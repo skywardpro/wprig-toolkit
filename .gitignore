@@ -117,5 +117,6 @@
 !.browserslistrc
 !pubspec.yaml
 !pubspec.lock
+!compile-sass.dart
 
 *.DS_Store
