@@ -1,0 +1,5 @@
+environment:
+  sdk: "^3.3.0"
+name: wprig
+dev_dependencies:
+  sass: ^1.77.1
