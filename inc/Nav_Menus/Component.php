@@ -169,12 +169,13 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @return string Mobile Nav Toggle HTML.
 	 */
 	public function customize_mobile_menu_toggle() {
-		$get_menu_icon  = wp_remote_get( get_theme_file_uri() . '/assets/svg/menu-icon.svg' );
-		$get_close_icon = wp_remote_get( get_theme_file_uri() . '/assets/svg/close-icon.svg' );
 		return '<button class="menu-toggle icon" aria-label="' . esc_html__( 'Open menu', 'wp-rig' ) . '" aria-controls="primary-menu" aria-expanded="false">
-					' . wp_remote_retrieve_body( $get_menu_icon ) . '
-					' . wp_remote_retrieve_body( $get_close_icon ) . '
-					</button>';
+				div class="hamburger">
+				<span class="meat"></span>
+				<span class="meat"></span>
+				<span class="meat"></span>
+			</div>
+		</button>';
 	}
 
 	/**
