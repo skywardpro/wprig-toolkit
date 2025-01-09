@@ -1,0 +1,428 @@
+/**
+ * Typography System
+ *
+ * This SCSS file establishes consistent and adaptable typographic styles for various screen sizes using structured maps and mixins.
+ */
+.typo--normal {
+  font-style: normal !important;
+}
+
+.typo--italic {
+  font-style: italic !important;
+}
+
+.typo--light {
+  font-weight: 300 !important;
+}
+
+.typo--regular {
+  font-weight: 400 !important;
+}
+
+.typo--medium {
+  font-weight: 500 !important;
+}
+
+.typo--semibold {
+  font-weight: 600 !important;
+}
+
+.typo--bold {
+  font-weight: 700 !important;
+}
+
+.typo--extra-bold {
+  font-weight: 800 !important;
+}
+
+.typo--black {
+  font-weight: 900 !important;
+}
+
+.typo--title {
+  font-size: 6rem !important;
+  line-height: 1.05 !important;
+  letter-spacing: -1px !important;
+}
+
+.typo--heading-1 {
+  font-size: 4.8rem !important;
+  line-height: 1.12 !important;
+  letter-spacing: -1px !important;
+}
+
+.typo--heading-2 {
+  font-size: 4rem !important;
+  font-weight: 800 !important;
+  line-height: 1.24 !important;
+  letter-spacing: -0.75px !important;
+}
+
+.typo--heading-3 {
+  font-size: 3.2rem !important;
+  line-height: 1.24 !important;
+  letter-spacing: -0.75px !important;
+}
+
+.typo--heading-4 {
+  font-size: 2.4rem !important;
+  line-height: 1.24 !important;
+  letter-spacing: -0.25px !important;
+}
+
+.typo--heading-5 {
+  font-size: 2rem !important;
+  line-height: 1.4 !important;
+}
+
+.typo--body-big {
+  font-size: 1.8rem !important;
+  line-height: 1.62 !important;
+}
+
+.typo--body {
+  font-size: 1.6rem !important;
+  line-height: 1.62 !important;
+}
+
+.typo--body-small {
+  font-size: 1.4rem !important;
+  line-height: 1.62 !important;
+}
+
+.typo--caption {
+  font-size: 1.2rem !important;
+  line-height: 1.62 !important;
+  letter-spacing: 0.25px !important;
+}
+
+.typo--label {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  line-height: 16px !important;
+}
+
+@media (min-width: 769px) {
+  .typo--normal__tablet {
+    font-style: normal !important;
+  }
+  .typo--italic__tablet {
+    font-style: italic !important;
+  }
+  .typo--light__tablet {
+    font-weight: 300 !important;
+  }
+  .typo--regular__tablet {
+    font-weight: 400 !important;
+  }
+  .typo--medium__tablet {
+    font-weight: 500 !important;
+  }
+  .typo--semibold__tablet {
+    font-weight: 600 !important;
+  }
+  .typo--bold__tablet {
+    font-weight: 700 !important;
+  }
+  .typo--extra-bold__tablet {
+    font-weight: 800 !important;
+  }
+  .typo--black__tablet {
+    font-weight: 900 !important;
+  }
+  .typo--title__tablet {
+    font-size: 6rem !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-1__tablet {
+    font-size: 4.8rem !important;
+    line-height: 1.12 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-2__tablet {
+    font-size: 4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-3__tablet {
+    font-size: 3.2rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-4__tablet {
+    font-size: 2.4rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.25px !important;
+  }
+  .typo--heading-5__tablet {
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
+  }
+  .typo--body-big__tablet {
+    font-size: 1.8rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body__tablet {
+    font-size: 1.6rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body-small__tablet {
+    font-size: 1.4rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--caption__tablet {
+    font-size: 1.2rem !important;
+    line-height: 1.62 !important;
+    letter-spacing: 0.25px !important;
+  }
+  .typo--label__tablet {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 16px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .typo--normal__desktop {
+    font-style: normal !important;
+  }
+  .typo--italic__desktop {
+    font-style: italic !important;
+  }
+  .typo--light__desktop {
+    font-weight: 300 !important;
+  }
+  .typo--regular__desktop {
+    font-weight: 400 !important;
+  }
+  .typo--medium__desktop {
+    font-weight: 500 !important;
+  }
+  .typo--semibold__desktop {
+    font-weight: 600 !important;
+  }
+  .typo--bold__desktop {
+    font-weight: 700 !important;
+  }
+  .typo--extra-bold__desktop {
+    font-weight: 800 !important;
+  }
+  .typo--black__desktop {
+    font-weight: 900 !important;
+  }
+  .typo--title__desktop {
+    font-size: 6rem !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-1__desktop {
+    font-size: 4.8rem !important;
+    line-height: 1.12 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-2__desktop {
+    font-size: 4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-3__desktop {
+    font-size: 3.2rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-4__desktop {
+    font-size: 2.4rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.25px !important;
+  }
+  .typo--heading-5__desktop {
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
+  }
+  .typo--body-big__desktop {
+    font-size: 1.8rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body__desktop {
+    font-size: 1.6rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body-small__desktop {
+    font-size: 1.4rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--caption__desktop {
+    font-size: 1.2rem !important;
+    line-height: 1.62 !important;
+    letter-spacing: 0.25px !important;
+  }
+  .typo--label__desktop {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 16px !important;
+  }
+}
+@media (min-width: 1216px) {
+  .typo--normal__widescreen {
+    font-style: normal !important;
+  }
+  .typo--italic__widescreen {
+    font-style: italic !important;
+  }
+  .typo--light__widescreen {
+    font-weight: 300 !important;
+  }
+  .typo--regular__widescreen {
+    font-weight: 400 !important;
+  }
+  .typo--medium__widescreen {
+    font-weight: 500 !important;
+  }
+  .typo--semibold__widescreen {
+    font-weight: 600 !important;
+  }
+  .typo--bold__widescreen {
+    font-weight: 700 !important;
+  }
+  .typo--extra-bold__widescreen {
+    font-weight: 800 !important;
+  }
+  .typo--black__widescreen {
+    font-weight: 900 !important;
+  }
+  .typo--title__widescreen {
+    font-size: 6rem !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-1__widescreen {
+    font-size: 4.8rem !important;
+    line-height: 1.12 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-2__widescreen {
+    font-size: 4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-3__widescreen {
+    font-size: 3.2rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-4__widescreen {
+    font-size: 2.4rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.25px !important;
+  }
+  .typo--heading-5__widescreen {
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
+  }
+  .typo--body-big__widescreen {
+    font-size: 1.8rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body__widescreen {
+    font-size: 1.6rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body-small__widescreen {
+    font-size: 1.4rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--caption__widescreen {
+    font-size: 1.2rem !important;
+    line-height: 1.62 !important;
+    letter-spacing: 0.25px !important;
+  }
+  .typo--label__widescreen {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 16px !important;
+  }
+}
+@media (min-width: 1408px) {
+  .typo--normal__fullhd {
+    font-style: normal !important;
+  }
+  .typo--italic__fullhd {
+    font-style: italic !important;
+  }
+  .typo--light__fullhd {
+    font-weight: 300 !important;
+  }
+  .typo--regular__fullhd {
+    font-weight: 400 !important;
+  }
+  .typo--medium__fullhd {
+    font-weight: 500 !important;
+  }
+  .typo--semibold__fullhd {
+    font-weight: 600 !important;
+  }
+  .typo--bold__fullhd {
+    font-weight: 700 !important;
+  }
+  .typo--extra-bold__fullhd {
+    font-weight: 800 !important;
+  }
+  .typo--black__fullhd {
+    font-weight: 900 !important;
+  }
+  .typo--title__fullhd {
+    font-size: 6rem !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-1__fullhd {
+    font-size: 4.8rem !important;
+    line-height: 1.12 !important;
+    letter-spacing: -1px !important;
+  }
+  .typo--heading-2__fullhd {
+    font-size: 4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-3__fullhd {
+    font-size: 3.2rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.75px !important;
+  }
+  .typo--heading-4__fullhd {
+    font-size: 2.4rem !important;
+    line-height: 1.24 !important;
+    letter-spacing: -0.25px !important;
+  }
+  .typo--heading-5__fullhd {
+    font-size: 2rem !important;
+    line-height: 1.4 !important;
+  }
+  .typo--body-big__fullhd {
+    font-size: 1.8rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body__fullhd {
+    font-size: 1.6rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--body-small__fullhd {
+    font-size: 1.4rem !important;
+    line-height: 1.62 !important;
+  }
+  .typo--caption__fullhd {
+    font-size: 1.2rem !important;
+    line-height: 1.62 !important;
+    letter-spacing: 0.25px !important;
+  }
+  .typo--label__fullhd {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 16px !important;
+  }
+}

@@ -1,0 +1,75 @@
+/**
+ * Typography System
+ *
+ * This SCSS file establishes consistent and adaptable typographic styles for various screen sizes using structured maps and mixins.
+ */
+
+// Define typography styles combining font styles, weights, and custom typography
+$typography-styles: (
+    // Font Style Classes
+    "typo--normal": (font-style: normal),
+    "typo--italic": (font-style: italic),
+
+    // Font Weight Classes
+    "typo--light": (font-weight: 300),
+    "typo--regular": (font-weight: 400),
+    "typo--medium": (font-weight: 500),
+    "typo--semibold": (font-weight: 600),
+    "typo--bold": (font-weight: 700),
+    "typo--extra-bold": (font-weight: 800),
+    "typo--black": (font-weight: 900),
+
+    // Custom Typography Styles
+    "typo--title": (font-size: 6rem, line-height: 1.05, letter-spacing: -1px),
+    "typo--heading-1": (font-size: 4.8rem, line-height: 1.12, letter-spacing: -1px),
+    "typo--heading-2": (font-size: 4rem, font-weight: 800, line-height: 1.24, letter-spacing: -0.75px),
+    "typo--heading-3": (font-size: 3.2rem, line-height: 1.24, letter-spacing: -0.75px),
+    "typo--heading-4": (font-size: 2.4rem, line-height: 1.24, letter-spacing: -0.25px),
+    "typo--heading-5": (font-size: 2rem, line-height: 1.4),
+    "typo--body-big": (font-size: 1.8rem, line-height: 1.62),
+    "typo--body": (font-size: 1.6rem, line-height: 1.62),
+    "typo--body-small": (font-size: 1.4rem, line-height: 1.62),
+    "typo--caption": (font-size: 1.2rem, line-height: 1.62, letter-spacing: 0.25px),
+    "typo--label": (font-size: 1.4rem, font-weight: 700, line-height: 16px),
+) !default;
+
+// Define breakpoints for responsive design, ensuring typography scales well on different devices.
+$breakpoints: (
+    xs: 0,
+    tablet: 769px,
+    desktop: 1024px,
+    widescreen: 1216px,
+    fullhd: 1408px,
+) !default;
+
+// Mixin to generate base typography styles.
+@mixin print-base-styles($styles) {
+    @each $class, $style in $styles {
+        .#{$class} {
+            @each $property, $value in $style {
+                #{$property}: $value !important;
+            }
+        }
+    }
+}
+
+// Mixin to generate responsive typography styles with specific class suffixes.
+@mixin print-responsive-styles($breakpoints, $styles) {
+    @each $breakpoint-name, $breakpoint-value in $breakpoints {
+        @if $breakpoint-value != 0 {
+            @media (min-width: $breakpoint-value) {
+                @each $class, $style in $styles {
+                    .#{$class}__#{$breakpoint-name} {
+                        @each $property, $value in $style {
+                            #{$property}: $value !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Generate non-responsive and responsive typography styles.
+@include print-base-styles($typography-styles);
+@include print-responsive-styles($breakpoints, $typography-styles);

@@ -1,0 +1,55 @@
+/** Property: z-index
+
+ Some minus values for cases which requires negative value,
+ 0, 1, 2, 3, 4, 5 - most usual layers,
+ 100 - over most of elements,
+ 1000 - over the header
+ */
+
+$z-index-values: -3, -2, -1, 0, 1, 2, 3, 4, 5, 100, 1000
+
+@each $value in $z-index-values
+  @if $value < 0
+    .z-index--minus#{$value}
+      z-index: $value
+  @else
+    .z-index--#{$value}
+      z-index: $value
+
++tablet
+  @each $value in $z-index-values
+    @if $value < 0
+      .z-index--minus#{$value}__tablet
+        z-index: $value
+    @else
+      .z-index--#{$value}__tablet
+        z-index: $value
+
++desktop
+  @each $value in $z-index-values
+    @if $value < 0
+      .z-index--minus#{$value}__desktop
+        z-index: $value
+    @else
+      .z-index--#{$value}__desktop
+        z-index: $value
+
++widescreen
+  @each $value in $z-index-values
+    @if $value < 0
+      .z-index--minus#{$value}__widescreen
+        z-index: $value
+    @else
+      .z-index--#{$value}__widescreen
+        z-index: $value
+
++fullhd
+  @each $value in $z-index-values
+    @if $value < 0
+      .z-index--minus#{$value}__fullhd
+        z-index: $value
+    @else
+      .z-index--#{$value}__fullhd
+        z-index: $value
+
+

@@ -1,0 +1,59 @@
+/*----------------------------
+# Buttons
+----------------------------*/
+
+/*----------------------------
+## Buttons: Sizes
+----------------------------*/
+
+/* Reserve a space using paddings to adjust the size.
+ *
+ * You can find and example below.
+ */
+
+
+.btn--size-normal {
+	padding: var(--spacing-2xs) var(--spacing-xs);
+}
+
+.btn--size-big {
+	padding: var(--spacing-s) var(--spacing-l);
+}
+
+/*----------------------------
+## Buttons: Colors
+----------------------------*/
+
+/* For example, use a background attribute with your primary color variable,
+ * as well as a color variable for text, to ensure accessibility.
+ *
+ * You can find and example below.
+ */
+
+/* Primary */
+/* .btn--color-primary {
+	 background: var(--color-theme-primary);
+	 color: var(--color-theme-secondary);
+ }*/
+
+/*----------------------------
+## Buttons: Effects
+----------------------------*/
+
+/* Here, we can add classes for adding shadows or outlines to buttons. */
+
+/*----------------------------
+## Buttons: Icon buttons
+----------------------------*/
+
+/* We could add classes that include icons for buttons. One option is to encode small icons to base64. */
+
+/* Full screen view for buttons on mobile */
+@media (--mobile-query) {
+
+	.btn--primary.is-full-mobile,
+	.btn--secondary.is-full-mobile {
+		width: 100%;
+		text-align: center;
+	}
+}

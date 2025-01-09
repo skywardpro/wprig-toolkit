@@ -1,0 +1,29 @@
+/* Property: position */
+
+$position-values: static, relative, absolute, fixed
+
+@each $value in $position-values
+    .is-#{$value}
+      position: $value !important
+
++tablet
+  @each $value in $position-values
+    .is-#{$value}__tablet
+      position: $value !important
+
++desktop
+  @each $value in $position-values
+    .is-#{$value}__desktop
+      position: $value !important
+
++widescreen
+  @each $value in $position-values
+    .is-#{$value}__widescreen
+      position: $value !important
+
++fullhd
+  @each $value in $position-values
+    .is-#{$value}__fullhd
+      position: $value !important
+
+

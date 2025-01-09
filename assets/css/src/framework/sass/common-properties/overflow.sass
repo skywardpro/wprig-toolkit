@@ -1,0 +1,32 @@
+/* Property: overflow
+
+ Most popular overflow values.
+ */
+
+$overflow-values: visible, hidden, scroll, auto, unset
+
+@each $value in $overflow-values
+    .overflow--#{$value}
+      overflow: $value !important
+
++tablet
+  @each $value in $overflow-values
+    .overflow--#{$value}__tablet
+      overflow: $value !important
+
++desktop
+  @each $value in $overflow-values
+    .overflow--#{$value}__desktop
+      overflow: $value !important
+
++widescreen
+  @each $value in $overflow-values
+    .overflow--#{$value}__widescreen
+      overflow: $value !important
+
++fullhd
+  @each $value in $overflow-values
+    .overflow--#{$value}__fullhd
+      overflow: $value !important
+
+

@@ -1,0 +1,139 @@
+/**
+ * Spacing System
+ *
+ * This SCSS file defines a comprehensive set of spacing values for CSS classes, ensuring precise and efficient layouts.
+ * The values are organized into a scalable array, facilitating easy adjustments and uniform application across various elements.
+ *
+ * Inspired by a Gist from @Eomerx: https://gist.github.com/Eomerx/d69ccaf5fec88040b431
+ */
+
+// Define margin and padding values
+// Each key represents a specific spacing scale from "auto" for automatic spacing to "5xl" for maximum spacing.
+// The "!important" rule is used to ensure that these spacing classes take precedence in styling conflicts.
+$space-values: (
+	"auto": auto !important,
+	"0": 0 !important,
+	"5xs": 0.2rem !important,
+	"4xs": 0.4rem !important,
+	"3xs": 0.8rem !important,
+	"2xs": 1.2rem !important,
+	"xs": 1.6rem !important,
+	"s": 2rem !important,
+	"m": 2.4rem !important,
+	"l": 3.2rem !important,
+	"xl": 4rem !important,
+	"2xl": 5.6rem !important,
+	"3xl": 7.2rem !important,
+	"4xl": 8.8rem !important,
+	"5xl": 12rem !important,
+) !default;
+
+// Margin and padding shorthand configurations
+// Defines shorthand notation for applying spacing to padding and margin properties.
+// Each prefix like 'p' for padding or 'm' for margin is mapped to the respective CSS property for easy usage.
+$space-prefixes: (
+	p: padding,
+	pt: padding-top,
+	pr: padding-right,
+	pb: padding-bottom,
+	pl: padding-left,
+	px: (
+		padding-left,
+		padding-right,
+	),
+	py: (
+		padding-top,
+		padding-bottom,
+	),
+	m: margin,
+	mt: margin-top,
+	mr: margin-right,
+	mb: margin-bottom,
+	ml: margin-left,
+	mx: (
+		margin-left,
+		margin-right,
+	),
+	my: (
+		margin-top,
+		margin-bottom,
+	),
+) !default;
+
+// Responsive breakpoints
+// Defines key breakpoints for responsive design, allowing for layout adjustments across different device sizes.
+$breakpoints: (
+	xs: 0,
+	tablet: 769px,
+	desktop: 1024px,
+	widescreen: 1216px,
+	fullhd: 1408px,
+) !default;
+
+@mixin print-default-values($breakpoint-name, $prefixes, $values) {
+
+	@each $attr-short, $attr-long in $prefixes {
+
+		@each $value-name, $value-size in $values {
+
+			.#{$attr-short}-#{$value-name} {
+
+				@if (length($attr-long)) {
+
+					@each $a in $attr-long {
+						#{$a}: #{$value-size};
+					}
+				}
+
+				@else {
+					#{$attr-long}: #{$value}px;
+				}
+			}
+		}
+	}
+}
+
+@mixin print-values($breakpoint-name, $prefixes, $values) {
+
+	@each $attr-short, $attr-long in $prefixes {
+
+		@each $value-name, $value-size in $values {
+
+			.#{$attr-short}-#{$value-name}__#{$breakpoint-name} {
+
+				@if (length($attr-long)) {
+
+					@each $a in $attr-long {
+						#{$a}: #{$value-size};
+					}
+				}
+
+				@else {
+					#{$attr-long}: #{$value}px;
+				}
+			}
+		}
+	}
+}
+
+// Main function definition
+@mixin make-space($values, $prefixes, $breakpoints) {
+
+	@each $breakpoint-name, $breakpoint-value in $breakpoints {
+		// if xs value = 0, set it global without media queries
+		@if ($breakpoint-value == 0) {
+
+			@include print-default-values($breakpoint-name, $prefixes, $values);
+		}
+		// breakpoint values that not equal to 0
+		@else {
+
+			@media screen and (min-width: $breakpoint-value) {
+
+				@include print-values($breakpoint-name, $prefixes, $values);
+			}
+		}
+	}
+}
+
+@include make-space($space-values, $space-prefixes, $breakpoints);

@@ -1,0 +1,50 @@
+/** Property: order
+
+ Some basic values for order positioning
+ */
+
+$order-values: -1, 0, 1, 2, 3, 4, 5
+
+@each $value in $order-values
+  @if $value < 0
+    .order--minus#{$value}
+      order: $value
+  @else
+    .order--#{$value}
+      order: $value
+
++tablet
+  @each $value in $order-values
+    @if $value < 0
+      .order--minus#{$value}__tablet
+        order: $value
+    @else
+      .order--#{$value}__tablet
+        order: $value
+
++desktop
+  @each $value in $order-values
+    @if $value < 0
+      .order--minus#{$value}__desktop
+        order: $value
+    @else
+      .order--#{$value}__desktop
+        order: $value
+
++widescreen
+  @each $value in $order-values
+    @if $value < 0
+      .order--minus#{$value}__widescreen
+        order: $value
+    @else
+      .order--#{$value}__widescreen
+        order: $value
+
++fullhd
+  @each $value in $order-values
+    @if $value < 0
+      .order--minus#{$value}__fullhd
+        order: $value
+    @else
+      .order--#{$value}__fullhd
+        order: $value

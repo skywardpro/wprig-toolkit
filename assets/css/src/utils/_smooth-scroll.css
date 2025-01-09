@@ -1,0 +1,20 @@
+/**
+ * Smooth scroll
+ *
+ * A modern no-js smooth scroll solution driven by browser.
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-margin-top
+ */
+
+html {
+	scroll-behavior: smooth;
+	scroll-margin-top: var(--spacing-4xl);
+}
+
+section,
+h2,
+h3,
+h4,
+h5 {
+	scroll-margin-top: var(--spacing-5xl);
+}
