@@ -125,9 +125,9 @@
     "images": "gulp images",
     "bundle": "cross-env NODE_ENV=production gulp bundle",
     "bundle:phpcs": "cross-env NODE_ENV=production gulp bundle --phpcs",
-    "bundle:check-all": "cross-env NODE_ENV=production gulp bundle --phpcs"
-	"build:spacing-system": "dart compile-sass.dart assets/css/src/spacing-system/_spacing-system.scss assets/css/src/spacing-system/_spacing-system.css",
+    "bundle:check-all": "cross-env NODE_ENV=production gulp bundle --phpcs",
+	  "build:spacing-system": "dart compile-sass.dart assets/css/src/spacing-system/_spacing-system.scss assets/css/src/spacing-system/_spacing-system.css",
     "build:framework": "dart compile-sass.dart assets/css/src/framework/bulma-barebone.sass assets/css/src/framework/_bulma-barebone.css",
-    "build:typo": "dart compile-sass.dart assets/css/src/typography/_typography-system.scss assets/css/src/typography/_typography-system.css",
+    "build:typo": "dart compile-sass.dart assets/css/src/typography/_typography-system.scss assets/css/src/typography/_typography-system.css"
   }
 }
