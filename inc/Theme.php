@@ -157,6 +157,78 @@ class Theme {
 			new Scripts\Component(),
 			new Excerpts\Component(),
 			new Options\Component(),
+			
+			/**
+			 * WP Rig Toolkit Components
+			 *
+			 * @link https://docs.wprig.org/coming-soon
+			 */
+
+			/*----------------------------
+			# Global Features
+			----------------------------*/
+
+			/**
+			 * Fresh_URL
+			 *
+			 * Plugin that keeps your URLs clean.
+			 */
+			// new WP_Rig_Toolkit\Fresh_URL\Component(),
+
+
+			/*----------------------------
+			# Popups and Modals
+			----------------------------*/
+
+			/**
+			 * Tingle
+			 *
+			 * A minimalist and easy-to-use modal pure JavaScript plugin.
+			 */
+			//new WP_Rig_Toolkit\Tingle\Component(),
+
+
+			/*----------------------------
+			# Validation & Forms
+			----------------------------*/
+			
+			/**
+			 * Validatejs
+			 *
+			 * A pure JavaScript library for forms validation.
+			 */
+			//new WP_Rig_Toolkit\Validatejs\Component(),
+
+
+			/*----------------------------
+			# Sliders
+			----------------------------*/
+
+			/**
+			 * Splidejs
+			 *
+			 * The lightweight, flexible and accessible slider/carousel.
+			 */
+			//new WP_Rig_Toolkit\Splidejs\Component(),
+
+
+			/*----------------------------
+			# Content components
+			----------------------------*/
+
+			/**
+			 * Masonry
+			 *
+			 * A pure JavaScript plugin for making smart and high performance sticky sidebar.
+			 */
+			//new WP_Rig_Toolkit\Masonry\Component(),
+			
+			/**
+			 * Listjs
+			 *
+			 * A pure JavaScript to sort and search within your data.
+			 */
+			//new WP_Rig_Toolkit\Masonry\Component(),
 		);
 
 		if ( defined( 'JETPACK__VERSION' ) ) {
