@@ -54,6 +54,8 @@
     "gulp-shell": "^0.8.0",
     "gulp-sort": "^2.0.0",
     "gulp-sourcemaps": "^3.0.0",
+	"gulp-svgmin": "^4.1.0",
+    "gulp-svgstore": "^9.0.0",
     "gulp-webp": "^5.0.0",
     "gulp-wp-pot": "^2.5.0",
     "gulp-zip": "^6.0.0",
@@ -124,5 +126,8 @@
     "bundle": "cross-env NODE_ENV=production gulp bundle",
     "bundle:phpcs": "cross-env NODE_ENV=production gulp bundle --phpcs",
     "bundle:check-all": "cross-env NODE_ENV=production gulp bundle --phpcs"
+	"build:spacing-system": "dart compile-sass.dart assets/css/src/spacing-system/_spacing-system.scss assets/css/src/spacing-system/_spacing-system.css",
+    "build:framework": "dart compile-sass.dart assets/css/src/framework/bulma-barebone.sass assets/css/src/framework/_bulma-barebone.css",
+    "build:typo": "dart compile-sass.dart assets/css/src/typography/_typography-system.scss assets/css/src/typography/_typography-system.css",
   }
 }
