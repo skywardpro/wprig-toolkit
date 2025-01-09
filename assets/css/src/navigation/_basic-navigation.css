@@ -4,7 +4,7 @@
 .nav--toggle-small .menu-toggle {
 	display: block;
 	margin: 0;
-	padding: 0.6em 1.2em 0.5em;
+	padding: 0;
 	font-family: var(--highlight-font-family);
 	font-stretch: condensed;
 	font-size: 80%;
@@ -17,7 +17,6 @@
 		border: none;
 		position: relative;
 		top: 40px;
-		left: 5px;
 		display: none;
 
 		@media (--narrow-menu-query) {
@@ -46,7 +45,7 @@
 			display: block;
 		}
 
-		@media (--narrow-menu-query) {
+		@media (--wide-menu-query) {
 
 			& .menu {
 				display: flex;
@@ -69,7 +68,7 @@
 			display: block;
 		}
 
-		@media (--narrow-menu-query) {
+		@media (--wide-menu-query) {
 
 			& .menu {
 				display: flex;
@@ -87,13 +86,14 @@
 				top: 300px;
 				left: 0;
 				height: 200%;
-				padding: 20px 30px;
+				padding: 1.6rem 2.4rem;
 				opacity: 0;
 				transition:
 					opacity 0.3s ease,
 					top 0.3s ease-out,
 					visibility 0.1s ease 0.4s;
 				visibility: hidden;
+				overflow-y: scroll;
 			}
 
 			/* & .menu {
@@ -144,6 +144,16 @@
 	overflow: visible;
 }
 
+@media (--narrow-menu-query) {
+	.nav--toggle-sub .dropdown,
+	.nav--toggle-sub .dropdown-toggle,
+	.wp-block-navigation__responsive-container.is-menu-open
+	.wp-block-navigation__responsive-container-content
+	.wp-block-navigation__submenu-icon {
+		top: auto;
+	}
+}
+
 .nav--toggle-sub .dropdown-symbol {
 	display: block;
 	background: transparent;
@@ -154,14 +164,14 @@
 	height: 60%;
 	border: solid var(--border-color-dark);
 	border-width: 0 2px 2px 0;
-	transform: translateY(-50%) rotate(45deg);
+	transform: translateY(-50%) rotate(-45deg);
 	transition: transform 0.2s;
 }
 
 .nav--toggle-sub
 li.menu-item--toggled-on > button.dropdown-toggle
 .dropdown-symbol {
-	transform: translateY(-50%) rotate(225deg);
+	transform: translateY(-50%) rotate(45deg);
 }
 
 .nav--toggle-sub
@@ -184,6 +194,10 @@ svg {
 	}
 }
 
+.nav--toggle-sub ul ul {
+	background: var(--color-theme-bg-blue);
+}
+
 @media (--wide-menu-query) {
 
 	.nav--toggle-small .menu-toggle {
@@ -199,9 +213,8 @@ svg {
 		position: absolute;
 		top: 100%;
 		flex-direction: column;
-		background: #fff;
+		border-top: 1px solid var(--color-theme-border-gray);
 		margin-left: 0;
-		box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
 		z-index: 100;
 	}
 
@@ -280,5 +293,17 @@ svg {
 	 */
 	.nav--toggle-sub li:not(.menu-item--has-toggle):focus-within > ul {
 		display: block;
+	}
+}
+
+.menu-item {
+
+	& > a {
+		transition: var(--animation-speed);
+	}
+
+	&.menu-item--toggled-on > a {
+		color: var(--color-theme-orange);
+		transition: var(--animation-speed);
 	}
 }
