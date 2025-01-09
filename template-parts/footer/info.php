@@ -10,19 +10,22 @@ namespace WP_Rig\WP_Rig;
 ?>
 
 <div class="site-info">
-	<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'wp-rig' ) ); ?>">
-		<?php
-		/* translators: %s: CMS name, i.e. WordPress. */
-		printf( esc_html__( 'Proudly powered by %s', 'wp-rig' ), 'WordPress' );
-		?>
-	</a>
-	<span class="sep"> | </span>
-	<?php
-	/* translators: Theme name. */
-	printf( esc_html__( 'Theme: %s by the contributors.', 'wp-rig' ), '<a href="' . esc_url( 'https://github.com/wprig/wprig/' ) . '">WP Rig</a>' );
+    <?php
+    // Fetching the current year and site name with link to homepage
+    echo '<div class="copyright">';
+    echo '&copy; ' . date('Y') . ' <a href="' . esc_url(home_url('/')) . '">' . get_bloginfo('name') . '</a>. All rights reserved.';
+    echo '</div><!-- .copyright -->';
 
-	if ( function_exists( 'the_privacy_policy_link' ) ) {
-		the_privacy_policy_link( '<span class="sep"> | </span>' );
-	}
-	?>
+    // Fetching the theme author from style.css
+    $theme = wp_get_theme();
+    $theme_author = $theme->get('Author');
+    $theme_author_uri = $theme->get('AuthorURI');
+    if ( $theme_author ) {
+        echo '<div class="theme-author">';
+        echo 'Developed by <a href="' . esc_url( $theme_author_uri ) . '">' . esc_html( $theme_author ) . '</a>.';
+        echo '</div><!-- .theme-author -->';
+    }
+    ?>
 </div><!-- .site-info -->
+
+

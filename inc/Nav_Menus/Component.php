@@ -170,7 +170,7 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 */
 	public function customize_mobile_menu_toggle() {
 		return '<button class="menu-toggle icon" aria-label="' . esc_html__( 'Open menu', 'wp-rig' ) . '" aria-controls="primary-menu" aria-expanded="false">
-				div class="hamburger">
+			<div class="hamburger">
 				<span class="meat"></span>
 				<span class="meat"></span>
 				<span class="meat"></span>
