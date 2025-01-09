@@ -185,7 +185,7 @@ class Theme {
 			 *
 			 * A minimalist and easy-to-use modal pure JavaScript plugin.
 			 */
-			//new WP_Rig_Toolkit\Tingle\Component(),
+			// new WP_Rig_Toolkit\Tingle\Component(),
 
 
 			/*----------------------------
@@ -197,7 +197,7 @@ class Theme {
 			 *
 			 * A pure JavaScript library for forms validation.
 			 */
-			//new WP_Rig_Toolkit\Validatejs\Component(),
+			// new WP_Rig_Toolkit\Validatejs\Component(),
 
 
 			/*----------------------------
@@ -209,7 +209,7 @@ class Theme {
 			 *
 			 * The lightweight, flexible and accessible slider/carousel.
 			 */
-			//new WP_Rig_Toolkit\Splidejs\Component(),
+			// new WP_Rig_Toolkit\Splidejs\Component(),
 
 
 			/*----------------------------
@@ -221,14 +221,14 @@ class Theme {
 			 *
 			 * A pure JavaScript plugin for making smart and high performance sticky sidebar.
 			 */
-			//new WP_Rig_Toolkit\Masonry\Component(),
+			// new WP_Rig_Toolkit\Masonry\Component(),
 			
 			/**
 			 * Listjs
 			 *
 			 * A pure JavaScript to sort and search within your data.
 			 */
-			//new WP_Rig_Toolkit\Masonry\Component(),
+			// new WP_Rig_Toolkit\Masonry\Component(),
 		);
 
 		if ( defined( 'JETPACK__VERSION' ) ) {
