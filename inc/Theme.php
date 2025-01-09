@@ -157,7 +157,7 @@ class Theme {
 			new Scripts\Component(),
 			new Excerpts\Component(),
 			new Options\Component(),
-			
+
 			/**
 			 * WP Rig Toolkit Components
 			 *
@@ -191,7 +191,7 @@ class Theme {
 			/*----------------------------
 			# Validation & Forms
 			----------------------------*/
-			
+
 			/**
 			 * Validatejs
 			 *
@@ -205,11 +205,11 @@ class Theme {
 			----------------------------*/
 
 			/**
-			 * Splidejs
+			 * Swiper
 			 *
-			 * The lightweight, flexible and accessible slider/carousel.
+			 * The most popular slider library.
 			 */
-			// new WP_Rig_Toolkit\Splidejs\Component(),
+			// new WP_Rig_Toolkit\Swiper\Component(),
 
 
 			/*----------------------------
@@ -222,7 +222,7 @@ class Theme {
 			 * A pure JavaScript plugin for making smart and high performance sticky sidebar.
 			 */
 			// new WP_Rig_Toolkit\Masonry\Component(),
-			
+
 			/**
 			 * Listjs
 			 *
