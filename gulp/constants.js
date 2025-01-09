@@ -101,12 +101,16 @@ export const paths = {
 		dest: `${assetsDir}/js`,
 	},
 	images: {
-		src: `${assetsDir}/images/src/**/*.{jpg,JPG,png,svg,gif,GIF}`,
-		dest: `${assetsDir}/images/`,
+		src: `${ assetsDir }/images/src/**/*.{jpg,JPG,png,svg,gif,GIF,webp,avif}`,
+		dest: `${ assetsDir }/images/`,
+	},
+	iconsSvg: {
+		src: `${ assetsDir }/images/src/icons/*.svg`,
+		dest: `${ assetsDir }/images/icons/sprite-svg/`,
 	},
 	fonts: {
-		src: `${assetsDir}/fonts/**/*.{woff,woff2,eot,ttf,svg}`,
-		dest: `${assetsDir}/fonts/`,
+		src: `${ assetsDir }/fonts/**/*.{woff,woff2,eot,ttf,svg}`,
+		dest: `${ assetsDir }/fonts/`,
 	},
 	export: {
 		src: [],
@@ -144,8 +148,9 @@ if (isProd) {
 	paths.styles.dest = `${prodAssetsDir}/css/`;
 	paths.styles.editorDest = `${prodAssetsDir}/css/editor/`;
 	paths.scripts.dest = `${prodAssetsDir}/js/`;
-	paths.images.dest = `${prodAssetsDir}/images/`;
-	paths.fonts.dest = `${prodAssetsDir}/fonts/`;
+	paths.images.dest = `${ prodAssetsDir }/images/`;
+	paths.iconsSvg.dest = `${ prodAssetsDir }/images/icons/sprite-svg/`;
+	paths.fonts.dest = `${ prodAssetsDir }/fonts/`;
 	paths.languages = {
 		src: `${prodThemePath}/**/*.php`,
 		dest: `${prodThemePath}/languages/${config.theme.slug}.pot`,
