@@ -42,11 +42,6 @@ class Component implements Component_Interface {
 	 * Enqueues script.
 	 */
 	public function action_enqueue_sticky_files() {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
-
 		// Enqueue the script.
 		if ( is_post_type_archive( 'testimonial' ) || is_page( 'testimonials' ) || is_singular( 'post' ) ) {
 			wp_enqueue_script(

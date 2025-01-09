@@ -49,10 +49,6 @@ class Component implements Component_Interface {
 	 * Enqueues scripts and styles.
 	 */
 	public function action_activate_popup_tingle() {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
 
 		// Enqueue scripts.
 		wp_enqueue_script(

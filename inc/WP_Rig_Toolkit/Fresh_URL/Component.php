@@ -40,10 +40,6 @@ class Component implements Component_Interface {
 	 * Enqueues a script.
 	 */
 	public function action_activate_fresh_url() {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
 
 		// Enqueue the Fresh_URL script.
 		wp_enqueue_script(

@@ -58,10 +58,6 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * Enqueues scripts and styles.
 	 */
 	public function use_listjs( $arg ) {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
 		// Enqueue script.
 		wp_enqueue_script(
 			'listjs',

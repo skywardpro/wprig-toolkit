@@ -42,11 +42,6 @@ class Component implements Component_Interface {
 	 * Enqueues scripts and styles.
 	 */
 	public function action_enqueue_toc_files() {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
-
 		if (is_singular( 'blog_post' ) ) {
 			// Enqueue script.
 			wp_enqueue_script(

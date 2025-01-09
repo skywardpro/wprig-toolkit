@@ -42,11 +42,6 @@ class Component implements Component_Interface {
 	 * Enqueues script.
 	 */
 	public function action_enqueue_sticky_files() {
-		// If the AMP plugin is active, return early.
-		if ( wp_rig()->is_amp() ) {
-			return;
-		}
-
 		// Enqueue the sticky script.
 		wp_enqueue_script(
 			'validatejs',
