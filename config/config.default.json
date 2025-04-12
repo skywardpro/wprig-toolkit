@@ -46,7 +46,8 @@
       "assets/css/vendor/**/*.css",
       "assets/js/vendor/**/*.js",
       "inc/EZ_Customizer/themeCustomizeSettings.json",
-      "assets/data/**"
+      "assets/data/**",
+	  "assets/fonts/**"
     ]
   }
 }
