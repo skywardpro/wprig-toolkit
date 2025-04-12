@@ -1,4 +1,4 @@
-# Ignore everything:
+#Ignore everything:
 /*
 !/.dart_tool/
 !/.github/
@@ -13,37 +13,11 @@
 !/assets/js/src/
 !/assets/js/vendor/
 !/assets/images/
-/assets/images/*
+/assets/images/prod/*
 !/assets/svg/
 !/assets/svg/*
 !/assets/images/src/
-!/assets/data/*
-!/assets/fonts/
-!/assets/fonts/*
-!/assets/images/src/
-!/languages/
-!gulp/
-!node/
-!style.css
-!/*.php# Ignore everything:
-/*
-!/.dart_tool/
-!/.github/
-!/assets/
-/assets/*
-!/assets/css/
-/assets/css/*
-!/assets/css/src/
-!/assets/css/vendor/
-!/assets/js/
-/assets/js/*
-!/assets/js/src/
-!/assets/js/vendor/
-!/assets/images/
-/assets/images/*
-!/assets/svg/
-!/assets/svg/*
-!/assets/images/src/
+!/assets/data/
 !/assets/data/*
 !/assets/fonts/
 !/assets/fonts/*
@@ -86,37 +60,8 @@
 !pubspec.lock
 
 *.DS_Store
-!/inc/
-!/template-parts/
-!/config/
-/config/config.local.json
-!/tests/
-!/optional/
-!/functions/
 
-!.babelrc
-!composer.json
-!composer.lock
-!CHANGELOG.md
-!CONTRIBUTING.md
-!.editorconfig
-!.eslintignore
-!.eslintrc.json
-!.gitignore
-!gulpfile.babel.js
-!LICENSE
-!package-lock.json
-!package.json
-!phpcs.xml.dist
-!phpunit.integration.xml.dist
-!phpunit.xml.dist
-!README.md
-!readme.txt
-!screenshot.png
-!.travis.yml
-!.browserslistrc
-!pubspec.yaml
-!pubspec.lock
 !compile-sass.dart
-
-*.DS_Store
+!gulpfile.js
+!build-css.js
+!build-js.js
