@@ -8,5 +8,26 @@
     "author_uri": "https://wprig.io/",
     "description": "A progressive theme development rig for WordPress.",
     "version": "1.0.0"
+  },
+  "dev": {
+    "browserSync": {
+      "live": true,
+      "proxyURL": "yoursite.local",
+      "bypassPort": "8181",
+      "https": false
+    }
+  },
+  "export": {
+    "compress": true,
+    "generatePotFile": true,
+    "filesToCopy": [
+      "LICENSE",
+      "readme.txt",
+      "screenshot.png",
+      "assets/css/vendor/**/*.css",
+      "assets/js/vendor/**/*.js",
+      "inc/EZ_Customizer/themeCustomizeSettings.json",
+      "assets/data/**"
+    ]
   }
 }
