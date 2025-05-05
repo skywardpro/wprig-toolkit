@@ -8,7 +8,7 @@
  */
 
 // Define margin and padding values
-// Each key represents a specific spacing scale from "auto" for automatic spacing to "5xl" for maximum spacing.
+// Each key represents a specific spacing scale from "auto" for automatic spacing to "6xl" for maximum spacing.
 // The "!important" rule is used to ensure that these spacing classes take precedence in styling conflicts.
 $space-values: (
 	"auto": auto !important,
@@ -22,10 +22,12 @@ $space-values: (
 	"m": 2.4rem !important,
 	"l": 3.2rem !important,
 	"xl": 4rem !important,
-	"2xl": 5.6rem !important,
-	"3xl": 7.2rem !important,
-	"4xl": 8.8rem !important,
-	"5xl": 12rem !important,
+	"2xl": 4.8rem !important,
+	"3xl": 5.6rem !important,
+	"4xl": 6.4rem !important,
+	"5xl": 8rem !important,
+	"6xl": 10rem !important,
+	"7xl": 12rem !important,
 ) !default;
 
 // Margin and padding shorthand configurations
