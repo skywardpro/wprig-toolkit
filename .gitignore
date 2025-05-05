@@ -46,7 +46,6 @@
 !.gitignore
 !gulpfile.babel.js
 !LICENSE
-!package-lock.json
 !package.json
 !phpcs.xml.dist
 !phpunit.integration.xml.dist
