@@ -219,7 +219,7 @@ class Theme {
 			/**
 			 * Masonry
 			 *
-			 * A pure JavaScript plugin for making smart and high performance sticky sidebar.
+			 * A pure JavaScript plugin for making masonry view content.
 			 */
 			// new WP_Rig_Toolkit\Masonry\Component(),
 
