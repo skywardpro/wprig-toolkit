@@ -200,7 +200,7 @@ class Theme
 		 * 
 		 *  * @param string[] $enabled_plugins Optional. List of plugin keys to load.
 		 */
-			// new WP_Rig_Toolkit\JSAP\Component([]),
+			// new WP_Rig_Toolkit\GSAP\Component([]),
 
 
 			/*----------------------------

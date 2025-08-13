@@ -45,7 +45,7 @@ class Component implements Component_Interface
 		$this->enqueue_script('gsap', 'gsap/gsap.min.js');
 
 		if (in_array('ss', $this->enabled_plugins)) {
-			$this->enqueue_script('gsap-ss', 'gsap/scroll-smoother.min.js', ['gsap']);
+			$this->enqueue_script('gsap-scroll-smoother', 'gsap/scroll-smoother.min.js', ['gsap']);
 		}
 		if (in_array('st', $this->enabled_plugins)) {
 			$this->enqueue_script('gsap-scroll-trigger', 'gsap/scroll-trigger.min.js', ['gsap']);
@@ -54,16 +54,16 @@ class Component implements Component_Interface
 			$this->enqueue_script('gsap-scroll-to-plugin', 'gsap/scroll-to-plugin.min.js', ['gsap']);
 		}
 		if (in_array('ce', $this->enabled_plugins)) {
-			$this->enqueue_script('gsap-scroll-to-plugin', 'gsap/custom-easy.min.js', ['gsap']);
+			$this->enqueue_script('gsap-custom-easy', 'gsap/custom-easy.min.js', ['gsap']);
 		}
 		if (in_array('ds', $this->enabled_plugins)) {
-			$this->enqueue_script('gsap-scroll-to-plugin', 'gsap/draw-svg.min.js', ['gsap']);
+			$this->enqueue_script('gsap-draw-svg', 'gsap/draw-svg.min.js', ['gsap']);
 		}
 		if (in_array('fl', $this->enabled_plugins)) {
-			$this->enqueue_script('gsap-scroll-to-plugin', 'gsap/flip.min.js', ['gsap']);
+			$this->enqueue_script('gsap-flip', 'gsap/flip.min.js', ['gsap']);
 		}
 		if (in_array('stext', $this->enabled_plugins)) {
-			$this->enqueue_script('gsap-scroll-to-plugin', 'gsap/split-text.min.js', ['gsap']);
+			$this->enqueue_script('gsap-split-text', 'gsap/split-text.min.js', ['gsap']);
 		}
 	}
 
