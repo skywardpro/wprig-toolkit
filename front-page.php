@@ -23,15 +23,13 @@ if (is_home()) {
 <main id="primary" class="site-main">
 	<?php
 
-	get_template_part('template-parts/section/test');
+	while (have_posts()) {
+		the_post();
 
-	// while (have_posts()) {
-	// 	the_post();
+		get_template_part('template-parts/content/entry', get_post_type());
+	}
 
-	// 	get_template_part('template-parts/content/entry', get_post_type());
-	// }
-
-	// get_template_part('template-parts/content/pagination');
+	get_template_part('template-parts/content/pagination');
 	?>
 </main><!-- #primary -->
 <?php
