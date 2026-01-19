@@ -1,0 +1,33 @@
+/** Property: outline
+
+ In case you want to disable outline.
+ Especially useful for Mozilla cause sometimes default styles break the design.
+ */
+
+$outline-values: none
+
+@each $value in $outline-values
+  .outline--#{$value},
+  .outline--#{$value}:active,
+  .outline--#{$value}:focus
+    outline: $value !important
+
++tablet
+ @each $value in $outline-values
+  .outline--#{$value}__tablet, .outline--#{$value}__tablet:active, .outline--#{$value}__tablet:focus
+      outline: $value !important
+
++desktop
+ @each $value in $outline-values
+  .outline--#{$value}__desktop, .outline--#{$value}__desktop:active, .outline--#{$value}__desktop:focus
+      outline: $value !important
+
++widescreen
+ @each $value in $outline-values
+  .outline--#{$value}__widescreen, .outline--#{$value}__widescreen:active, .outline--#{$value}__widescreen:focus
+      outline: $value !important
+
++fullhd
+ @each $value in $outline-values
+  .outline--#{$value}__fullhd, .outline--#{$value}__fullhd:active, .outline--#{$value}__fullhd:focus
+      outline: $value !important

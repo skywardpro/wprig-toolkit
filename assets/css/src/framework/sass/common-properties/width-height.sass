@@ -1,0 +1,44 @@
+@use "sass:math"
+
+/** Properties: width and height
+
+ In case you want to reset (normal) or remove spacing from line height (1).
+ Can be useful for adjusting custom typography classes.
+ */
+
+$width-height-values: 25, 50, 75, 100
+
+@each $value in $width-height-values
+    .w-#{$value}
+      width: calc($value * 1%) !important
+    .h-#{$value}
+      height: calc($value * 1%) !important
+
++tablet
+  @each $value in $width-height-values
+    .w-#{$value}__tablet
+      width: calc($value * 1%) !important
+    .h-#{$value}__tablet
+      height: calc($value * 1%) !important
+
++desktop
+  @each $value in $width-height-values
+    .w-#{$value}__desktop
+      width: calc($value * 1%) !important
+    .h-#{$value}__desktop
+      height: calc($value * 1%) !important
+
++widescreen
+  @each $value in $width-height-values
+    .w-#{$value}__widescreen
+      width: calc($value * 1%) !important
+    .h-#{$value}__widescreen
+      height: calc($value * 1%) !important
+
++fullhd
+  @each $value in $width-height-values
+    .w-#{$value}__fullhd
+      width: calc($value * 1%) !important
+    .h-#{$value}__fullhd
+      height: calc($value * 1%) !important
+

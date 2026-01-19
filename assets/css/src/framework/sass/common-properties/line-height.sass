@@ -1,0 +1,34 @@
+/** Property: line-height
+
+ Can be useful when you want to reset the line height (normal)
+ or completely remove space from line height (1).
+ Could be especially useful to customize custom typography.
+ */
+
+$line-height-values: normal, 1
+
+@each $value in $line-height-values
+    .line-height--#{$value}
+      line-height: $value !important
+
++tablet
+  @each $value in $line-height-values
+    .line-height--#{$value}__tablet
+      line-height: $value !important
+
++desktop
+  @each $value in $line-height-values
+    .line-height--#{$value}__desktop
+      line-height: $value !important
+
++widescreen
+  @each $value in $line-height-values
+    .line-height--#{$value}__widescreen
+      line-height: $value !important
+
++fullhd
+  @each $value in $line-height-values
+    .line-height--#{$value}__fullhd
+      line-height: $value !important
+
+

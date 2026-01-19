@@ -1,0 +1,117 @@
+/**
+ * Custom Properties
+ * aka CSS variables.
+ *
+ * @link: https://developer.mozilla.org/en-US/docs/Web/CSS/--*
+ **/
+
+:root {
+	--content-width: 45rem;
+	--dropdown-symbol-width: 0.7em;
+
+	/* Typography */
+	--global-font-family: "Crimson Text", serif;
+	--highlight-font-family:
+		"Roboto Condensed",
+		"Helvetica Neue",
+		"Arial Narrow",
+		sans-serif;
+	--global-font-size: 1.6rem;
+	--global-line-height: 1.62;
+
+	/* * Select Font Scale:
+	 #	1.067 - Minor Second,
+	 #	1.125 - Major Second,
+	 #	1.2   - Minor Third,
+	 #	1.25  - Major Third,
+	 #	1.333 - Perfect Fourth,
+	 #	1.414 - Augmented Fourth,
+	 #	1.5   - Perfect Fifth,
+	 #	1.618 - Golden Ratio
+	 */
+	--global-font-scale: 1.333;
+
+	/* Custom font sizes */
+	--font-size-6xl: calc(var(--font-size-5xl) * var(--global-font-scale));
+	--font-size-5xl: calc(var(--font-size-4xl) * var(--global-font-scale));
+	--font-size-4xl: calc(var(--font-size-3xl) * var(--global-font-scale));
+	--font-size-3xl: calc(var(--font-size-2xl) * var(--global-font-scale));
+	--font-size-2xl: calc(var(--font-size-xl) * var(--global-font-scale));
+	--font-size-xl: calc(var(--font-size-l) * var(--global-font-scale));
+	--font-size-l: calc(var(--font-size-r) * var(--global-font-scale));
+	--font-size-r: var(--global-font-size);
+	--font-size-s: calc(var(--font-size-r) / var(--global-font-scale));
+	--font-size-xs: calc(var(--font-size-s) / var(--global-font-scale));
+	--font-size-2xs: calc(var(--font-size-xs) / var(--global-font-scale));
+
+	/**
+	* Colors
+	*
+	* Custom values for color pallete.
+	*
+	* Read more about effective tecniques at the link below
+	* @link: https://docs.wprig.org/assets-optimization/custom-properties
+	**/
+	--global-font-color: #333;
+	--border-color-dark: #333;
+	--border-color-light: #ccc;
+	--color-link: #0073aa;
+	--color-link-visited: #333;
+	--color-link-active: #00a0d2;
+	--color-quote-border: #000;
+	--color-quote-citation: #6c7781;
+
+	/* Selection color */
+	--color-selection: #41848f;
+
+	/* Scrollbar colors for unified browsers view */
+	--color-scrollbar: #cbd3e5;
+	--color-scrollbar-bg: #f9fbfc;
+
+	/* Core colors */
+	--color-theme-primary: #e36d60;
+	--color-theme-secondary: #41848f;
+
+	/* Color - Black */
+	--color-theme-black: #1c2833;
+
+	/* Color - White */
+	--color-theme-white: #ecf0f1;
+
+	/* Color - Red */
+	--color-theme-red: #c0392b;
+
+	/* Color - Green */
+	--color-theme-green: #27ae60;
+
+	/* Color - Blue */
+	--color-theme-blue: #2980b9;
+
+	/* Color - Yellow */
+	--color-theme-yellow: #f1c40f;
+
+	/* Color - Grey */
+	--color-theme-grey: #95a5a6;
+
+	/* Custom editor colors */
+	--color-custom-daylight: #97c0b7;
+	--color-custom-sun: #eee9d1;
+
+	/* Spacing */
+	--spacing-5xl: 12rem;
+	--spacing-4xl: 8.8rem;
+	--spacing-3xl: 7.2rem;
+	--spacing-2xl: 5.6rem;
+	--spacing-xl: 4rem;
+	--spacing-l: 3.2rem;
+	--spacing-m: 2.4rem;
+	--spacing-s: 2rem;
+	--spacing-xs: 1.6rem;
+	--spacing-2xs: 1.2rem;
+	--spacing-3xs: 0.8rem;
+	--spacing-4xs: 0.4rem;
+	--spacing-5xs: 0.2rem;
+
+	/* Transitions */
+	--animation-speed: 0.3s;
+}

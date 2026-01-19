@@ -1,0 +1,21 @@
+/*----------------------------
+# Colors
+----------------------------*/
+
+.color--primary {
+	color: var(--color-theme-primary) !important;
+}
+
+.color--secondary {
+	color: var(--color-theme-primary) !important;
+}
+
+/* Fills */
+
+.fill--primary {
+	fill: var(--color-theme-primary) !important;
+}
+
+.fill--secondary {
+	fill: var(--color-theme-secondary) !important;
+}

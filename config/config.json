@@ -1,0 +1,25 @@
+{
+  "theme": {
+    "PHPNamespace": "WP_Rig\\WP_Rig",
+    "slug": "tttt",
+    "name": "TTTT-Theme",
+    "theme_uri": "https://github.com/wprig/wprig/",
+    "author": "The WP Rig Contributors",
+    "author_uri": "https://wprig.io/",
+    "description": "A progressive theme development rig for WordPress.",
+    "version": "1.0.0"
+  },
+  "dev": {
+    "browserSync": {
+      "proxyURL": "tttt.local",
+      "bypassPort": "8181",
+      "live": true,
+      "https": false
+    }
+  },
+  "export": {
+    "filesToCopy": [
+      "assets/data/*"
+    ]
+  }
+}

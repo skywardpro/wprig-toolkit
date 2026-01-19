@@ -1,0 +1,30 @@
+/** Property: cursor
+ */
+
+$cursor-values: pointer
+
+@each $value in $cursor-values
+  .cursor--#{$value},
+  .cursor--#{$value}:active,
+  .cursor--#{$value}:focus
+    cursor: $value !important
+
++tablet
+ @each $value in $cursor-values
+  .cursor--#{$value}__tablet, .cursor--#{$value}__tablet:active, .cursor--#{$value}__tablet:focus
+      cursor: $value !important
+
++desktop
+ @each $value in $cursor-values
+  .cursor--#{$value}__desktop, .cursor--#{$value}__desktop:active, .cursor--#{$value}__desktop:focus
+      cursor: $value !important
+
++widescreen
+ @each $value in $cursor-values
+  .cursor--#{$value}__widescreen, .cursor--#{$value}__widescreen:active, .cursor--#{$value}__widescreen:focus
+      cursor: $value !important
+
++fullhd
+ @each $value in $cursor-values
+  .cursor--#{$value}__fullhd, .cursor--#{$value}__fullhd:active, .cursor--#{$value}__fullhd:focus
+      cursor: $value !important
