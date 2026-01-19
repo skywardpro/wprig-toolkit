@@ -243,6 +243,10 @@ class Component implements Component_Interface, Templating_Component_Interface {
 				'file'   => 'global.min.css',
 				'global' => true,
 			),
+			'wp-rig-spacing-system'     => array(
+				'file'   => 'spacing-system.min.css',
+				'global' => true,
+			),
 			'wp-rig-comments'   => array(
 				'file'             => 'comments.min.css',
 				'preload_callback' => function () {

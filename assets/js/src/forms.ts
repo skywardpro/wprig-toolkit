@@ -4,8 +4,7 @@
 * Contains functions, inits, and configurations for all sort of forms.
 */
 
-const FORMCARRY_ENDPOINT_CONTACT_US_FORM = 'https://formcarry.com/s/GUu3Ewj8Jbl';
-const FORMCARRY_ENDPOINT_FOOTER_FORM = 'https://formcarry.com/s/GUu3Ewj8Jbl';
+const FORMCARRY_ENDPOINT_FORM = 'https://formcarry.com/s/XXXXXXXXXXXX';
 
 const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -42,6 +41,10 @@ export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElemen
 			const targetForms = forms ? Array.from(forms) : Array.from(document.querySelectorAll('form'));
 			
 			targetForms.forEach((form) => {
+				// Skip if form doesn't have .form__countries selector
+				if (!form.querySelector('.form__countries')) {
+					return;
+				}
 				const phoneInputs = form.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
 				phoneInputs.forEach((phoneInput) => {
 					// Skip if already initialized
@@ -143,6 +146,72 @@ interface ValidateFunction {
 
 declare const validate: ValidateFunction;
 
+// Global form constraints configuration
+// Can be overridden from window object: (window as any).formConstraints = { ... }
+const defaultFormConstraints: Record<string, Constraints> = {
+	'example-form': {
+		name: {
+			presence: {
+				allowEmpty: false,
+			},
+			length: {
+				minimum: 2,
+				maximum: 30,
+			},
+		},
+		email: {
+			presence: {
+				allowEmpty: false,
+			},
+			email: true,
+			length: {
+				minimum: 2,
+				maximum: 50,
+			},
+		},
+		phone: {
+			presence: {
+				allowEmpty: false,
+				message: "Phone number is required"
+			},
+			length: {
+				minimum: 7,
+				maximum: 20,
+				tooShort: "Phone number must be at least %{count} characters",
+				tooLong: "Phone number must be no more than %{count} characters"
+			},
+			format: {
+				pattern: /^\+?[\d\s\-()]+$/,
+				message: "Phone number format is invalid"
+			}
+		},
+	},
+	'default': {
+		email: {
+			presence: {
+				allowEmpty: false,
+			},
+			email: true,
+			length: {
+				minimum: 2,
+				maximum: 50,
+			},
+		},
+	}
+};
+
+// Get form constraints from global variable or use defaults
+function getFormConstraints(formId: string | null): Constraints {
+	const globalConstraints = (window as any).formConstraints as Record<string, Constraints> | undefined;
+	const constraintsMap = globalConstraints || defaultFormConstraints;
+	
+	if (formId && constraintsMap[formId]) {
+		return constraintsMap[formId];
+	}
+	
+	return constraintsMap['default'] || defaultFormConstraints['default'];
+}
+
 // Function to update validation classes on submit
 function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
 
@@ -163,7 +232,7 @@ function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
 	if (errors) {
 		Object.keys(errors).forEach((key) => {
 			errorCounter++;
-			const field = form.querySelector<HTMLInputElement>(`[name="${key}"]`);
+			const field = form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${key}"]`);
 			if (field) {
 				field.classList.add('not-valid');
 				// display error message under the input
@@ -182,7 +251,7 @@ function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
 }
 
 // Function to update validation on input change
-function updateValidationInputClass(errors: Errors, input: HTMLInputElement): void {
+function updateValidationInputClass(errors: Errors, input: HTMLInputElement | HTMLSelectElement): void {
 	// Add 'not-valid' class to inputs with errors
 	if (errors) {
 		input.classList.add('not-valid');
@@ -494,6 +563,14 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 	return formattedData;
 }
 
+// Helper function to check if form is a CF7 form
+function isCF7Form(form: HTMLFormElement): boolean {
+	return form.classList.contains('wpcf7-form') || 
+		   form.querySelector('.wpcf7-form-control-wrap') !== null ||
+		   form.hasAttribute('data-status') ||
+		   form.closest('.wpcf7') !== null;
+}
+
 // Attach input event listeners to all input fields
 export function attachFormValidation(): void {
 	// Регистрируем кастомный валидатор для файлов один раз
@@ -524,84 +601,15 @@ export function attachFormValidation(): void {
 	}
 
 	document.querySelectorAll<HTMLFormElement>('form').forEach((form) => {
-		let constraints: Constraints | undefined;
-
-		if (form.getAttribute('id') === 'contact-us-form') {
-			constraints = {
-				name: {
-					presence: {
-						allowEmpty: false,
-					},
-					length: {
-						minimum: 2,
-						maximum: 30,
-					},
-				},
-				email: {
-					presence: {
-						allowEmpty: false,
-					},
-					email: true,
-					length: {
-						minimum: 2,
-						maximum: 50,
-					},
-				},
-				phone: {
-					presence: {
-						allowEmpty: false,
-						message: "Phone number is required"
-					},
-					length: {
-						minimum: 7,
-						maximum: 20,
-						tooShort: "Phone number must be at least %{count} characters",
-						tooLong: "Phone number must be no more than %{count} characters"
-					},
-					format: {
-						pattern: /^\+?[\d\s\-()]+$/,
-						message: "Phone number format is invalid"
-					}
-				},
-				'message': {
-					length: {
-						minimum: 0,
-						maximum: 240,
-					},
-				}
-			};
-		} 
-
-		if (form.getAttribute('id') === 'footer-form') {
-			constraints = {
-				email: {
-					presence: {
-						allowEmpty: false,
-					},
-					email: true,
-					length: {
-						minimum: 2,
-						maximum: 50,
-					},
-				},
-			};
+		// Skip CF7 forms - они обрабатываются самим плагином
+		if (isCF7Form(form)) {
+			console.log('[Forms] Skipping CF7 form:', form.id || 'unnamed');
+			return;
 		}
-
-		if (constraints === undefined) {
-			// Default constraints for any other form
-			constraints = {
-				email: {
-					presence: {
-						allowEmpty: false,
-					},
-					email: true,
-					length: {
-						minimum: 2,
-						maximum: 50,
-					},
-				},
-			};
-		}
+		
+		// Get constraints from global variables
+		const formId = form.getAttribute('id');
+		const constraints = getFormConstraints(formId);
 
 		// Capture the current constraints in a constant (for closure clarity)
 		const currentConstraints: Constraints = constraints;
@@ -618,6 +626,22 @@ export function attachFormValidation(): void {
 		form.querySelectorAll<HTMLTextAreaElement>('textarea').forEach((textarea) => {
 			textarea.addEventListener('change', (event) => validateField(event, constraints as Constraints));
 			textarea.addEventListener('blur', (event) => validateField(event, constraints as Constraints));
+		});
+
+		// Validate select elements
+		form.querySelectorAll<HTMLSelectElement>('select').forEach((select) => {
+			select.addEventListener('change', (event) => {
+				const target = event.target as HTMLSelectElement;
+				const fieldName = target.name;
+				const value: Record<string, unknown> = {};
+				value[fieldName] = target.value;
+
+				const fieldConstraints: Constraints = {};
+				fieldConstraints[fieldName] = constraints[fieldName];
+
+				const errors = validate(value, fieldConstraints);
+				updateValidationInputClass(errors, target);
+			});
 		});
 
 		function restrictToLetters(event: Event): void {
@@ -882,15 +906,14 @@ function showNotification(form: HTMLFormElement, message: string, type: 'fail' |
 // Function to set the form action based on the form's ID
 function getFormActionHref(form: HTMLFormElement): string {
 	const formActions: Record<string, string> = {
-		'contact-us-form': FORMCARRY_ENDPOINT_CONTACT_US_FORM,
-		'footer-form': FORMCARRY_ENDPOINT_FOOTER_FORM,
+		'example-form': FORMCARRY_ENDPOINT_FORM
 	};
 
 	const formId = form.getAttribute('id') ?? '';
 	if (formActions[formId]) {
 		return formActions[formId];
 	}
-	return '';
+	return FORMCARRY_ENDPOINT_FORM;
 }
 
 // Phone masking functions
@@ -1121,6 +1144,13 @@ export async function initPhoneMasking(): Promise<void> {
 		return;
 	}
 
+	// Check if there are any forms with .form__countries selector
+	const formsWithCountries = document.querySelectorAll('form .form__countries');
+	if (formsWithCountries.length === 0) {
+		console.log('[Forms] No forms with .form__countries found, skipping phone masking initialization');
+		return;
+	}
+
 	(window as any).formsScriptLoaded = true;
 	
 	// Set flag immediately to prevent multiple calls
@@ -1141,8 +1171,15 @@ export async function initPhoneMasking(): Promise<void> {
 			});
 
 			// Create mask without the country code (only the number part)
+			// Only initialize phone inputs that are inside forms with .form__countries
 			const phoneInputs = document.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
 			phoneInputs.forEach((phoneInput) => {
+				// Check if this phone input is inside a form with .form__countries
+				const form = phoneInput.closest('form');
+				if (!form || !form.querySelector('.form__countries')) {
+					return;
+				}
+
 				if (phoneInput.getAttribute('data-initialized') === 'true') {
 					return;
 				}
@@ -1259,14 +1296,330 @@ function updatePhoneWithCountryCode(form: HTMLFormElement): void {
 	}, 1000);
 }
 
+// Custom select initialization
+function initCustomSelects(): void {
+	const selects = document.querySelectorAll<HTMLSelectElement>('form select:not(.wpcf7-select)');
+	
+	selects.forEach((select) => {
+		// Skip if already initialized
+		if (select.hasAttribute('data-custom-select-initialized')) {
+			return;
+		}
+		
+		// Skip CF7 selects
+		if (select.closest('.wpcf7-form')) {
+			return;
+		}
+		
+		// Create custom select wrapper
+		const wrapper = document.createElement('div');
+		wrapper.className = 'form__select-custom';
+		
+		// Create custom select button
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'form__select-custom__current';
+		button.setAttribute('aria-haspopup', 'listbox');
+		button.setAttribute('aria-expanded', 'false');
+		
+		// Create custom select text span
+		const textSpan = document.createElement('span');
+		textSpan.className = 'form__select-custom__current__text';
+		
+		// Set initial text
+		const selectedOption = select.options[select.selectedIndex];
+		if (selectedOption && selectedOption.value) {
+			textSpan.textContent = selectedOption.textContent || selectedOption.value;
+		} else {
+			// Use placeholder if available
+			const placeholder = select.getAttribute('data-placeholder') || select.getAttribute('placeholder') || 'Select an option...';
+			textSpan.textContent = placeholder;
+			textSpan.classList.add('placeholder');
+		}
+		
+		button.appendChild(textSpan);
+		
+		// Create arrow
+		const arrow = document.createElement('span');
+		arrow.className = 'form__select-custom__current__arrow';
+		button.appendChild(arrow);
+		
+		// Create dropdown list
+		const listHolder = document.createElement('div');
+		listHolder.className = 'form__select-custom__list-holder';
+		listHolder.style.display = 'none';
+		
+		const list = document.createElement('ul');
+		list.className = 'form__select-custom__list';
+		list.setAttribute('role', 'listbox');
+		
+		// Create options
+		Array.from(select.options).forEach((option, index) => {
+			if (option.value === '' && option.textContent === '') {
+				return; // Skip empty placeholder options
+			}
+			
+			const listItem = document.createElement('li');
+			listItem.className = 'form__select-custom__list__item';
+			listItem.setAttribute('role', 'option');
+			listItem.setAttribute('data-value', option.value);
+			listItem.textContent = option.textContent || option.value;
+			
+			if (select.selectedIndex === index && option.value) {
+				listItem.classList.add('active');
+				textSpan.textContent = option.textContent || option.value;
+				textSpan.classList.remove('placeholder');
+				// Set initial has-value class for floating labels
+				select.classList.add('has-value');
+			}
+			
+			listItem.addEventListener('click', () => {
+				// Update native select
+				select.selectedIndex = index;
+				
+				// Update has-value class for floating labels
+				if (select.value && select.value !== '') {
+					select.classList.add('has-value');
+				} else {
+					select.classList.remove('has-value');
+				}
+				
+				select.dispatchEvent(new Event('change', { bubbles: true }));
+				
+				// Update custom select display
+				textSpan.textContent = option.textContent || option.value;
+				textSpan.classList.remove('placeholder');
+				
+				// Update active state
+				list.querySelectorAll('.form__select-custom__list__item').forEach(item => {
+					item.classList.remove('active');
+				});
+				listItem.classList.add('active');
+				
+				// Close dropdown
+				listHolder.style.display = 'none';
+				listHolder.classList.remove('show', 'show--top', 'show--bottom');
+				button.setAttribute('aria-expanded', 'false');
+			});
+			
+			list.appendChild(listItem);
+		});
+		
+		listHolder.appendChild(list);
+		
+		// Toggle dropdown
+		button.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			
+			const isOpen = listHolder.classList.contains('show');
+			
+			// Close all other selects
+			document.querySelectorAll('.form__select-custom__list-holder.show').forEach((otherHolder) => {
+				if (otherHolder !== listHolder) {
+					(otherHolder as HTMLElement).style.display = 'none';
+					otherHolder.classList.remove('show', 'show--top', 'show--bottom');
+					const otherButton = otherHolder.closest('.form__select-custom')?.querySelector('.form__select-custom__current') as HTMLElement;
+					if (otherButton) {
+						otherButton.setAttribute('aria-expanded', 'false');
+					}
+				}
+			});
+			
+			if (isOpen) {
+				listHolder.style.display = 'none';
+				listHolder.classList.remove('show', 'show--top', 'show--bottom');
+				button.setAttribute('aria-expanded', 'false');
+				// Update floating label state when closing
+				if (select.value && select.value !== '') {
+					select.classList.add('has-value');
+				} else {
+					select.classList.remove('has-value');
+				}
+			} else {
+				listHolder.style.display = 'block';
+				const holderRect = listHolder.getBoundingClientRect();
+				const windowHeight = window.innerHeight;
+				const bottomSpace = windowHeight - holderRect.bottom;
+				
+				listHolder.classList.remove('show--top', 'show--bottom');
+				listHolder.classList.add('show');
+				if (bottomSpace < 100) {
+					listHolder.classList.add('show--top');
+				} else {
+					listHolder.classList.add('show--bottom');
+				}
+				button.setAttribute('aria-expanded', 'true');
+				// Add has-value class when opening dropdown for floating labels
+				select.classList.add('has-value');
+			}
+		});
+		
+		// Close dropdown when clicking outside
+		document.addEventListener('click', (e) => {
+			if (!wrapper.contains(e.target as Node)) {
+				listHolder.style.display = 'none';
+				listHolder.classList.remove('show', 'show--top', 'show--bottom');
+				button.setAttribute('aria-expanded', 'false');
+				// Update floating label state when closing
+				if (select.value && select.value !== '') {
+					select.classList.add('has-value');
+				} else {
+					select.classList.remove('has-value');
+				}
+			}
+		});
+		
+		// Save parent and next sibling before moving select
+		const parent = select.parentNode;
+		const nextSibling = select.nextSibling;
+		
+		// Hide native select
+		select.style.position = 'absolute';
+		select.style.opacity = '0';
+		select.style.pointerEvents = 'none';
+		select.style.width = '1px';
+		select.style.height = '1px';
+		select.setAttribute('aria-hidden', 'true');
+		select.setAttribute('tabindex', '-1');
+		select.setAttribute('data-custom-select-initialized', 'true');
+		
+		// Add all elements to wrapper
+		wrapper.appendChild(select);
+		wrapper.appendChild(button);
+		wrapper.appendChild(listHolder);
+		
+		// Replace select with wrapper in DOM
+		if (parent) {
+			if (nextSibling) {
+				parent.insertBefore(wrapper, nextSibling);
+			} else {
+				parent.appendChild(wrapper);
+			}
+		}
+	});
+}
+
+// Initialize floating labels
+function initFloatingLabels(): void {
+	const floatingLabelForms = document.querySelectorAll<HTMLFormElement>('form.floating-label');
+	
+	floatingLabelForms.forEach((form) => {
+		// Handle input and textarea fields
+		const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type="submit"]):not([type="button"]):not([type="file"]), textarea');
+		
+		inputs.forEach((input) => {
+			const field = input.closest('.form__field');
+			
+			// Check initial state
+			const updateFloatingLabel = () => {
+				if (input.value && input.value.trim() !== '') {
+					input.classList.add('has-value');
+					if (field) {
+						field.classList.add('has-value');
+					}
+				} else {
+					input.classList.remove('has-value');
+					if (field) {
+						field.classList.remove('has-value');
+					}
+				}
+			};
+			
+			// Set initial state
+			updateFloatingLabel();
+			
+			// Update on input
+			input.addEventListener('input', updateFloatingLabel);
+			input.addEventListener('change', updateFloatingLabel);
+			
+			// Handle focus/blur for field state
+			input.addEventListener('focus', () => {
+				if (field) {
+					field.classList.add('is-focused');
+				}
+			});
+			input.addEventListener('blur', () => {
+				if (field) {
+					field.classList.remove('is-focused');
+				}
+				updateFloatingLabel();
+			});
+		});
+		
+		// Handle select fields
+		const selects = form.querySelectorAll<HTMLSelectElement>('select');
+		selects.forEach((select) => {
+			const field = select.closest('.form__field');
+			const updateSelectLabel = () => {
+				if (select.value && select.value !== '') {
+					select.classList.add('has-value');
+					if (field) {
+						field.classList.add('has-value');
+					}
+				} else {
+					select.classList.remove('has-value');
+					if (field) {
+						field.classList.remove('has-value');
+					}
+				}
+			};
+			
+			// Set initial state
+			updateSelectLabel();
+			
+			// Update on change
+			select.addEventListener('change', updateSelectLabel);
+			
+			// Also update when custom select button is focused
+			const customSelectButton = select.closest('.form__select-custom')?.querySelector('.form__select-custom__current');
+			if (customSelectButton) {
+				customSelectButton.addEventListener('focus', () => {
+					select.classList.add('has-value');
+					if (field) {
+						field.classList.add('is-focused', 'has-value');
+					}
+				});
+				customSelectButton.addEventListener('blur', () => {
+					if (field) {
+						field.classList.remove('is-focused');
+					}
+					// Only remove has-value if no value selected
+					if (!select.value || select.value === '') {
+						select.classList.remove('has-value');
+						if (field) {
+							field.classList.remove('has-value');
+						}
+					}
+				});
+			}
+		});
+	});
+}
+
 // Attach form validation
 document.addEventListener("DOMContentLoaded", () => {
 	console.log('[Forms] Initializing forms...');
 	attachFormValidation();
 	
-	// Initialize phone masking if IMask is available
+	// Initialize custom selects first (so floating labels can work with them)
+	initCustomSelects();
+	
+	// Initialize floating labels after custom selects are ready
+	// Use setTimeout to ensure DOM is fully updated
+	setTimeout(() => {
+		initFloatingLabels();
+	}, 0);
+	
+	// Initialize phone masking only if IMask is available and forms with .form__countries exist
 	if (typeof (window as any).IMask !== 'undefined') {
-		initPhoneMasking();
+		// Check if there are forms with .form__countries before initializing
+		const formsWithCountries = document.querySelectorAll('form .form__countries');
+		if (formsWithCountries.length > 0) {
+			initPhoneMasking();
+		} else {
+			console.log('[Forms] No forms with .form__countries found, skipping phone masking');
+		}
 	} else {
 		console.warn('[Forms] IMask not available, phone masking will not work');
 	}

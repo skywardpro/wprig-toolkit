@@ -61,6 +61,22 @@
 	--color-quote-border: #000;
 	--color-quote-citation: #6c7781;
 
+	/* Form colors */
+	--color-form-input-background: #f9fbfc;
+	--color-form-input-border: #ccc;
+	--color-form-input-text: #333;
+	--color-form-input-label: #333;
+	--color-form-input-placeholder: #999;
+	--color-form-list-item-current: #e36d60;
+
+	/* Form validation colors */
+	--color-form-error: #FFF5F3;
+	--color-form-error-border: #F8C2C1;
+	--color-form-success: #F6FFF9;
+	--color-form-success-border: #48C1B5;
+	--color-form-warning: #FFF8EC;
+	--color-form-warning-border: #F7D9A4;
+
 	/* Selection color */
 	--color-selection: #41848f;
 
@@ -96,21 +112,6 @@
 	/* Custom editor colors */
 	--color-custom-daylight: #97c0b7;
 	--color-custom-sun: #eee9d1;
-
-	/* Spacing */
-	--spacing-5xl: 12rem;
-	--spacing-4xl: 8.8rem;
-	--spacing-3xl: 7.2rem;
-	--spacing-2xl: 5.6rem;
-	--spacing-xl: 4rem;
-	--spacing-l: 3.2rem;
-	--spacing-m: 2.4rem;
-	--spacing-s: 2rem;
-	--spacing-xs: 1.6rem;
-	--spacing-2xs: 1.2rem;
-	--spacing-3xs: 0.8rem;
-	--spacing-4xs: 0.4rem;
-	--spacing-5xs: 0.2rem;
 
 	/* Transitions */
 	--animation-speed: 0.3s;

@@ -21,8 +21,17 @@ if (is_home()) {
 
 ?>
 <main id="primary" class="site-main">
-	<?php
-	?>
+
+    <div class="container">
+        <div class="mx-auto" style="max-width: 600px;">
+        <?php get_template_part('template-parts/forms/form-example'); ?>
+        <div class="my-60">
+        <?php get_template_part('template-parts/forms/form-example-floating-label'); ?>
+        </div>
+        
+        </div>
+    </div>
+
 </main><!-- #primary -->
 <?php
 get_footer();
