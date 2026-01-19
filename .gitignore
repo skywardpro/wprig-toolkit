@@ -30,6 +30,7 @@
 !/template-parts/
 !/page-templates/
 !/config/
+!/config/config.json
 !/wp-cli/
 /config/config.local.json
 !/tests/
