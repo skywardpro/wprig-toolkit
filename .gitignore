@@ -37,6 +37,7 @@
 !/scripts/
 !build-css.js
 !build-js.js
+!functions
 
 !.babelrc
 !.stylelintrcrc

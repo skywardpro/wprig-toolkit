@@ -11,7 +11,7 @@
   },
   "dev": {
     "browserSync": {
-      "proxyURL": "tttt.local",
+      "proxyURL": "wprig.test:8888",
       "bypassPort": "8181",
       "live": true,
       "https": false
