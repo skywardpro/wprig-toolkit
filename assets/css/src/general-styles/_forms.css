@@ -73,11 +73,11 @@ textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus {
 	-webkit-text-fill-color: var(--color-theme-black);
-	-webkit-box-shadow: 0 0 0px 1000px var(--color-theme-accent-3) inset !important;
-	box-shadow: 0 0 0px 1000px var(--color-theme-accent-3) inset !important;
-	background-color: var(--color-theme-accent-3) !important;
+	-webkit-box-shadow: 0 0 0px 1000px var(--color-form-input-background) inset !important;
+	box-shadow: 0 0 0px 1000px var(--color-form-input-background) inset !important;
+	background-color: var(--color-form-input-background) !important;
 	transition: background-color 5000s ease-in-out 0s;
-	border-color: var(--color-theme-accent-3) !important;
+	border-color: var(--color-form-input-border) !important;
 }
 
 input:not([type="submit"]):focus,
@@ -85,7 +85,7 @@ textarea:focus,
 input:not([type="submit"]):hover,
 textarea:hover {
 	color: var(--color-theme-black);
-	border-color: var(--color-theme-accent-1);
+	border-color: var(--color-form-input-border);
 }
 
 select {
@@ -118,7 +118,7 @@ select {
 
 .form__select-custom__current:hover,
 .form__select-custom__current:focus {
-	border-color: var(--color-theme-accent-1);
+	border-color: var(--color-form-input-border);
 	outline: none;
 }
 
@@ -298,10 +298,11 @@ input.wpcf7-not-valid {
 }
 
 .wpcf7-form input[type=submit] {
-	display: none !important;
+	cursor: pointer;
+	transition: all var(--animation-speed);
 }
 
-form.submitting .fake-submit {
+form.submitting input[type=submit] {
 	opacity: 0.75;
 	cursor: progress;
 }
@@ -331,7 +332,7 @@ form.submitting .fake-submit {
 
 .wpcf7-response-output {
 	position: fixed;
-	top: calc(var(--header-height) + 1rem);
+	top: 10rem;
 	right: 1rem;
 	max-width: 34rem;
 	padding: 1.6rem 1.6rem !important;
@@ -504,9 +505,8 @@ body:has(.wpcf7-form.sent) .wpcf7-response-output::before {
 	border-color: var(--color-theme-red) !important;
 }
 
-.form__field--tel:has(input:not(.not-valid):hover) .form__countries__current,
-.form__field--tel:has(input:not(.not-valid):focus) .form__countries__current {
-	border-color: var(--color-theme-accent-1) !important;
+.form__field--tel:has(input:-webkit-autofill) .form__countries__current {
+	border-color: var(--color-form-input-border) !important;
 }
 
 .form__countries__current__flag {

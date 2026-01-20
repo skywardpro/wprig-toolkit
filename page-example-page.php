@@ -28,6 +28,7 @@ if (is_home()) {
         <div class="my-60">
         <?php get_template_part('template-parts/forms/form-example-floating-label'); ?>
         </div>
+        <?php echo do_shortcode('[contact-form-7 id="9190212" title="Contact form 1"]'); ?>
         
         </div>
     </div>
