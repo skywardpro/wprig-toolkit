@@ -1,4 +1,5 @@
 <?php
+
 /**
  * WP_Rig\WP_Rig\Theme class
  *
@@ -14,7 +15,8 @@ use InvalidArgumentException;
  *
  * This class takes care of initializing theme features and available template tags.
  */
-class Theme {
+class Theme
+{
 
 	/**
 	 * Associative array of theme components, keyed by their slug.
@@ -41,34 +43,35 @@ class Theme {
 	 *
 	 * @throws InvalidArgumentException Thrown if one of the $components does not implement Component_Interface.
 	 */
-	public function __construct( array $components = array() ) {
-		if ( array() === $components ) {
+	public function __construct(array $components = array())
+	{
+		if (array() === $components) {
 			$components = $this->get_default_components();
 		}
 
 		// Set the components.
-		foreach ( $components as $component ) {
+		foreach ($components as $component) {
 
 			// Bail if a component is invalid.
-			if ( ! $component instanceof Component_Interface ) {
+			if (! $component instanceof Component_Interface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: classname/type of the variable, 2: interface name */
-						esc_html__( 'The theme component %1$s does not implement the %2$s interface.', 'wp-rig' ),
-						esc_html( gettype( $component ) ),
+						esc_html__('The theme component %1$s does not implement the %2$s interface.', 'wp-rig'),
+						esc_html(gettype($component)),
 						Component_Interface::class
 					)
 				);
 			}
 
-			$this->components[ $component->get_slug() ] = $component;
+			$this->components[$component->get_slug()] = $component;
 		}
 
 		// Instantiate the template tags instance for all theme templating components.
 		$this->template_tags = new Template_Tags(
 			array_filter(
 				$this->components,
-				function ( Component_Interface $component ) {
+				function (Component_Interface $component) {
 					return $component instanceof Templating_Component_Interface;
 				}
 			)
@@ -80,10 +83,11 @@ class Theme {
 	 *
 	 * This method must only be called once in the request lifecycle.
 	 */
-	public function initialize() {
+	public function initialize()
+	{
 		array_walk(
 			$this->components,
-			function ( Component_Interface $component ) {
+			function (Component_Interface $component) {
 				$component->initialize();
 			}
 		);
@@ -98,7 +102,8 @@ class Theme {
 	 *
 	 * @return Template_Tags Template tags instance.
 	 */
-	public function template_tags(): Template_Tags {
+	public function template_tags(): Template_Tags
+	{
 		return $this->template_tags;
 	}
 
@@ -112,18 +117,19 @@ class Theme {
 	 *
 	 * @throws InvalidArgumentException Thrown when no theme component with the given slug exists.
 	 */
-	public function component( string $slug ): Component_Interface {
-		if ( ! isset( $this->components[ $slug ] ) ) {
+	public function component(string $slug): Component_Interface
+	{
+		if (! isset($this->components[$slug])) {
 			throw new InvalidArgumentException(
 				sprintf(
 					/* translators: %s: slug */
-					esc_html__( 'No theme component with the slug %s exists.', 'wp-rig' ),
-					esc_html( $slug )
+					esc_html__('No theme component with the slug %s exists.', 'wp-rig'),
+					esc_html($slug)
 				)
 			);
 		}
 
-		return $this->components[ $slug ];
+		return $this->components[$slug];
 	}
 
 	/**
@@ -136,7 +142,8 @@ class Theme {
 	 *
 	 * @return array List of theme components to use by default.
 	 */
-	protected function get_default_components(): array {
+	protected function get_default_components(): array
+	{
 		$components = array(
 			new Localization\Component(),
 			new Base_Support\Component(),
@@ -160,7 +167,7 @@ class Theme {
 			new Blocks\Component(),
 		);
 
-		if ( defined( 'JETPACK__VERSION' ) ) {
+		if (defined('JETPACK__VERSION')) {
 			$components[] = new Jetpack\Component();
 		}
 
@@ -231,6 +238,13 @@ class Theme {
 		/*----------------------------
 		# Content components
 		----------------------------*/
+
+		/**
+		 * Simplebar
+		 *
+		 * A pure JavaScript library for creating scrollable content.
+		 */
+		// new WP_Rig_Toolkit\Simplebar\Component(),
 
 		/**
 		 * Masonry
