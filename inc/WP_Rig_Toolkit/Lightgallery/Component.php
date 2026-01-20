@@ -1,12 +1,12 @@
 <?php
 
 /**
- * WP_Rig\WP_Rig\WP_Rig_Toolkit\Simplebar\Component class
+ * WP_Rig\WP_Rig\WP_Rig_Toolkit\Lightgallery\Component class
  *
  * @package wp_rig
  */
 
-namespace WP_Rig\WP_Rig\WP_Rig_Toolkit\Simplebar;
+namespace WP_Rig\WP_Rig\WP_Rig_Toolkit\Lightgallery;
 
 use WP_Rig\WP_Rig\Component_Interface;
 use WP_Post;
@@ -37,7 +37,7 @@ class Component implements Component_Interface
 	 */
 	public function get_slug(): string
 	{
-		return 'simplebar';
+		return 'lightgallery';
 	}
 
 
@@ -46,33 +46,33 @@ class Component implements Component_Interface
 	 */
 	public function initialize()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'action_activate_simplebar'), 200);
+		add_action('wp_enqueue_scripts', array($this, 'action_activate_lightgallery'), 200);
 	}
 
 
 	/**
 	 * Enqueues scripts and styles.
 	 */
-	public function action_activate_simplebar()
+	public function action_activate_lightgallery()
 	{
 		// Enqueue scripts.
 		wp_enqueue_script(
-			'simplebar',
-			get_theme_file_uri('/assets/js/vendor/simplebar/simplebar.min.js'),
+			'lightgallery',
+			get_theme_file_uri('/assets/js/vendor/lightgallery/lightgallery.umd.min.js'),
 			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/vendor/simplebar/simplebar.min.js')),
+			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/vendor/lightgallery/lightgallery.umd.min.js')),
 			true // Load in footer
 		);
 
-		wp_script_add_data('simplebar', 'defer', true);
-		wp_script_add_data('simplebar', 'precache', true);
+		wp_script_add_data('lightgallery', 'defer', true);
+		wp_script_add_data('lightgallery', 'precache', true);
 
 		// Enqueue styles.
 		wp_enqueue_style(
-			'simplebar',
-			get_theme_file_uri('/assets/css/vendor/simplebar/simplebar.min.css'),
+			'lightgallery',
+			get_theme_file_uri('/assets/css/vendor/lightgallery/lightgallery-bundle.min.css'),
 			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/css/vendor/simplebar/simplebar.min.css'))
+			wp_rig()->get_asset_version(get_theme_file_path('/assets/css/vendor/lightgallery/lightgallery-bundle.min.css'))
 		);
 	}
 }

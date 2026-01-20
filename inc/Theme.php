@@ -240,6 +240,13 @@ class Theme
 		----------------------------*/
 
 		/**
+		 * Lightgallery
+		 *
+		 * A pure JavaScript library for creating lightbox galleries.
+		 */
+		// new WP_Rig_Toolkit\Lightgallery\Component();
+
+		/**
 		 * Simplebar
 		 *
 		 * A pure JavaScript library for creating scrollable content.
