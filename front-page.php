@@ -21,6 +21,7 @@ if (is_home()) {
 
 ?>
 <main id="primary" class="site-main">
+	<h1 class=" typo--body">Front Page 1</h1>
 	<?php
 
 	while (have_posts()) {
