@@ -10,6 +10,8 @@ import path from 'path';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import browserslist from 'browserslist';
 import { bundleAsync, browserslistToTargets } from 'lightningcss';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import sass from 'sass';
 import themeConfig from './config/themeConfig.js'; // merged WP Rig config (default -> config -> local)
 import { paths } from './scripts/lib/constants.js';
 import { replaceInlineCSS } from './scripts/lib/utils.js';
@@ -72,7 +74,8 @@ const preloadListAbs = preloadListRel.map( ( p ) =>
  * Concatenate all preload files into a single virtual snippet.
  * Missing files are silently skipped to match legacy behavior.
  * @return {string} Concatenated preload CSS snippet.
- */ function loadPreloadSnippet() {
+ */
+function loadPreloadSnippet() {
 	let buf = '';
 	for ( const file of preloadListAbs ) {
 		try {
@@ -194,6 +197,207 @@ function assertNoLateImports( css, file ) {
 		);
 	}
 }
+
+/**
+ * Find SCSS/SASS files imported in CSS files.
+ *
+ * @param {string} dir - Directory to search
+ * @return {string[]} - List of imported SCSS/SASS file paths
+ */
+const findImportedSCSSFiles = ( dir ) => {
+	const importedFiles = new Set();
+	
+	// Get all CSS files to search for imports
+	const cssFiles = [];
+	const getAllCSSFilesRecursive = ( searchDir ) => {
+		if ( ! existsSync( searchDir ) ) {
+			return;
+		}
+		const files = readdirSync( searchDir );
+		files.forEach( ( file ) => {
+			const filePath = path.join( searchDir, file );
+			const fileStat = statSync( filePath );
+			if ( fileStat.isDirectory() ) {
+				getAllCSSFilesRecursive( filePath );
+			} else if ( file.endsWith( '.css' ) && ! file.startsWith( '_' ) ) {
+				cssFiles.push( filePath );
+			}
+		} );
+	};
+	getAllCSSFilesRecursive( dir );
+
+	cssFiles.forEach( ( cssFile ) => {
+		try {
+			const content = readFileSync( cssFile, 'utf8' );
+			// Match @import statements that reference files (including .css, .scss, .sass)
+			const importRegex = /@import\s+['"]([^'"]+\.(css|scss|sass))['"]/gi;
+			let match;
+			while ( ( match = importRegex.exec( content ) ) !== null ) {
+				const importPath = match[ 1 ];
+				const importExt = match[ 2 ];
+				// Resolve relative to the CSS file's directory
+				const resolvedPath = path.resolve(
+					path.dirname( cssFile ),
+					importPath
+				);
+
+				// If import references .css, check if corresponding .scss or .sass exists
+				if ( importExt === 'css' ) {
+					// Try .scss first
+					const scssPath = resolvedPath.replace( /\.css$/, '.scss' );
+					if ( existsSync( scssPath ) ) {
+						importedFiles.add( scssPath );
+						continue;
+					}
+					// Try .sass
+					const sassPath = resolvedPath.replace( /\.css$/, '.sass' );
+					if ( existsSync( sassPath ) ) {
+						importedFiles.add( sassPath );
+						continue;
+					}
+				}
+
+				// If import references .scss or .sass directly, or file exists
+				if ( existsSync( resolvedPath ) ) {
+					if ( importExt === 'scss' || importExt === 'sass' ) {
+						importedFiles.add( resolvedPath );
+					}
+				} else {
+					// Try alternative extensions
+					const scssPath = resolvedPath.replace( /\.(css|sass)$/, '.scss' );
+					if ( existsSync( scssPath ) ) {
+						importedFiles.add( scssPath );
+					} else {
+						const sassPath = resolvedPath.replace( /\.(css|scss)$/, '.sass' );
+						if ( existsSync( sassPath ) ) {
+							importedFiles.add( sassPath );
+						}
+					}
+				}
+			}
+		} catch {
+			// Skip files that can't be read
+		}
+	} );
+
+	return Array.from( importedFiles );
+};
+
+/**
+ * Find SASS/SCSS files that are imported in other SASS/SCSS files.
+ * These files should NOT be compiled separately as they are partials.
+ *
+ * @param {string} dir - Directory to search
+ * @return {Set<string>} - Set of imported SASS/SCSS file paths (normalized, without extension)
+ */
+const findSASSImports = ( dir ) => {
+	const importedFiles = new Set();
+
+	// Get all SASS/SCSS files
+	const sassFiles = [];
+	const getAllSASSFilesRecursive = ( searchDir ) => {
+		if ( ! existsSync( searchDir ) ) {
+			return;
+		}
+		const files = readdirSync( searchDir );
+		files.forEach( ( file ) => {
+			const filePath = path.join( searchDir, file );
+			const fileStat = statSync( filePath );
+			if ( fileStat.isDirectory() ) {
+				getAllSASSFilesRecursive( filePath );
+			} else if ( file.endsWith( '.scss' ) || file.endsWith( '.sass' ) ) {
+				sassFiles.push( filePath );
+			}
+		} );
+	};
+	getAllSASSFilesRecursive( dir );
+
+	// Parse each SASS/SCSS file for @import statements
+	sassFiles.forEach( ( sassFile ) => {
+		try {
+			const content = readFileSync( sassFile, 'utf8' );
+			// Match @import statements (SASS syntax: @import "file" or @import "file.sass")
+			// Also handles SCSS syntax: @import "file.scss"
+			const importRegex = /@import\s+['"]([^'"]+?)(?:\.(?:sass|scss))?['"]/gi;
+			let match;
+			while ( ( match = importRegex.exec( content ) ) !== null ) {
+				const importPath = match[ 1 ];
+				// Skip if it's a partial (starts with _) - those are handled differently
+				if ( importPath.includes( '/' ) ) {
+					const fileName = path.basename( importPath );
+					if ( fileName.startsWith( '_' ) ) {
+						continue;
+					}
+				} else if ( importPath.startsWith( '_' ) ) {
+					continue;
+				}
+
+				// Resolve relative to the SASS file's directory
+				const resolvedPath = path.resolve(
+					path.dirname( sassFile ),
+					importPath
+				);
+
+				// Try to find the actual file (with or without extension)
+				const possiblePaths = [
+					resolvedPath + '.sass',
+					resolvedPath + '.scss',
+					resolvedPath,
+				];
+
+				for ( const possiblePath of possiblePaths ) {
+					if ( existsSync( possiblePath ) ) {
+						// Normalize path and add to set (without extension for matching)
+						const normalizedPath = possiblePath.replace( /\.(sass|scss)$/, '' );
+						importedFiles.add( normalizedPath );
+						break;
+					}
+				}
+			}
+		} catch {
+			// Skip files that can't be read
+		}
+	} );
+
+	return importedFiles;
+};
+
+/**
+ * Recursively collect all SCSS/SASS files.
+ * Excludes files that are imported in other SASS files (they are partials).
+ *
+ * @param {string} dir - Directory to search
+ * @param {Set<string>} sassImportedFiles - Set of files imported in SASS (without extension)
+ * @return {string[]} - List of SCSS/SASS file paths
+ */
+const getAllSCSSFiles = ( dir, sassImportedFiles = null ) => {
+	// If sassImportedFiles is not provided, find it once for the entire directory tree
+	if ( sassImportedFiles === null ) {
+		sassImportedFiles = findSASSImports( dir );
+	}
+
+	const files = readdirSync( dir );
+	let filelist = [];
+	files.forEach( ( file ) => {
+		const filePath = path.join( dir, file );
+		const fileStat = statSync( filePath );
+		if ( fileStat.isDirectory() ) {
+			filelist = filelist.concat(
+				getAllSCSSFiles( filePath, sassImportedFiles )
+			);
+		} else if (
+			( file.endsWith( '.scss' ) || file.endsWith( '.sass' ) ) &&
+			! file.startsWith( '_' )
+		) {
+			// Check if this file is imported in another SASS file
+			const filePathWithoutExt = filePath.replace( /\.(sass|scss)$/, '' );
+			if ( ! sassImportedFiles.has( filePathWithoutExt ) ) {
+				filelist.push( filePath );
+			}
+		}
+	} );
+	return filelist;
+};
 
 /**
  * Recursively collect all CSS files (excluding partials starting with "_").
@@ -324,6 +528,99 @@ const processCSSFile = async ( filePath, outputPath, injectPreload = true ) => {
 };
 
 /**
+ * Compile a single SCSS/SASS file to CSS.
+ *
+ * @param {string} filePath - Path to SCSS/SASS file
+ * @return {Promise<void>}
+ */
+const compileSCSSFile = async ( filePath ) => {
+	const outputPath = filePath.replace( /\.(scss|sass)$/, '.css' );
+
+	try {
+		const result = sass.compile( filePath, {
+			style: isDev ? 'expanded' : 'compressed',
+			sourceMap: isDev,
+			sourceMapIncludeSources: isDev,
+			loadPaths: [ path.dirname( filePath ) ],
+		} );
+
+		// Write CSS file
+		writeFileSync( outputPath, result.css );
+
+		// Write source map if available
+		if ( isDev && result.sourceMap ) {
+			const mapPath = `${ outputPath }.map`;
+			writeFileSync( mapPath, JSON.stringify( result.sourceMap, null, 2 ) );
+
+			// Append sourceMappingURL comment
+			const cssWithMap = Buffer.concat( [
+				Buffer.from( result.css ),
+				Buffer.from(
+					`\n/*# sourceMappingURL=${ path.basename( mapPath ) } */\n`
+				),
+			] );
+			writeFileSync( outputPath, cssWithMap );
+		}
+	} catch ( error ) {
+		// Re-throw error to be handled by caller
+		throw error;
+	}
+};
+
+/**
+ * Compile all SCSS/SASS files in a directory to CSS.
+ * Files that fail to compile (e.g., due to missing dependencies) are skipped.
+ * Also compiles SCSS/SASS files that are imported in CSS files (even if they start with '_').
+ *
+ * @param {string} dir - Source directory
+ * @return {Promise<void>}
+ */
+const compileSCSSFiles = async ( dir ) => {
+	if ( ! existsSync( dir ) ) {
+		return;
+	}
+
+	// Get regular SCSS/SASS files (not starting with '_')
+	const files = getAllSCSSFiles( dir );
+
+	// Also find SCSS/SASS files imported in CSS files (including those starting with '_')
+	const importedFiles = findImportedSCSSFiles( dir );
+
+	// Combine and deduplicate
+	const allFiles = [ ...new Set( [ ...files, ...importedFiles ] ) ];
+
+	if ( allFiles.length === 0 ) {
+		return;
+	}
+
+	let compiledCount = 0;
+	const errors = [];
+
+	const tasks = allFiles.map( async ( file ) => {
+		try {
+			await compileSCSSFile( file );
+			compiledCount++;
+		} catch ( error ) {
+			// Skip files that fail due to dependencies - they'll be compiled when imported
+			errors.push( { file, error: error.message } );
+		}
+	} );
+
+	await Promise.all( tasks );
+
+	if ( compiledCount > 0 ) {
+		// eslint-disable-next-line no-console
+		console.log( `[scss] Compiled ${ compiledCount } SCSS/SASS file(s)` );
+	}
+	if ( errors.length > 0 && isDev ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`[scss] Skipped ${ errors.length } file(s) due to compilation errors (likely dependencies)`
+		);
+	}
+};
+
+/**
  * Process all CSS files in a directory (await all bundles).
  *
  * @param {string} dir     - Source directory
@@ -347,6 +644,11 @@ const processDirectory = async ( dir, destDir ) => {
 
 // Kick off both directories (top-level await wrapper for Node ESM)
 ( async () => {
+	// Step 1: Compile SCSS/SASS files to CSS before processing
+	await compileSCSSFiles( paths.styles.srcDir );
+	await compileSCSSFiles( paths.styles.editorSrcDir );
+
+	// Step 2: Process CSS files with LightningCSS (including newly compiled ones)
 	// Theme-level CSS (inject preload snippet if configured)
 	await processDirectory( paths.styles.srcDir, paths.styles.dest );
 	await processDirectory(

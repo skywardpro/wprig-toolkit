@@ -264,6 +264,49 @@ program
 					console.error( e?.message || e );
 				}
 			};
+
+			/**
+			 * Check if a CSS file was generated from SCSS/SASS (has corresponding source file).
+			 *
+			 * @param {string} filePath - Path to CSS file
+			 * @return {boolean} True if CSS file has corresponding SCSS/SASS source
+			 */
+			function shouldIgnoreCSSFile( filePath ) {
+				if ( ! filePath || ! filePath.endsWith( '.css' ) ) {
+					return false;
+				}
+				// Check if this CSS file has a corresponding SCSS/SASS source file
+				const scssPath = filePath.replace( /\.css$/, '.scss' );
+				const sassPath = filePath.replace( /\.css$/, '.sass' );
+				return fs.existsSync( scssPath ) || fs.existsSync( sassPath );
+			}
+
+			// Debounce timer for CSS rebuilds
+			let cssRebuildTimeout = null;
+
+			/**
+			 * Run CSS rebuild with debounce, ignoring changes to generated CSS files.
+			 *
+			 * @param {string} changedFile - Path to changed file (optional)
+			 */
+			function rebuildCSSDebounced( changedFile ) {
+				// Ignore CSS files that were generated from SCSS/SASS
+				if ( changedFile && shouldIgnoreCSSFile( changedFile ) ) {
+					return;
+				}
+
+				// Clear existing timeout
+				if ( cssRebuildTimeout ) {
+					clearTimeout( cssRebuildTimeout );
+				}
+
+				// Debounce: wait 100ms before rebuilding to prevent rapid-fire rebuilds
+				cssRebuildTimeout = setTimeout( () => {
+					rebuildCSS();
+					cssRebuildTimeout = null;
+				}, 100 );
+			}
+
 			const processImagesWatcher = async () => {
 				try {
 					await runTask( images, 'images' );
@@ -285,13 +328,17 @@ program
 				.on( 'add', rebuildJS )
 				.on( 'unlink', rebuildJS );
 
-			const cssWatcher = server.watch( 'assets/css/src/**/*.css', {
+			const cssWatcher = server.watch( [
+				'assets/css/src/**/*.css',
+				'assets/css/src/**/*.scss',
+				'assets/css/src/**/*.sass',
+			], {
 				ignoreInitial: true,
 			} );
 			cssWatcher
-				.on( 'change', rebuildCSS )
-				.on( 'add', rebuildCSS )
-				.on( 'unlink', rebuildCSS );
+				.on( 'change', rebuildCSSDebounced )
+				.on( 'add', rebuildCSSDebounced )
+				.on( 'unlink', rebuildCSSDebounced );
 
 			const phpWatcher = server.watch( paths.php.src, {
 				ignoreInitial: true,
