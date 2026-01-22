@@ -97,11 +97,6 @@
 @import "_footer.css";
 
 /*----------------------------
-# Spacing System
-----------------------------*/
-@import "spacing-system/_spacing-system.css";
-
-/*----------------------------
 # Utils
 ----------------------------*/
 @import "utils/_utilities.css";

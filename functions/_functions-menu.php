@@ -11,9 +11,9 @@
 
 
 
-// Register new menu locations for the footer
-add_action( 'after_setup_theme', function() {
-	// register_nav_menus( array(
-	// 	'footer_menu' => __( 'Footer Menu', 'wp-rig' )
-	// ) );
-} );
+// Register new menu location for the footer
+// add_action( 'after_setup_theme', function() {
+// 	register_nav_menus( array(
+// 		'footer_menu' => __( 'Footer Menu', 'wp-rig' )
+// 	) );
+// } );

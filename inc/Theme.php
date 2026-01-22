@@ -218,11 +218,18 @@ class Theme
 		----------------------------*/
 
 		/**
+		 * iMask
+		 *
+		 * JavaScript library for phone input masking.
+		 */
+		$components[] = new WP_Rig_Toolkit\iMask\Component();
+
+		/**
 		 * Validatejs
 		 *
 		 * A pure JavaScript library for forms validation.
 		 */
-		// $components[] = new WP_Rig_Toolkit\Validatejs\Component();
+		$components[] = new WP_Rig_Toolkit\Validatejs\Component();
 
 		/*----------------------------
 		# Sliders

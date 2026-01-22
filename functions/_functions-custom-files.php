@@ -28,25 +28,6 @@ function enqueue_global_js() {
 add_action( 'wp_enqueue_scripts', 'enqueue_global_js', 999 );
 
 /**
- * Enqueue imask.js script
- *
- * Add the script file with global scripts.
- * https://docs.wprig.org/coming-soon
- */
-function enqueue_imask_js() {
-	wp_enqueue_script(
-		'imask-scripts',
-		get_theme_file_uri( '/assets/js/vendor/imask/imask.min.js' ),
-		array(),
-		wp_get_theme()->get( 'Version' ),
-		false
-	);
-	wp_script_add_data( 'imask-scripts', 'defer', false );
-	wp_script_add_data( 'imask-scripts', 'precache', true );
-}
-add_action( 'wp_enqueue_scripts', 'enqueue_imask_js', 999 );
-
-/**
  * Enqueue forms.js script
  * 
  */
@@ -55,7 +36,7 @@ add_action( 'wp_enqueue_scripts', 'enqueue_imask_js', 999 );
 	wp_enqueue_script(
 		'forms',
 		get_theme_file_uri( '/assets/js/forms.min.js' ),
-		array( 'imask-scripts' ),
+		array(),
 		wp_get_theme()->get( 'Version' ),
 		true
 	);

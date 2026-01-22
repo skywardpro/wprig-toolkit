@@ -9,7 +9,7 @@ namespace WP_Rig\WP_Rig;
 
 ?>
 
-<form id="example-form" class="form">
+<form id="example-form" class="form floating-label">
 
     <div class="form__row">
         <div class="form__field">
@@ -33,7 +33,7 @@ namespace WP_Rig\WP_Rig;
         </div>
     </div>
 
-    <div class="form__row"> 
+    <div class="form__row">
         <div class="form__field form__field--select">
             <label for="form-name">Select<span class="color--red">*</span></label>
             <select id="form-select" name="select" required>

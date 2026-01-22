@@ -6,3 +6,4 @@
  * @package wp_rig
  */
 
+// TODO: Add snippet examples. Describe in docs: https://github.com/skywardpro/wprig-toolkit-docs-ru
