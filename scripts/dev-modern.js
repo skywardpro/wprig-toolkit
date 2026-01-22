@@ -3,8 +3,7 @@
 'use strict';
 
 // ESM script (theme package.json has "type": "module")
-import fs from 'fs';
-import { readdirSync, existsSync, mkdirSync, statSync, readFileSync } from 'fs';
+import fs, { readdirSync, existsSync, mkdirSync, statSync, readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http';
@@ -267,20 +266,68 @@ function runCssBuild() {
 	} );
 }
 
+/**
+ * Check if a CSS file was generated from SCSS/SASS (has corresponding source file).
+ *
+ * @param {string} filePath - Path to CSS file
+ * @return {boolean} True if CSS file has corresponding SCSS/SASS source
+ */
+function shouldIgnoreCSSFile( filePath ) {
+	if ( ! filePath || ! filePath.endsWith( '.css' ) ) {
+		return false;
+	}
+	// Check if this CSS file has a corresponding SCSS/SASS source file
+	const scssPath = filePath.replace( /\.css$/, '.scss' );
+	const sassPath = filePath.replace( /\.css$/, '.sass' );
+	return existsSync( scssPath ) || existsSync( sassPath );
+}
+
+// Debounce timer for CSS rebuilds
+let cssBuildTimeout = null;
+
+/**
+ * Run CSS build with debounce, ignoring changes to generated CSS files.
+ *
+ * @param {string} changedFile - Path to changed file (optional)
+ */
+function runCssBuildDebounced( changedFile ) {
+	// Ignore CSS files that were generated from SCSS/SASS
+	if ( changedFile && shouldIgnoreCSSFile( changedFile ) ) {
+		return;
+	}
+
+	// Clear existing timeout
+	if ( cssBuildTimeout ) {
+		clearTimeout( cssBuildTimeout );
+	}
+
+	// Debounce: wait 100ms before rebuilding to prevent rapid-fire rebuilds
+	cssBuildTimeout = setTimeout( () => {
+		runCssBuild();
+		cssBuildTimeout = null;
+	}, 100 );
+}
+
 // Kick off initial CSS build (non-blocking)
 runCssBuild();
 
-// Watch CSS sources to rebuild
+// Watch CSS, SCSS, and SASS sources to rebuild
 if ( cssSrcDirs.length ) {
 	chokidar
 		.watch(
-			cssSrcDirs.map( ( d ) => path.join( d, '**/*.css' ) ),
+			cssSrcDirs.flatMap( ( d ) => [
+				path.join( d, '**/*.css' ),
+				path.join( d, '**/*.scss' ),
+				path.join( d, '**/*.sass' ),
+			] ),
 			{
 				ignoreInitial: true,
 			}
 		)
-		.on( 'change', () => runCssBuild() );
-	console.log( '🔄 Watching CSS in', cssSrcDirs.join( ', ' ) );
+		.on( 'change', ( filePath ) => runCssBuildDebounced( filePath ) )
+		.on( 'add', ( filePath ) => runCssBuildDebounced( filePath ) )
+		.on( 'unlink', ( filePath ) => runCssBuildDebounced( filePath ) );
+	console.log( '🔄 Watching CSS, SCSS, and SASS in', cssSrcDirs.join( ', ' ) );
 }
 
 // 5) Watch PHP templates to trigger a soft reload

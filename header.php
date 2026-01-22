@@ -27,12 +27,13 @@ namespace WP_Rig\WP_Rig;
 <div id="page" class="site">
 	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'wp-rig' ); ?></a>
 
-	<header id="masthead" class="site-header flex">
-		<?php get_template_part( 'template-parts/header/custom_header' ); ?>
+	<!-- Header -->
+	<header id="masthead" class="site-header is-sticky">
+		<div class="container is-flex">
+			<!-- Logo -->
+			<?php get_template_part( 'template-parts/header/branding' ); ?>
 
-		<?php get_template_part( 'template-parts/header/mobile-menu-toggle' ); ?>
-
-		<?php get_template_part( 'template-parts/header/branding' ); ?>
-
-		<?php get_template_part( 'template-parts/header/navigation' ); ?>
+			<!-- Primary menu -->
+			<?php get_template_part( 'template-parts/header/navigation' ); ?>
+		</div>
 	</header><!-- #masthead -->

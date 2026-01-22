@@ -251,12 +251,14 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 *
 	 * @return string Mobile Nav Toggle HTML.
 	 */
-	public function customize_mobile_menu_toggle()
-	{
-		return '<button class="menu-toggle icon" aria-label="' . esc_html__('Open menu', 'wp-rig') . '" aria-controls="primary-menu" aria-expanded="false">
-					' . $this->menu_icon_svg . '
-					' . $this->close_icon_svg . '
-					</button>';
+	public function customize_mobile_menu_toggle() {
+		return '<button class="menu-toggle icon" aria-label="' . esc_html__( 'Open menu', 'wp-rig' ) . '" aria-controls="primary-menu" aria-expanded="false">
+			<div class="hamburger">
+				<span class="meat"></span>
+				<span class="meat"></span>
+				<span class="meat"></span>
+			</div>
+		</button>';
 	}
 
 	/**
