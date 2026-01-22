@@ -8,6 +8,19 @@ const FORMCARRY_ENDPOINT_FORM = 'https://formcarry.com/s/XXXXXXXXXXXX';
 
 const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5 MB
 
+// IP Stack API key for automatic country detection
+// Set to false to disable automatic country detection
+const IPSTACK_API_KEY: string | false = 'YOUR_API_KEY';
+
+// Default country ISO code (e.g., 'US', 'GB', 'RU') to use when API key is not set or detection fails
+const DEFAULT_COUNTRY_ISO: string = 'PT';
+
+// reCAPTCHA/Turnstile site key for captcha validation
+// Set to false to disable captcha validation
+// For Google reCAPTCHA v2/v3: use site key
+// For Cloudflare Turnstile: use site key
+const CAPTCHA_SITE_KEY: string | false = false;
+
 // Phone masking interfaces and variables
 interface Country {
 	name: string;
@@ -387,8 +400,82 @@ function correctEmailDomain(email: string): string {
 	return email; // Return the email unmodified if no typos are found
 }
 
+// Validate captcha before form submission
+async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
+	// If captcha is disabled, skip validation
+	if (!CAPTCHA_SITE_KEY) {
+		return null;
+	}
+
+	try {
+		// Check for Google reCAPTCHA v2/v3
+		if (typeof (window as any).grecaptcha !== 'undefined') {
+			const grecaptcha = (window as any).grecaptcha;
+			
+			// Try to find captcha widget in form
+			const captchaWidget = form.querySelector('[data-sitekey]') as HTMLElement;
+			if (captchaWidget) {
+				const widgetId = captchaWidget.getAttribute('data-widget-id');
+				if (widgetId) {
+					const token = grecaptcha.getResponse(parseInt(widgetId));
+					if (token) {
+						return token;
+					}
+				}
+			}
+			
+			// For reCAPTCHA v3, execute with action
+			if (grecaptcha.execute) {
+				return new Promise((resolve) => {
+					grecaptcha.execute(CAPTCHA_SITE_KEY, { action: 'submit' }).then((token: string) => {
+						resolve(token);
+					}).catch(() => {
+						resolve(null);
+					});
+				});
+			}
+		}
+		
+		// Check for Cloudflare Turnstile
+		if (typeof (window as any).turnstile !== 'undefined') {
+			const turnstile = (window as any).turnstile;
+			const turnstileWidget = form.querySelector('[data-sitekey]') as HTMLElement;
+			if (turnstileWidget) {
+				const widgetId = turnstileWidget.getAttribute('data-widget-id');
+				if (widgetId) {
+					const token = turnstile.getResponse(widgetId);
+					if (token) {
+						return token;
+					}
+				}
+			}
+		}
+		
+		// Check for hCaptcha
+		if (typeof (window as any).hcaptcha !== 'undefined') {
+			const hcaptcha = (window as any).hcaptcha;
+			const hcaptchaWidget = form.querySelector('[data-sitekey]') as HTMLElement;
+			if (hcaptchaWidget) {
+				const widgetId = hcaptchaWidget.getAttribute('data-widget-id');
+				if (widgetId) {
+					const token = hcaptcha.getResponse(widgetId);
+					if (token) {
+						return token;
+					}
+				}
+			}
+		}
+		
+		console.warn('[Forms] Captcha widget not found or not completed');
+		return null;
+	} catch (error) {
+		console.error('[Forms] Error validating captcha:', error);
+		return null;
+	}
+}
+
 // Submit forms
-function submitFormViaFormCarry(form: HTMLFormElement): void {
+async function submitFormViaFormCarry(form: HTMLFormElement): Promise<void> {
 	console.log('[Forms] submitFormViaFormCarry called for form:', form.id);
 	
 	// Check if form is already submitting
@@ -419,11 +506,34 @@ function submitFormViaFormCarry(form: HTMLFormElement): void {
 	
 	console.log('[Forms] Form action:', formAction);
 
+	// Validate captcha if enabled
+	let captchaToken: string | null = null;
+	if (CAPTCHA_SITE_KEY) {
+		captchaToken = await validateCaptcha(form);
+		if (!captchaToken) {
+			console.error('[Forms] Captcha validation failed');
+			showNotification(form, 'Please complete the captcha verification.', 'fail');
+			(form as any)._isSubmitting = false;
+			if (submitButton) {
+				submitButton.disabled = false;
+			}
+			return;
+		}
+		console.log('[Forms] Captcha validated successfully');
+	}
+
 	// Update phone with country code before submission
 	updatePhoneWithCountryCode(form);
 
 	const formattedFormData = getFormattedFormData(form);
 	console.log('[Forms] Formatted form data:', formattedFormData);
+
+	// Add captcha token to form data if available
+	if (captchaToken) {
+		formattedFormData['g-recaptcha-response'] = captchaToken;
+		formattedFormData['cf-turnstile-response'] = captchaToken;
+		formattedFormData['h-captcha-response'] = captchaToken;
+	}
 
 	// Save data to local storage (for debugging or persistence)
 	localStorage.setItem('formData', JSON.stringify(formattedFormData));
@@ -467,17 +577,30 @@ async function sendFormData(form: HTMLFormElement, data: FormattedFormData, subm
 		console.log('[Forms] Response ok:', response.ok);
 
 		if (!response.ok) {
-			if (response.status === 429) {
-				console.error('[Forms] 429 Too Many Requests error');
-				showNotification(form, "Too many requests. Try again in 5 minutes.", "fail");
-			} else {
-				const errorResponse = await response.json().catch(() => ({}));
-				console.error('[Forms] Error response:', errorResponse);
-				if (errorResponse.code === 422) {
-					showNotification(form, "Error processing your request. Try again.", "fail");
-				} else {
-					showNotification(form, "Error processing your request. Invalid data. Try again.", "fail");
-				}
+			const errorResponse = await response.json().catch(() => ({}));
+			console.error('[Forms] Error response:', errorResponse);
+			switch (errorResponse.code) {
+				case 429:
+					showNotification(form, "Too many requests. Please try again in a few minutes.", "fail");
+					break;
+				case 422:
+					showNotification(form, "Please check the form fields and correct any errors.", "fail");
+					break;
+				case 400:
+					showNotification(form, "Invalid request. Please check your input and try again.", "fail");
+					break;
+				case 403:
+					showNotification(form, "Access denied. Please refresh the page and try again.", "fail");
+					break;
+				case 404:
+					showNotification(form, "Form endpoint not found. Please contact support.", "fail");
+					break;
+				case 500:
+					showNotification(form, "Server error occurred. Please try again later.", "fail");
+					break;
+				default:
+					showNotification(form, "An error occurred while processing your request. Please try again.", "fail");
+					break;
 			}
 		} else {
 			const responseData = await response.json();
@@ -879,7 +1002,14 @@ export function attachFormValidation(): void {
 				console.error('[Forms] Validation errors:', errors);
 			} else {
 				console.log('[Forms] Form validation passed, submitting...');
-				submitFormViaFormCarry(form);
+				submitFormViaFormCarry(form).catch((error) => {
+					console.error('[Forms] Error submitting form:', error);
+					(form as any)._isSubmitting = false;
+					const submitButton = form.querySelector<SubmitButton>('button[type="submit"], input[type="submit"]');
+					if (submitButton) {
+						submitButton.disabled = false;
+					}
+				});
 			}
 		}, { once: false }); // Allow multiple submissions but prevent duplicates with flag
 	});
@@ -919,6 +1049,17 @@ function getFormActionHref(form: HTMLFormElement): string {
 // Phone masking functions
 async function getCountryFromClientIp(): Promise<Country | null> {
 	try {
+		// If API key is not set, use default country
+		if (!IPSTACK_API_KEY) {
+			console.log('[Forms] IP Stack API key not set, using default country:', DEFAULT_COUNTRY_ISO);
+			const countries = await fetchCountries();
+			const country = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
+			if (country) {
+				return country;
+			}
+			return null;
+		}
+
 		// Check session storage first
 		const storedIpRegion = sessionStorage.getItem('ipRegion');
 		if (storedIpRegion) {
@@ -939,23 +1080,51 @@ async function getCountryFromClientIp(): Promise<Country | null> {
 		if (country) {
 			return country;
 		}
+		
+		// If API call failed, fallback to default country
+		console.log('[Forms] Failed to detect country, using default country:', DEFAULT_COUNTRY_ISO);
+		const defaultCountry = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
+		if (defaultCountry) {
+			return defaultCountry;
+		}
+		
 		return null;
 	} catch (error) {
-		console.error('Error in processing:', error);
-		throw error;
+		console.error('[Forms] Error in processing:', error);
+		// On error, try to use default country
+		try {
+			const countries = await fetchCountries();
+			const defaultCountry = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
+			if (defaultCountry) {
+				console.log('[Forms] Using default country due to error:', DEFAULT_COUNTRY_ISO);
+				return defaultCountry;
+			}
+		} catch (fetchError) {
+			console.error('[Forms] Failed to fetch countries:', fetchError);
+		}
+		return null;
 	}
 }
 
 function getClientIp(): Promise<string> {
-	const myUrl = 'https://api.ipstack.com/check?access_key=d8bace1287ee24f129651eeb25a270e1';
+	if (!IPSTACK_API_KEY) {
+		return Promise.reject(new Error('IP Stack API key is not set'));
+	}
+	
+	const myUrl = `https://api.ipstack.com/check?access_key=${IPSTACK_API_KEY}`;
 	return fetch(myUrl)
-		.then((response) => response.json())
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`IP Stack API error: ${response.status}`);
+			}
+			return response.json();
+		})
 		.then((data: IpData) => {
 			sessionStorage.setItem('ipRegion', JSON.stringify(data));
 			return data.country_code;
 		})
 		.catch((error) => {
-			console.error('Error:', error);
+			console.error('[Forms] Error fetching IP location:', error);
 			throw error;
 		});
 }

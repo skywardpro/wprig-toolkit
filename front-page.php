@@ -22,16 +22,20 @@ if (is_home()) {
 ?>
 <main id="primary" class="site-main">
 	<h1 class=" typo--body">Front Page 1</h1>
-	<?php
+	<?php wp_rig()->the_svg_icon_from_sprite( 'baths', array( 'width' => '20', 'height' => '20', 'style' => 'fill: red;' ) ); ?>
+	<svg width="20" height="20" style="fill: red;">
+		<use href="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/assets/images/icons/sprite-svg/sprite.svg?ver=<?php echo esc_attr( wp_get_theme()->get( 'Version' ) ); ?>#icon-baths"></use>
+	</svg>
+	<svg width="20" height="20" style="fill: red;">
+		<use href="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/assets/images/icons/sprite-svg/sprite.svg?ver=<?php echo esc_attr( wp_get_theme()->get( 'Version' ) ); ?>#advantage-wifi"></use>
+	</svg>
+	<svg width="20" height="20" style="fill: red;">
+		<use href="<?php echo esc_url( get_stylesheet_directory_uri() ); ?>/assets/images/icons/sprite-svg/sprite.svg?ver=<?php echo esc_attr( wp_get_theme()->get( 'Version' ) ); ?>#close-icon"></use>
+	</svg>
 
-	while (have_posts()) {
-		the_post();
-
-		get_template_part('template-parts/content/entry', get_post_type());
-	}
-
-	get_template_part('template-parts/content/pagination');
-	?>
+	<div class="container">
+		<?php get_template_part('template-parts/forms/form-example'); ?>
+	</div>
 </main><!-- #primary -->
 <?php
 get_footer();

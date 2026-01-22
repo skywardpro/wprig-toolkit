@@ -99,6 +99,14 @@ async function buildCSS( { dev = false } = {} ) {
 	}
 }
 
+async function buildSvgSprite( { dev = false } = {} ) {
+	const cmd = dev ? 'npm run dev:svg-sprite' : 'npm run build:svg-sprite';
+	const { stderr } = await exec( cmd );
+	if ( stderr ) {
+		console.error( stderr );
+	}
+}
+
 async function runBuild( { phpcs = false, lint = false, dev = false } = {} ) {
 	// Clean
 	await Promise.all( [
@@ -112,7 +120,11 @@ async function runBuild( { phpcs = false, lint = false, dev = false } = {} ) {
 	}
 
 	// Build assets in parallel
-	await Promise.all( [ buildCSS( { dev } ), buildJS( { dev } ) ] );
+	await Promise.all( [
+		buildCSS( { dev } ),
+		buildJS( { dev } ),
+		buildSvgSprite( { dev } ),
+	] );
 
 	// Images and PHP in parallel
 	const postBuildTasks = [
@@ -152,6 +164,7 @@ async function runBundle( { phpcs = false, lint = false } = {} ) {
 	await Promise.all( [
 		buildCSS( { dev: false } ),
 		buildJS( { dev: false } ),
+		buildSvgSprite( { dev: false } ),
 	] );
 
 	// Images, PHP, fonts in parallel
@@ -242,6 +255,7 @@ program
 			await Promise.all( [
 				buildCSS( { dev: true } ),
 				buildJS( { dev: true } ),
+				buildSvgSprite( { dev: true } ),
 			] );
 
 			// Start BrowserSync server (respects theme config)
@@ -316,6 +330,14 @@ program
 					console.error( e?.message || e );
 				}
 			};
+			const rebuildSvgSprite = async () => {
+				try {
+					await buildSvgSprite( { dev: true } );
+					server.reload();
+				} catch ( e ) {
+					console.error( e?.message || e );
+				}
+			};
 			const reloadOnly = () => server.reload();
 
 			// Set up watchers using BrowserSync's built-in chokidar
@@ -355,6 +377,16 @@ program
 				.on( 'change', processImagesWatcher )
 				.on( 'add', processImagesWatcher )
 				.on( 'unlink', processImagesWatcher );
+
+			// Watch SVG icons for sprite generation
+			const svgIconsWatcher = server.watch(
+				'assets/images/src/icons/**/*.svg',
+				{ ignoreInitial: true }
+			);
+			svgIconsWatcher
+				.on( 'change', rebuildSvgSprite )
+				.on( 'add', rebuildSvgSprite )
+				.on( 'unlink', rebuildSvgSprite );
 
 			console.log(
 				'Development server running. Watching for changes...'
