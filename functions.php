@@ -118,6 +118,9 @@ require get_template_directory() . '/functions/_functions-plugins.php';
  */
 require get_template_directory() . '/functions/_functions-optimization.php';
 
+
+
+
 // @dev-only:start
 /**
  * Load development-only helpers (LiveReload for dev proxy).
