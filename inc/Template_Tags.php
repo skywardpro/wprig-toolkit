@@ -307,4 +307,109 @@ class Template_Tags
 
 		return null;
 	}
+
+	/**
+	 * Cached SVG sprite content.
+	 *
+	 * @var string|null
+	 */
+	private static $svg_sprite_cache = null;
+
+	/**
+	 * Gets the SVG sprite content from the generated sprite file.
+	 *
+	 * @return string|null SVG sprite content or null if not found.
+	 */
+	public function get_svg_sprite(): ?string
+	{
+		if (null !== self::$svg_sprite_cache) {
+			return self::$svg_sprite_cache;
+		}
+
+		$sprite_path = get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
+
+		if (! file_exists($sprite_path)) {
+			return null;
+		}
+
+		// Initialize WordPress Filesystem
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		// Try wp_filesystem first, fallback to file_get_contents
+		if ($wp_filesystem && method_exists($wp_filesystem, 'get_contents')) {
+			$content = $wp_filesystem->get_contents($sprite_path);
+		} else {
+			$content = @file_get_contents($sprite_path);
+		}
+
+		if (false !== $content && ! empty($content)) {
+			self::$svg_sprite_cache = $content;
+			return self::$svg_sprite_cache;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets SVG icon from sprite by name using external reference.
+	 *
+	 * @param string $icon_name Icon name without .svg extension (e.g., 'baths' for 'icon-baths').
+	 * @param array $args Optional. Additional attributes for the SVG element.
+	 * @return string SVG markup with <use> element pointing to external sprite or empty string if sprite not found.
+	 */
+	public function get_svg_icon_from_sprite(string $icon_name, array $args = array()): string
+	{
+		// Check if sprite exists
+		$sprite_path = get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
+		if (! file_exists($sprite_path)) {
+			return '';
+		}
+
+		$defaults = array(
+			'width' => '',
+			'height' => '',
+			'class' => '',
+			'style' => '',
+		);
+
+		$args = wp_parse_args($args, $defaults);
+
+		// Ensure icon name has 'icon-' prefix if not present
+		$icon_id = $icon_name;
+		if (strpos($icon_name, 'icon-') !== 0) {
+			$icon_id = 'icon-' . $icon_name;
+		}
+
+		$sprite_url = esc_url(get_template_directory_uri() . '/assets/images/icons/sprite-svg/sprite.svg');
+		$width = ! empty($args['width']) ? ' width="' . esc_attr($args['width']) . '"' : '';
+		$height = ! empty($args['height']) ? ' height="' . esc_attr($args['height']) . '"' : '';
+		$class = ! empty($args['class']) ? ' class="' . esc_attr($args['class']) . '"' : '';
+		$style = ! empty($args['style']) ? ' style="' . esc_attr($args['style']) . '"' : '';
+
+		return sprintf(
+			'<svg%s%s%s%s><use href="%s#%s"></use></svg>',
+			$width,
+			$height,
+			$class,
+			$style,
+			$sprite_url,
+			esc_attr($icon_id)
+		);
+	}
+
+	/**
+	 * Outputs SVG icon from sprite by name using external reference.
+	 *
+	 * @param string $icon_name Icon name without .svg extension (e.g., 'baths' for 'icon-baths').
+	 * @param array $args Optional. Additional attributes for the SVG element.
+	 * @return void
+	 */
+	public function the_svg_icon_from_sprite(string $icon_name, array $args = array()): void
+	{
+		echo $this->get_svg_icon_from_sprite($icon_name, $args);
+	}
 }
