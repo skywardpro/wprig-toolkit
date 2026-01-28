@@ -23,7 +23,6 @@ a:active {
  * but it may negative impact on your design.
  */
 a:focus {
-
 	/* outline: thin dotted; */
 	outline: none;
 }

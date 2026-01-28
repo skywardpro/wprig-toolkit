@@ -16,24 +16,41 @@ use function add_filter;
 /**
  * Class for managing responsive image sizes.
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'image_sizes';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_filter( 'wp_calculate_image_sizes', array( $this, 'filter_content_image_sizes_attr' ), 10, 2 );
-		add_filter( 'get_header_image_tag', array( $this, 'filter_header_image_tag' ), 10, 3 );
-		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'filter_post_thumbnail_sizes_attr' ), 10, 3 );
+	public function initialize()
+	{
+		add_filter(
+			'wp_calculate_image_sizes',
+			[$this, 'filter_content_image_sizes_attr'],
+			10,
+			2,
+		);
+		add_filter(
+			'get_header_image_tag',
+			[$this, 'filter_header_image_tag'],
+			10,
+			3,
+		);
+		add_filter(
+			'wp_get_attachment_image_attributes',
+			[$this, 'filter_post_thumbnail_sizes_attr'],
+			10,
+			3,
+		);
 	}
 
 	/**
@@ -44,14 +61,17 @@ class Component implements Component_Interface {
 	 *                      values in pixels (in that order).
 	 * @return string A source size value for use in a content image 'sizes' attribute.
 	 */
-	public function filter_content_image_sizes_attr( string $sizes, array $size ): string {
+	public function filter_content_image_sizes_attr(
+		string $sizes,
+		array $size,
+	): string {
 		$width = $size[0];
 
-		if ( 740 <= $width ) {
+		if (740 <= $width) {
 			$sizes = '100vw';
 		}
 
-		if ( wp_rig()->is_primary_sidebar_active() ) {
+		if (wp_rig()->is_primary_sidebar_active()) {
 			$sizes = '(min-width: 960px) 75vw, 100vw';
 		}
 
@@ -66,9 +86,13 @@ class Component implements Component_Interface {
 	 * @param array  $attr   Array of the attributes for the image tag.
 	 * @return string The filtered header image HTML.
 	 */
-	public function filter_header_image_tag( string $html, $header, array $attr ): string {
-		if ( isset( $attr['sizes'] ) ) {
-			$html = str_replace( $attr['sizes'], '100vw', $html );
+	public function filter_header_image_tag(
+		string $html,
+		$header,
+		array $attr,
+	): string {
+		if (isset($attr['sizes'])) {
+			$html = str_replace($attr['sizes'], '100vw', $html);
 		}
 
 		return $html;
@@ -82,10 +106,14 @@ class Component implements Component_Interface {
 	 * @param string|array $size       Registered image size or flat array of height and width dimensions.
 	 * @return array The filtered attributes for the image markup.
 	 */
-	public function filter_post_thumbnail_sizes_attr( array $attr, WP_Post $attachment, $size ): array {
+	public function filter_post_thumbnail_sizes_attr(
+		array $attr,
+		WP_Post $attachment,
+		$size,
+	): array {
 		$attr['sizes'] = '100vw';
 
-		if ( wp_rig()->is_primary_sidebar_active() ) {
+		if (wp_rig()->is_primary_sidebar_active()) {
 			$attr['sizes'] = '(min-width: 960px) 75vw, 100vw';
 		}
 

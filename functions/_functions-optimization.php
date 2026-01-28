@@ -16,9 +16,8 @@
  * https://kinsta.com/blog/defer-parsing-of-javascript/#4-defer-javascript-via-functionsphp-file
  */
 
-if ( constant( 'DEFER_ALL_SCRIPTS' ) === true ) {
-
-	add_filter( 'script_loader_tag', 'defer_all_scripts', 10 );
+if (constant('DEFER_ALL_SCRIPTS') === true) {
+	add_filter('script_loader_tag', 'defer_all_scripts', 10);
 
 	/**
 	 * Add defer attribute to script tags.
@@ -26,17 +25,18 @@ if ( constant( 'DEFER_ALL_SCRIPTS' ) === true ) {
 	 * @param string $url The URL of the enqueued script.
 	 * @return string Modified script URL with defer attribute.
 	 */
-	function defer_all_scripts( $url ) {
-		if ( is_user_logged_in() ) {
+	function defer_all_scripts($url)
+	{
+		if (is_user_logged_in()) {
 			return $url; // don't break WP Admin.
 		}
-		if ( false === strpos( $url, '.js' ) ) {
+		if (false === strpos($url, '.js')) {
 			return $url;
 		}
-		if ( strpos( $url, 'jquery.min.js' ) ) {
+		if (strpos($url, 'jquery.min.js')) {
 			return $url;
 		}
-		return str_replace( ' src', ' defer src', $url );
+		return str_replace(' src', ' defer src', $url);
 	}
 }
 
@@ -47,9 +47,8 @@ if ( constant( 'DEFER_ALL_SCRIPTS' ) === true ) {
  * https://docs.wprig.org/coming-soon
  */
 
-if ( constant( 'DISABLE_SCRIPTS_STYLES_VERSIONS' ) === true ) {
-
-	add_filter( 'style_loader_src', 'switch_stylesheet_src', 10, 2 );
+if (constant('DISABLE_SCRIPTS_STYLES_VERSIONS') === true) {
+	add_filter('style_loader_src', 'switch_stylesheet_src', 10, 2);
 
 	/**
 	 * Remove version query string from stylesheets.
@@ -58,8 +57,9 @@ if ( constant( 'DISABLE_SCRIPTS_STYLES_VERSIONS' ) === true ) {
 	 * @param string $handle The handle of the stylesheet.
 	 * @return string The modified source URL.
 	 */
-	function switch_stylesheet_src( $src, $handle ) {
-		$src = remove_query_arg( 'ver', $src );
+	function switch_stylesheet_src($src, $handle)
+	{
+		$src = remove_query_arg('ver', $src);
 		return $src;
 	}
 }
@@ -71,15 +71,15 @@ if ( constant( 'DISABLE_SCRIPTS_STYLES_VERSIONS' ) === true ) {
  * https://docs.wprig.org/coming-soon
  */
 
-if ( constant( 'DISABLE_TYPE_ATTRIBUTES' ) === true ) {
+if (constant('DISABLE_TYPE_ATTRIBUTES') === true) {
 	add_action(
 		'after_setup_theme',
 		/**
 		 * Enable HTML5 support for script and style tags.
 		 */
-		function() {
-			add_theme_support( 'html5', [ 'script', 'style' ] );
-		}
+		function () {
+			add_theme_support('html5', ['script', 'style']);
+		},
 	);
 }
 
@@ -90,16 +90,16 @@ if ( constant( 'DISABLE_TYPE_ATTRIBUTES' ) === true ) {
  * https://docs.wprig.org/coming-soon
  */
 
-if ( constant( 'DISABLE_DEFAULT_BLOCK_STYLES' ) === true ) {
-
-	add_action( 'wp_enqueue_scripts', 'remove_wp_block_library_css' );
+if (constant('DISABLE_DEFAULT_BLOCK_STYLES') === true) {
+	add_action('wp_enqueue_scripts', 'remove_wp_block_library_css');
 
 	/**
 	 * Dequeue default block styles.
 	 */
-	function remove_wp_block_library_css() {
-		wp_dequeue_style( 'wp-block-library' );
-		wp_dequeue_style( 'wp-block-library-theme-css' );
+	function remove_wp_block_library_css()
+	{
+		wp_dequeue_style('wp-block-library');
+		wp_dequeue_style('wp-block-library-theme-css');
 	}
 }
 
@@ -110,15 +110,15 @@ if ( constant( 'DISABLE_DEFAULT_BLOCK_STYLES' ) === true ) {
  * https://docs.wprig.org/coming-soon
  */
 
-if ( constant( 'DISABLE_WP_POLYFILL' ) === true ) {
-
-	add_action( 'wp_enqueue_scripts', 'remove_wp_polyfill_js' );
+if (constant('DISABLE_WP_POLYFILL') === true) {
+	add_action('wp_enqueue_scripts', 'remove_wp_polyfill_js');
 
 	/**
 	 * Dequeue WP Polyfill scripts.
 	 */
-	function remove_wp_polyfill_js() {
-		wp_dequeue_script( 'wp-polyfill-js' );
-		wp_dequeue_script( 'wp-polyfill-js-after' );
+	function remove_wp_polyfill_js()
+	{
+		wp_dequeue_script('wp-polyfill-js');
+		wp_dequeue_script('wp-polyfill-js-after');
 	}
 }

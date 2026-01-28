@@ -32,59 +32,57 @@ import {
  * @param {Function} done function to call when async processes finish
  * @return {void} Calls done() on completion or error.
  */
-export default function prodPrep( done ) {
+export default function prodPrep(done) {
 	// Check if running in production environment based on NODE_ENV
-	if ( ! isProd ) {
+	if (!isProd) {
 		log(
 			colors.red(
-				`${ colors.bold(
+				`${colors.bold(
 					'Error:'
-				) } The prodPrep task may only be called when NODE_ENV is set to 'production'.`
+				)} The prodPrep task may only be called when NODE_ENV is set to 'production'.`
 			)
 		);
-		return done( new Error( 'prodPrep requires NODE_ENV=production' ) );
+		return done(new Error('prodPrep requires NODE_ENV=production'));
 	}
 
 	// --- Environment & Config Checks ---
-	if ( ! prodThemePath ) {
+	if (!prodThemePath) {
 		log(
 			colors.red(
-				`${ colors.bold(
+				`${colors.bold(
 					'Error:'
-				) } Production theme path is not defined. Check NODE_ENV and theme config.`
+				)} Production theme path is not defined. Check NODE_ENV and theme config.`
 			)
 		);
-		return done( new Error( 'Production theme path missing' ) );
+		return done(new Error('Production theme path missing'));
 	}
-	if ( path.basename( prodThemePath ) === path.basename( rootPath ) ) {
+	if (path.basename(prodThemePath) === path.basename(rootPath)) {
 		log(
 			colors.red(
-				`${ colors.bold(
+				`${colors.bold(
 					'Error:'
-				) } The theme slug cannot be the same as the dev theme directory name.`
+				)} The theme slug cannot be the same as the dev theme directory name.`
 			)
 		);
 		return done(
-			new Error(
-				'Production theme slug matches development directory name'
-			)
+			new Error('Production theme slug matches development directory name')
 		);
 	}
-	const requiredConfigUpdates = [ 'slug', 'name' ];
-	const config = getThemeConfig( true ); // Get production config
+	const requiredConfigUpdates = ['slug', 'name'];
+	const config = getThemeConfig(true); // Get production config
 
-	for ( const requiredConfigField of requiredConfigUpdates ) {
+	for (const requiredConfigField of requiredConfigUpdates) {
 		if (
-			nameFieldDefaults[ requiredConfigField ] ===
-			config.theme[ requiredConfigField ]
+			nameFieldDefaults[requiredConfigField] ===
+			config.theme[requiredConfigField]
 		) {
 			// Do not fail bundling if values are left at defaults. Warn and continue.
 			log(
 				colors.yellow(
-					`${ colors.bold(
+					`${colors.bold(
 						'Warning:'
-					) } Using default theme ${ requiredConfigField } (${
-						nameFieldDefaults[ requiredConfigField ]
+					)} Using default theme ${requiredConfigField} (${
+						nameFieldDefaults[requiredConfigField]
 					}). Override it in ./config/config.json if desired.`
 				)
 			);
@@ -95,40 +93,38 @@ export default function prodPrep( done ) {
 	// Create the prod directory
 	try {
 		createProdDir();
-	} catch ( err ) {
+	} catch (err) {
 		log(
 			colors.red(
-				`${ colors.bold(
+				`${colors.bold(
 					'Error:'
-				) } Failed to create production directory: ${ err.message }`
+				)} Failed to create production directory: ${err.message}`
 			)
 		);
-		return done( err );
+		return done(err);
 	}
 
 	// Resolve all source files defined in constants.js (populated from themeConfig.js -> filesToCopy)
 	let filesToCopy = [];
 	try {
 		// paths.export.src contains absolute paths built in constants.js for filesToCopy
-		paths.export.src.forEach( ( pattern ) => {
+		paths.export.src.forEach((pattern) => {
 			// Normalize path separators for cross-platform compatibility (especially Windows)
-			const normalizedPattern = pattern.replace( /\\/g, '/' );
-			const files = globSync.sync( normalizedPattern, { nodir: true } ); // Exclude directories
-			filesToCopy = filesToCopy.concat( files );
-		} );
-	} catch ( err ) {
+			const normalizedPattern = pattern.replace(/\\/g, '/');
+			const files = globSync.sync(normalizedPattern, { nodir: true }); // Exclude directories
+			filesToCopy = filesToCopy.concat(files);
+		});
+	} catch (err) {
 		log(
 			colors.red(
-				`${ colors.bold(
+				`${colors.bold(
 					'Error:'
-				) } Failed to resolve source file patterns for prodPrep: ${
-					err.message
-				}`
+				)} Failed to resolve source file patterns for prodPrep: ${err.message}`
 			)
 		);
-		return done( err );
+		return done(err);
 	}
-	if ( filesToCopy.length === 0 ) {
+	if (filesToCopy.length === 0) {
 		log(
 			colors.yellow(
 				'prodPrep: No files found matching export patterns (filesToCopy) to copy.'
@@ -139,7 +135,7 @@ export default function prodPrep( done ) {
 
 	log(
 		colors.cyan(
-			`prodPrep: Copying ${ filesToCopy.length } files (from filesToCopy) manually...`
+			`prodPrep: Copying ${filesToCopy.length} files (from filesToCopy) manually...`
 		)
 	);
 
@@ -149,68 +145,56 @@ export default function prodPrep( done ) {
 
 	// Function to check if all files are processed and call done()
 	const checkCompletion = () => {
-		if ( ++filesProcessed >= totalFiles ) {
+		if (++filesProcessed >= totalFiles) {
 			// Use >= for safety
-			if ( copyErrors > 0 ) {
+			if (copyErrors > 0) {
 				log(
 					colors.red(
-						`${ colors.bold(
+						`${colors.bold(
 							'prodPrep Error:'
-						) } ${ copyErrors } file(s) failed to copy.`
+						)} ${copyErrors} file(s) failed to copy.`
 					)
 				);
 				done(
-					new Error(
-						`${ copyErrors } file(s) failed to copy during prodPrep.`
-					)
+					new Error(`${copyErrors} file(s) failed to copy during prodPrep.`)
 				);
 			} else {
-				log(
-					colors.green(
-						`prodPrep: Successfully copied ${ totalFiles } files.`
-					)
-				);
+				log(colors.green(`prodPrep: Successfully copied ${totalFiles} files.`));
 				done();
 			}
 		}
 	};
 
 	// Manual file copy logic for each file listed in filesToCopy
-	filesToCopy.forEach( ( srcFilePath ) => {
+	filesToCopy.forEach((srcFilePath) => {
 		// Normalize source file path for consistent handling across platforms
-		const relativePath = path.relative( rootPath, srcFilePath );
+		const relativePath = path.relative(rootPath, srcFilePath);
 
 		// Exclude certain root-level directories from being bundled
 		try {
 			// Use forward slash as separator for consistency across platforms
 			const topLevel =
-				relativePath.split( '/' )[ 0 ] ||
-				relativePath.split( '\\' )[ 0 ] ||
-				'';
-			const excludedDirs = new Set( [ 'childify_backup', 'scripts' ] );
-			if ( excludedDirs.has( topLevel ) ) {
-				log(
-					colors.gray(
-						`prodPrep: Skipping ${ relativePath } (excluded)`
-					)
-				);
+				relativePath.split('/')[0] || relativePath.split('\\')[0] || '';
+			const excludedDirs = new Set(['childify_backup', 'scripts']);
+			if (excludedDirs.has(topLevel)) {
+				log(colors.gray(`prodPrep: Skipping ${relativePath} (excluded)`));
 				checkCompletion();
 				return; // Skip copying this file
 			}
-		} catch ( e ) {
+		} catch (e) {
 			// If any error occurs during exclusion check, proceed without excluding
 		}
 
-		const destFilePath = path.join( prodThemePath, relativePath );
-		const destDir = path.dirname( destFilePath );
+		const destFilePath = path.join(prodThemePath, relativePath);
+		const destDir = path.dirname(destFilePath);
 
 		// Ensure destination directory exists
 		try {
-			mkdirp.sync( destDir );
-		} catch ( err ) {
+			mkdirp.sync(destDir);
+		} catch (err) {
 			log(
 				colors.red(
-					`prodPrep: Error creating directory ${ destDir }: ${ err.message }`
+					`prodPrep: Error creating directory ${destDir}: ${err.message}`
 				)
 			);
 			copyErrors++;
@@ -219,42 +203,42 @@ export default function prodPrep( done ) {
 		}
 
 		// Create read and write streams
-		const readStream = fs.createReadStream( srcFilePath );
-		const writeStream = fs.createWriteStream( destFilePath );
+		const readStream = fs.createReadStream(srcFilePath);
+		const writeStream = fs.createWriteStream(destFilePath);
 
-		readStream.on( 'error', ( err ) => {
+		readStream.on('error', (err) => {
 			log(
 				colors.red(
-					`prodPrep: Error reading file ${ srcFilePath }: ${ err.message }`
+					`prodPrep: Error reading file ${srcFilePath}: ${err.message}`
 				)
 			);
 			copyErrors++;
-			if ( ! writeStream.destroyed ) {
+			if (!writeStream.destroyed) {
 				writeStream.end();
 			}
 			checkCompletion();
-		} );
+		});
 
-		writeStream.on( 'error', ( err ) => {
+		writeStream.on('error', (err) => {
 			log(
 				colors.red(
-					`prodPrep: Error writing file ${ destFilePath }: ${ err.message }`
+					`prodPrep: Error writing file ${destFilePath}: ${err.message}`
 				)
 			);
 			copyErrors++;
 			checkCompletion();
-		} );
+		});
 
-		writeStream.on( 'finish', () => {
+		writeStream.on('finish', () => {
 			checkCompletion(); // File copied successfully
-		} );
+		});
 
 		// Start the copy process
-		readStream.pipe( writeStream );
-	} );
+		readStream.pipe(writeStream);
+	});
 
 	// Safety net
-	if ( totalFiles === 0 ) {
+	if (totalFiles === 0) {
 		done();
 	}
 }

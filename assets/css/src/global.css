@@ -36,22 +36,22 @@
 /*----------------------------
 # Basic values
 ----------------------------*/
-@import "_custom-properties.css";
-@import "_reset.css";
+@import '_custom-properties.css';
+@import '_reset.css';
 
 /* ## Typography
 ----------------------------*/
-@import "typography/_fonts.css";
-@import "typography/_typography.css";
-@import "typography/_typography-system.css";
+@import 'typography/_fonts.css';
+@import 'typography/_typography.css';
+@import 'typography/_typography-system.css';
 
 /* ## Accessibility
 ----------------------------*/
-@import "_accessibility.css";
+@import '_accessibility.css';
 
 /* ## Layouts
 ----------------------------*/
-@import "_layouts.css";
+@import '_layouts.css';
 
 /*----------------------------
 # Framework
@@ -59,50 +59,50 @@
 * Learn more about framework at the link below
 * @link https://docs.wprig.org/assets-optimization/framework
 ----------------------------*/
-@import "framework/_bulma-barebone.css";
+@import 'framework/_bulma-barebone.css';
 
 /*----------------------------
 # Navigation
 ----------------------------*/
-@import "navigation/_basic-navigation.css";
-@import "navigation/_main-navigation.css";
-@import "navigation/_hamburger-menu.css";
-@import "navigation/_content-navigation.css";
+@import 'navigation/_basic-navigation.css';
+@import 'navigation/_main-navigation.css';
+@import 'navigation/_hamburger-menu.css';
+@import 'navigation/_content-navigation.css';
 
 /*----------------------------
 # General Styles
 ----------------------------*/
-@import "general-styles/_general.css";
-@import "general-styles/_links.css";
-@import "general-styles/_colors.css";
-@import "general-styles/_backgrounds.css";
-@import "general-styles/_buttons.css";
-@import "general-styles/_forms.css";
-@import "general-styles/_lists.css";
+@import 'general-styles/_general.css';
+@import 'general-styles/_links.css';
+@import 'general-styles/_colors.css';
+@import 'general-styles/_backgrounds.css';
+@import 'general-styles/_buttons.css';
+@import 'general-styles/_forms.css';
+@import 'general-styles/_lists.css';
 
 /*----------------------------
 # Header
 ----------------------------*/
-@import "_header.css";
+@import '_header.css';
 
 /*----------------------------
 # Elements
 ----------------------------*/
-@import "_elements.css";
+@import '_elements.css';
 
 /*----------------------------
 # Footer
 ----------------------------*/
-@import "_footer.css";
+@import '_footer.css';
 
 /*----------------------------
 # Utils
 ----------------------------*/
-@import "utils/_utilities.css";
-@import "utils/_smooth-scroll.css";
-@import "utils/_infinite-scroll.css";
+@import 'utils/_utilities.css';
+@import 'utils/_smooth-scroll.css';
+@import 'utils/_infinite-scroll.css';
 
 /*----------------------------
 # Custom CSS
 ----------------------------*/
-@import "_custom.css";
+@import '_custom.css';

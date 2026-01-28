@@ -113,12 +113,7 @@ files.forEach((file) => {
 			target: ['es6'],
 			loader: { '.js': 'jsx', '.jsx': 'jsx', '.ts': 'ts', '.tsx': 'tsx' },
 			plugins: [stripI18nSourceMapPlugin, replaceInlineJSPlugin],
-			external: [
-				'@wordpress/*',
-				'react',
-				'react-dom',
-				'react-dom/client',
-			],
+			external: ['@wordpress/*', 'react', 'react-dom', 'react-dom/client'],
 		})
 		.catch(() => process.exit(1));
 });
@@ -126,5 +121,7 @@ files.forEach((file) => {
 // Log watch mode status
 if (isWatchMode) {
 	console.log('🔄 Watch mode enabled for theme JS files');
-	console.log('📝 Note: Blocks are built separately using `npm run start:blocks`');
+	console.log(
+		'📝 Note: Blocks are built separately using `npm run start:blocks`'
+	);
 }

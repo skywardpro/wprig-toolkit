@@ -1,20 +1,13 @@
 {
-	"extends": [
-		"@wordpress/stylelint-config"
-	],
+	"extends": ["@wordpress/stylelint-config"],
 	"rules": {
 		"color-hex-length": "short",
 		"max-nesting-depth": 4,
 		"rule-empty-line-before": [
 			"always",
 			{
-				"except": [
-					"first-nested"
-				],
-				"ignore": [
-					"after-comment",
-					"inside-block"
-				]
+				"except": ["first-nested"],
+				"ignore": ["after-comment", "inside-block"]
 			}
 		],
 		"comment-whitespace-inside": null,
@@ -33,18 +26,13 @@
 		"media-feature-name-no-unknown": [
 			true,
 			{
-				"ignoreMediaFeatureNames": [
-					"/^--/"
-				]
+				"ignoreMediaFeatureNames": ["/^--/"]
 			}
 		],
 		"at-rule-no-unknown": [
 			true,
 			{
-				"ignoreAtRules": [
-					"media",
-					"custom-media"
-				]
+				"ignoreAtRules": ["media", "custom-media"]
 			}
 		]
 	},

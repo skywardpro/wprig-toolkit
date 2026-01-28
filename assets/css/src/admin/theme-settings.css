@@ -10,14 +10,13 @@
 		width: 50%;
 		top: 50px;
 
-
 		.components-snackbar-list {
 			position: relative;
 
 			& > div {
 				position: relative;
 				left: 0;
-				animation: swipeIn .2s forwards;
+				animation: swipeIn 0.2s forwards;
 
 				.components-snackbar {
 					background: #3c8000;

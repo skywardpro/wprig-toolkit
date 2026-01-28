@@ -5,9 +5,7 @@
  * @package wp_rig
  */
 
-namespace WP_Rig\WP_Rig;
-
-?>
+namespace WP_Rig\WP_Rig; ?>
 
 <form id="example-form" class="form">
 
@@ -27,7 +25,9 @@ namespace WP_Rig\WP_Rig;
         <div class="form__field form__field--tel">
             <label for="form-phone">Phone Number <span class="color--red">*</span></label>
             <div class="is-flex w-100">
-                <?php get_template_part('template-parts/forms/countries-dropdown'); ?>
+                <?php get_template_part(
+                	'template-parts/forms/countries-dropdown',
+                ); ?>
                 <input type="tel" id="form-phone" name="phone" placeholder="+381 64 123 4567" required>
             </div>
         </div>

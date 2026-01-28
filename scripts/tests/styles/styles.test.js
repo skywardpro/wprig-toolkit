@@ -39,30 +39,30 @@ const concatStream = (callback) => {
 		flush(done) {
 			callback(objects);
 			done();
-		}
+		},
 	});
 };
 
 function makeMockFiles() {
 	return [
-		new Vinyl( {
+		new Vinyl({
 			path: 'mock.css',
-			contents: fs.readFileSync( `${ testPath }/styles/mock.css` ),
-		} ),
+			contents: fs.readFileSync(`${testPath}/styles/mock.css`),
+		}),
 	];
 }
 
-test( 'nesting', ( done ) => {
+test('nesting', (done) => {
 	const mockFiles = makeMockFiles();
 
 	const config = getThemeConfig();
 	// Force minification of CSS.
 	config.dev.debug.styles = false;
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).toContain( '.entry .inner' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).toContain('.entry .inner');
 	}
 
 	pipeline(
@@ -72,20 +72,20 @@ test( 'nesting', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'partials are imported', ( done ) => {
+test('partials are imported', (done) => {
 	const mockFiles = makeMockFiles();
 
 	const config = getThemeConfig();
 	// Force minification of CSS.
 	config.dev.debug.styles = false;
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).toContain( ':root' );
-		expect( fileContents ).toContain( '--global-font-color:#333' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).toContain(':root');
+		expect(fileContents).toContain('--global-font-color:#333');
 	}
 
 	pipeline(
@@ -95,20 +95,20 @@ test( 'partials are imported', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'custom properties processed', ( done ) => {
+test('custom properties processed', (done) => {
 	const mockFiles = makeMockFiles();
 
 	const config = getThemeConfig();
 	// Force minification of CSS.
 	config.dev.debug.styles = false;
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).toContain( 'color:#e36d60' );
-		expect( fileContents ).toContain( 'font-family:"Crimson Text",serif' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).toContain('color:#e36d60');
+		expect(fileContents).toContain('font-family:"Crimson Text",serif');
 	}
 
 	pipeline(
@@ -118,21 +118,19 @@ test( 'custom properties processed', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'custom media is processed', ( done ) => {
+test('custom media is processed', (done) => {
 	const mockFiles = makeMockFiles();
 
 	const config = getThemeConfig();
 	// Force minification of CSS.
 	config.dev.debug.styles = false;
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).toContain(
-			'@media screen and (min-width:48em)'
-		);
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).toContain('@media screen and (min-width:48em)');
 	}
 
 	pipeline(
@@ -142,9 +140,9 @@ test( 'custom media is processed', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'minifies by default', ( done ) => {
+test('minifies by default', (done) => {
 	const mockFiles = makeMockFiles();
 
 	const config = getThemeConfig();
@@ -152,12 +150,12 @@ test( 'minifies by default', ( done ) => {
 	const defaultConfig = getDefaultConfig();
 	config.dev.debug.styles = defaultConfig.dev.debug.styles;
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( file.basename ).toEqual( 'mock.min.css' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(file.basename).toEqual('mock.min.css');
 		// Minified files will not have newlines.
-		expect( fileContents ).not.toContain( '\n' );
+		expect(fileContents).not.toContain('\n');
 	}
 
 	pipeline(
@@ -167,19 +165,19 @@ test( 'minifies by default', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'debug config disables minify', ( done ) => {
+test('debug config disables minify', (done) => {
 	const config = getThemeConfig();
 	config.dev.debug.styles = true;
 
 	const mockFiles = makeMockFiles();
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
 		// Unminified files will have newlines.
-		expect( fileContents ).toContain( '\n' );
+		expect(fileContents).toContain('\n');
 	}
 
 	pipeline(
@@ -189,18 +187,18 @@ test( 'debug config disables minify', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'IE grid prefix if configured', ( done ) => {
+test('IE grid prefix if configured', (done) => {
 	const config = getThemeConfig();
 	config.dev.styles.autoprefixer = { grid: true };
 
 	const mockFiles = makeMockFiles();
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).toContain( '-ms-grid' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).toContain('-ms-grid');
 	}
 
 	pipeline(
@@ -210,9 +208,9 @@ test( 'IE grid prefix if configured', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});
 
-test( 'No IE grid prefix by default', ( done ) => {
+test('No IE grid prefix by default', (done) => {
 	const config = getThemeConfig();
 	// Set autoprefix to the default value.
 	const defaultConfig = getDefaultConfig();
@@ -220,10 +218,10 @@ test( 'No IE grid prefix by default', ( done ) => {
 
 	const mockFiles = makeMockFiles();
 
-	function assert( files ) {
-		const file = files[ 0 ];
-		const fileContents = file.contents.toString( 'utf-8' );
-		expect( fileContents ).not.toContain( '-ms-grid' );
+	function assert(files) {
+		const file = files[0];
+		const fileContents = file.contents.toString('utf-8');
+		expect(fileContents).not.toContain('-ms-grid');
 	}
 
 	pipeline(
@@ -233,4 +231,4 @@ test( 'No IE grid prefix by default', ( done ) => {
 	)
 		.then(() => done())
 		.catch(done);
-} );
+});

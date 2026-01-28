@@ -126,7 +126,7 @@
 /* stylelint-enable */
 
 /* Search widget */
-.widget_search input[type="search"] {
+.widget_search input[type='search'] {
 	box-sizing: border-box;
 	width: 100%;
 	padding: 0.5em 1em;

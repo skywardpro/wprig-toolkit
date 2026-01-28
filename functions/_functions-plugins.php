@@ -17,9 +17,9 @@
  *
  * @link https://contactform7.com/loading-javascript-and-stylesheet-only-when-it-is-necessary/
  */
-if ( constant( 'CF7_DISABLE_DEFAULT_LOADING_JS_CSS' ) === true ) {
-	add_filter( 'wpcf7_load_js', '__return_false' );
-	add_filter( 'wpcf7_load_css', '__return_false' );
+if (constant('CF7_DISABLE_DEFAULT_LOADING_JS_CSS') === true) {
+	add_filter('wpcf7_load_js', '__return_false');
+	add_filter('wpcf7_load_css', '__return_false');
 }
 
 /**
@@ -30,8 +30,8 @@ if ( constant( 'CF7_DISABLE_DEFAULT_LOADING_JS_CSS' ) === true ) {
  *
  * @link https://docs.wprig.org/coming-soon
  */
-if ( constant( 'CF7_CLEAN_MARKUP' ) === true ) {
-	add_filter( 'wpcf7_autop_or_not', '__return_false' );
+if (constant('CF7_CLEAN_MARKUP') === true) {
+	add_filter('wpcf7_autop_or_not', '__return_false');
 }
 
 /**
@@ -41,21 +41,25 @@ if ( constant( 'CF7_CLEAN_MARKUP' ) === true ) {
  *
  * @link https://docs.wprig.org/coming-soon
  */
-if ( constant( 'YOAST_BREADCRUMBS_CLEAN_SPAN' ) === true ) {
+if (constant('YOAST_BREADCRUMBS_CLEAN_SPAN') === true) {
 	/**
 	 * Filter the output of Yoast breadcrumbs to remove <span> tags added by the plugin.
 	 *
 	 * @param string $output The breadcrumb output.
 	 * @return string Modified breadcrumb output.
 	 */
-	function doublee_filter_yoast_breadcrumb_output( $output ) {
-		$from   = '<span>';
-		$to     = '</span>';
-		$output = str_replace( $from, $to, $output );
+	function doublee_filter_yoast_breadcrumb_output($output)
+	{
+		$from = '<span>';
+		$to = '</span>';
+		$output = str_replace($from, $to, $output);
 
 		return $output;
 	}
-	add_filter( 'wpseo_breadcrumb_output', 'doublee_filter_yoast_breadcrumb_output' );
+	add_filter(
+		'wpseo_breadcrumb_output',
+		'doublee_filter_yoast_breadcrumb_output',
+	);
 }
 
 /**
@@ -65,8 +69,8 @@ if ( constant( 'YOAST_BREADCRUMBS_CLEAN_SPAN' ) === true ) {
  *
  * @link https://docs.wprig.org/coming-soon
  */
-if ( constant( 'YOAST_SEARCHACTION_JSON_DISABLE' ) === true ) {
-	add_filter( 'disable_wpseo_json_ld_search', '__return_true' );
+if (constant('YOAST_SEARCHACTION_JSON_DISABLE') === true) {
+	add_filter('disable_wpseo_json_ld_search', '__return_true');
 }
 
 /**
@@ -77,6 +81,6 @@ if ( constant( 'YOAST_SEARCHACTION_JSON_DISABLE' ) === true ) {
  *
  * @link https://docs.wprig.org/coming-soon
  */
-if ( constant( 'ELEMENTOR_REMOVE_STANDART_FONTS' ) === true ) {
-	add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+if (constant('ELEMENTOR_REMOVE_STANDART_FONTS') === true) {
+	add_filter('elementor/frontend/print_google_fonts', '__return_false');
 }

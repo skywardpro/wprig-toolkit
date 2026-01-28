@@ -29,7 +29,6 @@ use function wp_localize_script;
  */
 class Component implements Component_Interface
 {
-
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
@@ -40,15 +39,13 @@ class Component implements Component_Interface
 		return 'simplebar';
 	}
 
-
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
 	public function initialize()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'action_activate_simplebar'), 200);
+		add_action('wp_enqueue_scripts', [$this, 'action_activate_simplebar'], 200);
 	}
-
 
 	/**
 	 * Enqueues scripts and styles.
@@ -59,9 +56,11 @@ class Component implements Component_Interface
 		wp_enqueue_script(
 			'simplebar',
 			get_theme_file_uri('/assets/js/vendor/simplebar/simplebar.min.js'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/vendor/simplebar/simplebar.min.js')),
-			true // Load in footer
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/vendor/simplebar/simplebar.min.js'),
+			),
+			true, // Load in footer
 		);
 
 		wp_script_add_data('simplebar', 'defer', true);
@@ -71,8 +70,10 @@ class Component implements Component_Interface
 		wp_enqueue_style(
 			'simplebar',
 			get_theme_file_uri('/assets/css/vendor/simplebar/simplebar.min.css'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/css/vendor/simplebar/simplebar.min.css'))
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/css/vendor/simplebar/simplebar.min.css'),
+			),
 		);
 	}
 }

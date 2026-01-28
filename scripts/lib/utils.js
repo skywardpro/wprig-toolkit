@@ -21,7 +21,7 @@ import {
 import config from '../../config/themeConfig.js';
 
 export const getDefaultConfig = () =>
-	import( `${ rootPath }/config/config.default.json` );
+	import(`${rootPath}/config/config.default.json`);
 
 /**
  * Get theme configuration.
@@ -29,32 +29,32 @@ export const getDefaultConfig = () =>
  * @return {Object} Theme configuration data.
  */
 export function getThemeConfig() {
-	if ( ! config.theme.slug ) {
+	if (!config.theme.slug) {
 		config.theme.slug = config.theme.name
 			.toLowerCase()
-			.replace( /[\s_]+/g, '-' )
-			.replace( /[^a-z0-9-]+/g, '' );
+			.replace(/[\s_]+/g, '-')
+			.replace(/[^a-z0-9-]+/g, '');
 	}
 
-	if ( ! config.theme.underscoreCase ) {
-		config.theme.underscoreCase = config.theme.slug.replace( /-/g, '_' );
+	if (!config.theme.underscoreCase) {
+		config.theme.underscoreCase = config.theme.slug.replace(/-/g, '_');
 	}
 
-	if ( ! config.theme.constant ) {
+	if (!config.theme.constant) {
 		config.theme.constant = config.theme.underscoreCase.toUpperCase();
 	}
 
-	if ( ! config.theme.camelCase ) {
+	if (!config.theme.camelCase) {
 		config.theme.camelCase = config.theme.slug
-			.split( '-' )
-			.map( ( part ) => part[ 0 ].toUpperCase() + part.substring( 1 ) )
-			.join( '' );
+			.split('-')
+			.map((part) => part[0].toUpperCase() + part.substring(1))
+			.join('');
 	}
 
-	if ( ! config.theme.camelCaseVar ) {
+	if (!config.theme.camelCaseVar) {
 		config.theme.camelCaseVar =
-			config.theme.camelCase[ 0 ].toLowerCase() +
-			config.theme.camelCase.substring( 1 );
+			config.theme.camelCase[0].toLowerCase() +
+			config.theme.camelCase.substring(1);
 	}
 
 	return config;
@@ -69,13 +69,13 @@ export function getThemeConfig() {
  * @param {string}        replacements[].replaceValue - The value to replace the found content with.
  * @return {Buffer} - A new buffer with applied replacements.
  */
-function processBuffer( content, replacements ) {
+function processBuffer(content, replacements) {
 	let contentStr = content.toString(); // Default UTF-8
-	replacements.forEach( ( { searchValue, replaceValue } ) => {
-		contentStr = contentStr.replace( searchValue, replaceValue );
-	} );
+	replacements.forEach(({ searchValue, replaceValue }) => {
+		contentStr = contentStr.replace(searchValue, replaceValue);
+	});
 	// eslint-disable-next-line no-undef
-	return Buffer.from( contentStr ); // Default UTF-8
+	return Buffer.from(contentStr); // Default UTF-8
 }
 
 /**
@@ -86,18 +86,19 @@ function processBuffer( content, replacements ) {
  * @param {string} replaceValue - The value to replace the found occurrences with.
  * @return {Transform} A transform stream that performs the replacements.
  */
-function createReplaceStream( searchValue, replaceValue ) {
+function createReplaceStream(searchValue, replaceValue) {
 	let buffer = '';
 
 	return new Transform({
-		transform( chunk, encoding, callback ) {
+		transform(chunk, encoding, callback) {
 			const str = buffer + chunk.toString();
-			const replaced = str.replace( searchValue, replaceValue );
+			const replaced = str.replace(searchValue, replaceValue);
 
 			// Keep a small buffer in case the search pattern spans chunk boundaries
-			const maxPatternLength = searchValue instanceof RegExp ?
-				100 : // Reasonable buffer size for regex
-				searchValue.length;
+			const maxPatternLength =
+				searchValue instanceof RegExp
+					? 100 // Reasonable buffer size for regex
+					: searchValue.length;
 
 			if (str.length > maxPatternLength) {
 				// Push most of the processed content, but keep a small buffer
@@ -110,13 +111,13 @@ function createReplaceStream( searchValue, replaceValue ) {
 
 			callback();
 		},
-		flush( callback ) {
+		flush(callback) {
 			// Process any remaining buffered content
 			if (buffer.length > 0) {
 				this.push(buffer.replace(searchValue, replaceValue));
 			}
 			callback();
-		}
+		},
 	});
 }
 
@@ -125,40 +126,38 @@ function createReplaceStream( searchValue, replaceValue ) {
  * @param {boolean} isProdFlag - Flag indicating whether it's in production mode.
  * @return {import('stream').Transform} - A stream transformation for string replacements.
  */
-export function getStringReplacementTasks( isProdFlag ) {
-	const themeConfig = getThemeConfig( isProdFlag ); // keep call signature intact
+export function getStringReplacementTasks(isProdFlag) {
+	const themeConfig = getThemeConfig(isProdFlag); // keep call signature intact
 
-	const replacements = Object.keys( nameFieldDefaults ).map(
-		( nameField ) => ( {
-			searchValue: new RegExp(
-				nameFieldDefaults[ nameField ].replace( /\\/g, '\\\\' ),
-				'g'
-			),
-			replaceValue: themeConfig.theme[ nameField ],
-		} )
-	);
+	const replacements = Object.keys(nameFieldDefaults).map((nameField) => ({
+		searchValue: new RegExp(
+			nameFieldDefaults[nameField].replace(/\\/g, '\\\\'),
+			'g'
+		),
+		replaceValue: themeConfig.theme[nameField],
+	}));
 
 	return new Transform({
 		objectMode: true,
 		transform(file, encoding, callback) {
-			if ( file.isBuffer() ) {
-				file.contents = processBuffer( file.contents, replacements );
-				callback( null, file );
-			} else if ( file.isStream() ) {
+			if (file.isBuffer()) {
+				file.contents = processBuffer(file.contents, replacements);
+				callback(null, file);
+			} else if (file.isStream()) {
 				let stream = file.contents;
 				replacements.forEach(
-					( { searchValue, replaceValue } ) =>
-						( stream = stream.pipe(
-							createReplaceStream( searchValue, replaceValue )
-						) )
+					({ searchValue, replaceValue }) =>
+						(stream = stream.pipe(
+							createReplaceStream(searchValue, replaceValue)
+						))
 				);
 				file.contents = stream;
-				stream.on( 'finish', () => callback( null, file ) );
-				stream.on( 'error', callback );
+				stream.on('finish', () => callback(null, file));
+				stream.on('error', callback);
 			} else {
-				callback( null, file );
+				callback(null, file);
 			}
-		}
+		},
 	});
 }
 
@@ -168,9 +167,9 @@ export function getStringReplacementTasks( isProdFlag ) {
  * @param {string} errorTitle - Title to describe where the error occurred.
  * @param {Object} error      - The error object to log.
  */
-export function logError( errorTitle = 'Task', error = {} ) {
+export function logError(errorTitle = 'Task', error = {}) {
 	console.error(
-		`[${ errorTitle }] Error: ${ error.message || 'An error occurred' }`
+		`[${errorTitle}] Error: ${error.message || 'An error occurred'}`
 	);
 }
 
@@ -182,15 +181,11 @@ export function logError( errorTitle = 'Task', error = {} ) {
  * @return {void} This function does not return any value.
  */
 export function createProdDir() {
-	log(
-		colors.green(
-			`Creating the production theme directory ${ prodThemePath }`
-		)
-	);
-	if ( fs.existsSync( prodThemePath ) ) {
-		rimraf.sync( prodThemePath );
+	log(colors.green(`Creating the production theme directory ${prodThemePath}`));
+	if (fs.existsSync(prodThemePath)) {
+		rimraf.sync(prodThemePath);
 	}
-	mkdirp( prodThemePath );
+	mkdirp(prodThemePath);
 }
 
 /**
@@ -201,8 +196,8 @@ export function createProdDir() {
  * @param {string} file.cwd  - The current working directory from which the relative path is calculated.
  * @return {string} The relative production file path based on the file's base and current working directory.
  */
-export function gulpRelativeDest( file ) {
-	return file.base.replace( file.cwd, prodThemePath );
+export function gulpRelativeDest(file) {
+	return file.base.replace(file.cwd, prodThemePath);
 }
 
 /**
@@ -211,14 +206,14 @@ export function gulpRelativeDest( file ) {
  * @param {string|string[]} path - The path or array of paths to be converted.
  * @return {string|string[]} The converted path or array of paths with backslashes replaced by forward slashes.
  */
-export function backslashToForwardSlash( path ) {
-	const replaceFn = ( p ) => p.replace( /\\/g, '/' );
-	if ( Array.isArray( path ) ) {
+export function backslashToForwardSlash(path) {
+	const replaceFn = (p) => p.replace(/\\/g, '/');
+	if (Array.isArray(path)) {
 		const paths = [];
-		path.forEach( ( p ) => paths.push( replaceFn( p ) ) );
+		path.forEach((p) => paths.push(replaceFn(p)));
 		return paths;
 	}
-	return replaceFn( path );
+	return replaceFn(path);
 }
 
 /**
@@ -226,29 +221,26 @@ export function backslashToForwardSlash( path ) {
  * @param {string} configValueLocation a config value path to search for, e.g. 'config.theme.slug'
  * @return {boolean} whethere the config value is defined
  */
-export function configValueDefined( configValueLocation ) {
-	if ( 0 === configValueLocation.length ) {
+export function configValueDefined(configValueLocation) {
+	if (0 === configValueLocation.length) {
 		return false;
 	}
 
 	let themeConfig = getThemeConfig();
 
-	const configValueLocationArray = configValueLocation.split( '.' );
+	const configValueLocationArray = configValueLocation.split('.');
 
-	if ( 'config' === configValueLocationArray[ 0 ] ) {
+	if ('config' === configValueLocationArray[0]) {
 		configValueLocationArray.shift();
 	}
 
-	for ( const currentValueLocation of configValueLocationArray ) {
+	for (const currentValueLocation of configValueLocationArray) {
 		if (
-			! Object.prototype.hasOwnProperty.call(
-				themeConfig,
-				currentValueLocation
-			)
+			!Object.prototype.hasOwnProperty.call(themeConfig, currentValueLocation)
 		) {
 			return false;
 		}
-		themeConfig = themeConfig[ currentValueLocation ];
+		themeConfig = themeConfig[currentValueLocation];
 	}
 
 	return true;
@@ -260,15 +252,15 @@ export function configValueDefined( configValueLocation ) {
  * @param {string}       basePath  the base path to append
  * @return {string|Array} file paths with base path appended
  */
-export function appendBaseToFilePathArray( filePaths, basePath ) {
-	if ( ! Array.isArray( filePaths ) ) {
-		return `${ basePath }/${ filePaths }`;
+export function appendBaseToFilePathArray(filePaths, basePath) {
+	if (!Array.isArray(filePaths)) {
+		return `${basePath}/${filePaths}`;
 	}
 
 	const output = [];
 
-	for ( const filePath of filePaths ) {
-		output.push( `${ basePath }/${ filePath }` );
+	for (const filePath of filePaths) {
+		output.push(`${basePath}/${filePath}`);
 	}
 
 	return output;
@@ -283,13 +275,13 @@ export function appendBaseToFilePathArray( filePaths, basePath ) {
  * @return {string} The modified code with the specified inline CSS class name
  * replaced.
  */
-export function replaceInlineCSS( code ) {
-	if ( ! isProd ) {
+export function replaceInlineCSS(code) {
+	if (!isProd) {
 		return code;
 	}
 	const searchValue = nameFieldDefaults.slug;
 	const replaceValue = config.theme.slug;
-	return code.replace( new RegExp( searchValue, 'g' ), replaceValue );
+	return code.replace(new RegExp(searchValue, 'g'), replaceValue);
 }
 
 /**
@@ -298,10 +290,10 @@ export function replaceInlineCSS( code ) {
  * @param {string} str - The input string containing words separated by hyphens.
  * @return {string} The converted string in camelCase notation.
  */
-function toCamelCase( str ) {
+function toCamelCase(str) {
 	return str
 		.toLowerCase()
-		.replace( /-([a-z])/g, ( match, group1 ) => group1.toUpperCase() );
+		.replace(/-([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
 /**
@@ -310,8 +302,8 @@ function toCamelCase( str ) {
  * @param {string} code - The inline JavaScript code that contains placeholders to be replaced.
  * @return {string} - The modified JavaScript code with placeholders replaced by their respective values.
  */
-export function replaceInlineJS( code ) {
-	if ( ! isProd ) {
+export function replaceInlineJS(code) {
+	if (!isProd) {
 		return code;
 	}
 	const replacements = [
@@ -320,19 +312,16 @@ export function replaceInlineJS( code ) {
 			replaceValue: config.theme.slug,
 		},
 		{
-			searchValue: toCamelCase( nameFieldDefaults.slug ),
-			replaceValue: toCamelCase( config.theme.slug ),
+			searchValue: toCamelCase(nameFieldDefaults.slug),
+			replaceValue: toCamelCase(config.theme.slug),
 		},
 	];
 
 	return code.replace(
-		new RegExp(
-			replacements.map( ( r ) => r.searchValue ).join( '|' ),
-			'g'
-		),
-		( match ) => {
-			const replacement = replacements.find( ( r ) =>
-				new RegExp( r.searchValue ).test( match )
+		new RegExp(replacements.map((r) => r.searchValue).join('|'), 'g'),
+		(match) => {
+			const replacement = replacements.find((r) =>
+				new RegExp(r.searchValue).test(match)
 			);
 			return replacement ? replacement.replaceValue : match;
 		}

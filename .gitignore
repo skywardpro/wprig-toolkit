@@ -1,18 +1,54 @@
-# Ignore everything:
+# =============================================================================
+# Project Structure
+# Ignore all files except explicitly specified directories and files
+# =============================================================================
+
+# Ignore everything in root
 /*
+
+# Exceptions: project directories
 !/.github/
 !/assets/
+!/languages/
+!/inc/
+!/template-parts/
+!/page-templates/
+!/config/
+!/wp-cli/
+!/tests/
+!/optional/
+!/scripts/
+!gulp/
+!node/
+
+# Exceptions: root theme files
+!style.css
+!/*.php
+!build-css.js
+!build-js.js
+!functions
+
+# =============================================================================
+# Assets: CSS
+# =============================================================================
 /assets/*
 !/assets/css/
 /assets/css/*
 !/assets/css/src/
 !/assets/css/vendor/
-!/assets/js/
+
+# =============================================================================
+# Assets: JavaScript
+# =============================================================================
 /assets/js/*
 !/assets/js/src/
 !/assets/js/vendor/
-!/assets/images/
+
+# =============================================================================
+# Assets: Images, SVG, Fonts, Data
+# =============================================================================
 /assets/images/*
+!/assets/images/src/
 !/assets/svg/
 !/assets/svg/*
 !/assets/fonts/
@@ -20,49 +56,60 @@
 !/assets/data/
 !/assets/data/*
 !/assets/data/**/*
-!/assets/images/src/
-!/languages/
-!gulp/
-!node/
-!style.css
-!/*.php
-!/inc/
-!/template-parts/
-!/page-templates/
-!/config/
-!/wp-cli/
-/config/config.json
-/config/config.local.json
-!/tests/
-!/optional/
-!/scripts/
-!build-css.js
-!build-js.js
-!functions
 
+# =============================================================================
+# Project Configuration Files
+# =============================================================================
 !.babelrc
-!.stylelintrc
-!.eslintrc
-!eslint.config.js
 !gulpfile.js
-!lint-css.js
 !composer.json
 !composer.lock
+!package.json
+!.gitignore
+!.browserslistrc
+!.travis.yml
+
+# Ignore local configuration files (don't commit personal settings)
+/config/config.json
+/config/config.local.json
+
+# =============================================================================
+# Documentation and License
+# =============================================================================
 !CHANGELOG.md
 !CONTRIBUTING.md
-!.editorconfig
-!.eslintignore
-!.eslintrc.json
-!.gitignore
+!README.md
+!readme.txt
 !LICENSE
-!package.json
+!screenshot.png
+
+# =============================================================================
+# Testing
+# =============================================================================
 !phpcs.xml.dist
 !phpunit.integration.xml.dist
 !phpunit.xml.dist
-!README.md
-!readme.txt
-!screenshot.png
-!.travis.yml
-!.browserslistrc
 
+# =============================================================================
+# Code Linting and Formatting
+# =============================================================================
+!.stylelintrc
+!.eslintrc
+!eslint.config.js
+!.eslintignore
+!.eslintrc.json
+!.prettierrc
+!.prettierignore
+!.editorconfig
+!lint-css.js
+
+# =============================================================================
+# Git Hooks
+# =============================================================================
+!.git-prehooks/
+!.git-prehooks/*
+
+# =============================================================================
+# System Files
+# =============================================================================
 *.DS_Store

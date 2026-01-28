@@ -24,69 +24,80 @@ use function wp_scripts;
  * * `wp_rig()->get_version()`
  * * `wp_rig()->get_asset_version( string $filepath )`
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'base_support';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'init', array( $this, 'action_title_tag_support' ), -999 );
-		add_action( 'after_setup_theme', array( $this, 'action_essential_theme_support' ), 1 );
-		add_action( 'wp_head', array( $this, 'action_add_pingback_header' ) );
-		add_filter( 'body_class', array( $this, 'filter_body_classes_add_hfeed' ) );
-		add_filter( 'embed_defaults', array( $this, 'filter_embed_dimensions' ) );
-		add_filter( 'theme_scandir_exclusions', array( $this, 'filter_scandir_exclusions_for_optional_templates' ) );
-		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
+	public function initialize()
+	{
+		add_action('init', [$this, 'action_title_tag_support'], -999);
+		add_action(
+			'after_setup_theme',
+			[$this, 'action_essential_theme_support'],
+			1,
+		);
+		add_action('wp_head', [$this, 'action_add_pingback_header']);
+		add_filter('body_class', [$this, 'filter_body_classes_add_hfeed']);
+		add_filter('embed_defaults', [$this, 'filter_embed_dimensions']);
+		add_filter('theme_scandir_exclusions', [
+			$this,
+			'filter_scandir_exclusions_for_optional_templates',
+		]);
+		add_filter('script_loader_tag', [$this, 'filter_script_loader_tag'], 10, 2);
 	}
 
 	/**
 	 * Adds title-tag theme support very early.
 	 */
-	public function action_title_tag_support() {
-		add_theme_support( 'title-tag' );
+	public function action_title_tag_support()
+	{
+		add_theme_support('title-tag');
 	}
 
 	/**
 	 * Adds theme support for essential features.
 	 */
-	public function action_essential_theme_support() {
+	public function action_essential_theme_support()
+	{
 		// Add default RSS feed links to head.
-		add_theme_support( 'automatic-feed-links' );
+		add_theme_support('automatic-feed-links');
 
 		// Ensure WordPress theme features render in HTML5 markup.
-		add_theme_support(
-			'html5',
-			array(
-				'search-form',
-				'comment-form',
-				'comment-list',
-				'gallery',
-				'caption',
-			)
-		);
+		add_theme_support('html5', [
+			'search-form',
+			'comment-form',
+			'comment-list',
+			'gallery',
+			'caption',
+		]);
 
 		// Add support for selective refresh for widgets.
-		add_theme_support( 'customize-selective-refresh-widgets' );
+		add_theme_support('customize-selective-refresh-widgets');
 
 		// Add support for responsive embedded content.
-		add_theme_support( 'responsive-embeds' );
+		add_theme_support('responsive-embeds');
 	}
 
 	/**
 	 * Adds a pingback url auto-discovery header for singularly identifiable articles.
 	 */
-	public function action_add_pingback_header() {
-		if ( is_singular() && pings_open() ) {
-			echo '<link rel="pingback" href="', esc_url( get_bloginfo( 'pingback_url' ) ), '">';
+	public function action_add_pingback_header()
+	{
+		if (is_singular() && pings_open()) {
+			echo '<link rel="pingback" href="',
+				esc_url(get_bloginfo('pingback_url')),
+				'">';
 		}
 	}
 
@@ -96,8 +107,9 @@ class Component implements Component_Interface {
 	 * @param array $classes Classes for the body element.
 	 * @return array Filtered body classes.
 	 */
-	public function filter_body_classes_add_hfeed( array $classes ): array {
-		if ( ! is_singular() ) {
+	public function filter_body_classes_add_hfeed(array $classes): array
+	{
+		if (!is_singular()) {
 			$classes[] = 'hfeed';
 		}
 
@@ -110,7 +122,8 @@ class Component implements Component_Interface {
 	 * @param array $dimensions An array of embed width and height values in pixels (in that order).
 	 * @return array Filtered dimensions array.
 	 */
-	public function filter_embed_dimensions( array $dimensions ): array {
+	public function filter_embed_dimensions(array $dimensions): array
+	{
 		$dimensions['width'] = 720;
 		return $dimensions;
 	}
@@ -123,11 +136,10 @@ class Component implements Component_Interface {
 	 * @param array $exclusions the default directories to exclude.
 	 * @return array Filtered exclusions.
 	 */
-	public function filter_scandir_exclusions_for_optional_templates( array $exclusions ): array {
-		return array_merge(
-			$exclusions,
-			array( 'optional' )
-		);
+	public function filter_scandir_exclusions_for_optional_templates(
+		array $exclusions,
+	): array {
+		return array_merge($exclusions, ['optional']);
 	}
 
 	/**
@@ -141,16 +153,16 @@ class Component implements Component_Interface {
 	 * @param string $handle The script handle.
 	 * @return string Script HTML string.
 	 */
-	public function filter_script_loader_tag( string $tag, string $handle ): string {
-
-		foreach ( array( 'async', 'defer' ) as $attr ) {
-			if ( ! wp_scripts()->get_data( $handle, $attr ) ) {
+	public function filter_script_loader_tag(string $tag, string $handle): string
+	{
+		foreach (['async', 'defer'] as $attr) {
+			if (!wp_scripts()->get_data($handle, $attr)) {
 				continue;
 			}
 
 			// Prevent adding attribute when already added in #12009.
-			if ( ! preg_match( ":\s$attr(=|>|\s):", $tag ) ) {
-				$tag = preg_replace( ':(?=></script>):', " $attr", $tag, 1 );
+			if (!preg_match(":\s$attr(=|>|\s):", $tag)) {
+				$tag = preg_replace(':(?=></script>):', " $attr", $tag, 1);
 			}
 
 			// Only allow async or defer, not both.

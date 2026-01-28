@@ -1,3 +1,3 @@
 export function initExampleElement() {
-    console.log('Example element initialized');
+	console.log('Example element initialized');
 }

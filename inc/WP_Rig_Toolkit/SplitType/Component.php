@@ -23,7 +23,6 @@ use function wp_localize_script;
  */
 class Component implements Component_Interface
 {
-
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
@@ -39,7 +38,7 @@ class Component implements Component_Interface
 	 */
 	public function initialize()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'action_enqueue_split_type'));
+		add_action('wp_enqueue_scripts', [$this, 'action_enqueue_split_type']);
 	}
 
 	/**
@@ -51,9 +50,11 @@ class Component implements Component_Interface
 		wp_enqueue_script(
 			'split-type',
 			get_theme_file_uri('/assets/js/vendor/split-type/splittype.min.js'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/vendor/split-type/splittype.min.js')),
-			false
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/vendor/split-type/splittype.min.js'),
+			),
+			false,
 		);
 		wp_script_add_data('split-type', 'defer', true);
 		wp_script_add_data('split-type', 'precache', true);

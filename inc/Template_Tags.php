@@ -22,7 +22,6 @@ use RuntimeException;
  */
 class Template_Tags
 {
-
 	/**
 	 * Associative array of all available template tags.
 	 *
@@ -30,7 +29,7 @@ class Template_Tags
 	 *
 	 * @var array
 	 */
-	protected $template_tags = array();
+	protected $template_tags = [];
 
 	/**
 	 * Constructor.
@@ -43,21 +42,22 @@ class Template_Tags
 	 * @throws InvalidArgumentException Thrown if one of the $components does not implement
 	 *                                  Templating_Component_Interface.
 	 */
-	public function __construct(array $components = array())
+	public function __construct(array $components = [])
 	{
-
 		// Set the template tags for the components.
 		foreach ($components as $component) {
-
 			// Bail if a templating component is invalid.
-			if (! $component instanceof Templating_Component_Interface) {
+			if (!$component instanceof Templating_Component_Interface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: classname/type of the variable, 2: interface name */
-						esc_html__('The theme templating component %1$s does not implement the %2$s interface.', 'wp-rig'),
+						esc_html__(
+							'The theme templating component %1$s does not implement the %2$s interface.',
+							'wp-rig',
+						),
 						esc_html(gettype($component)),
-						Templating_Component_Interface::class
-					)
+						Templating_Component_Interface::class,
+					),
 				);
 			}
 
@@ -78,17 +78,20 @@ class Template_Tags
 	 */
 	public function __call(string $method, array $args)
 	{
-		if (! isset($this->template_tags[$method])) {
+		if (!isset($this->template_tags[$method])) {
 			throw new BadMethodCallException(
 				sprintf(
 					/* translators: %s: template tag name */
 					esc_html__('The template tag %s does not exist.', 'wp-rig'),
-					'wp_rig()->' . esc_html($method) . '()'
-				)
+					'wp_rig()->' . esc_html($method) . '()',
+				),
 			);
 		}
 
-		return call_user_func_array($this->template_tags[$method]['callback'], $args);
+		return call_user_func_array(
+			$this->template_tags[$method]['callback'],
+			$args,
+		);
 	}
 
 	/**
@@ -99,23 +102,27 @@ class Template_Tags
 	 * @throws InvalidArgumentException Thrown when one of the template tags is invalid.
 	 * @throws RuntimeException         Thrown when one of the template tags conflicts with an existing one.
 	 */
-	protected function set_template_tags(Templating_Component_Interface $component)
-	{
+	protected function set_template_tags(
+		Templating_Component_Interface $component,
+	) {
 		$tags = $component->template_tags();
 
 		foreach ($tags as $method_name => $callback) {
 			if (is_callable($callback)) {
-				$callback = array('callback' => $callback);
+				$callback = ['callback' => $callback];
 			}
 
-			if (! is_array($callback) || ! isset($callback['callback'])) {
+			if (!is_array($callback) || !isset($callback['callback'])) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: template tag method name, 2: component class name */
-						esc_html__('The template tag method %1$s registered by theme component %2$s must either be a callable or an array.', 'wp-rig'),
+						esc_html__(
+							'The template tag method %1$s registered by theme component %2$s must either be a callable or an array.',
+							'wp-rig',
+						),
 						esc_html($method_name),
-						esc_html(get_class($component))
-					)
+						esc_html(get_class($component)),
+					),
 				);
 			}
 
@@ -123,10 +130,13 @@ class Template_Tags
 				throw new RuntimeException(
 					sprintf(
 						/* translators: 1: template tag method name, 2: component class name */
-						esc_html__('The template tag method %1$s registered by theme component %2$s conflicts with an already registered template tag of the same name.', 'wp-rig'),
+						esc_html__(
+							'The template tag method %1$s registered by theme component %2$s conflicts with an already registered template tag of the same name.',
+							'wp-rig',
+						),
 						esc_html($method_name),
-						esc_html(get_class($component))
-					)
+						esc_html(get_class($component)),
+					),
 				);
 			}
 
@@ -177,12 +187,25 @@ class Template_Tags
 	 *
 	 * @throws RuntimeException If the asset file cannot be read.
 	 */
-	public function get_theme_asset(string $filename, string $type = 'images', bool $content = false): ?string
-	{
-		$asset_path = get_template_directory() . '/assets/' . trim($type, '/') . '/' . $filename;
-		$asset_uri  = get_template_directory_uri() . '/assets/' . trim($type, '/') . '/' . $filename;
+	public function get_theme_asset(
+		string $filename,
+		string $type = 'images',
+		bool $content = false,
+	): ?string {
+		$asset_path =
+			get_template_directory() .
+			'/assets/' .
+			trim($type, '/') .
+			'/' .
+			$filename;
+		$asset_uri =
+			get_template_directory_uri() .
+			'/assets/' .
+			trim($type, '/') .
+			'/' .
+			$filename;
 
-		if (! file_exists($asset_path)) {
+		if (!file_exists($asset_path)) {
 			return null;
 		}
 
@@ -195,9 +218,12 @@ class Template_Tags
 					WP_Filesystem();
 				}
 
-				if (! $wp_filesystem) {
+				if (!$wp_filesystem) {
 					throw new RuntimeException(
-						esc_html__('WordPress filesystem is not initialized properly.', 'wp-rig')
+						esc_html__(
+							'WordPress filesystem is not initialized properly.',
+							'wp-rig',
+						),
 					);
 				}
 
@@ -207,8 +233,8 @@ class Template_Tags
 						sprintf(
 							/* translators: %s: asset file path */
 							esc_html__('Error reading asset file: %s', 'wp-rig'),
-							esc_html($asset_path)
-						)
+							esc_html($asset_path),
+						),
 					);
 				}
 				return $file_contents;
@@ -217,8 +243,8 @@ class Template_Tags
 					sprintf(
 						/* translators: %s: error message */
 						esc_html__('Failed to get asset contents: %s', 'wp-rig'),
-						esc_html($e->getMessage())
-					)
+						esc_html($e->getMessage()),
+					),
 				);
 			}
 		}
@@ -244,17 +270,17 @@ class Template_Tags
 			return self::$svg_cache;
 		}
 
-		self::$svg_cache = array();
+		self::$svg_cache = [];
 		$svg_dir = get_template_directory() . '/assets/svg/';
 
-		if (! is_dir($svg_dir)) {
+		if (!is_dir($svg_dir)) {
 			return self::$svg_cache;
 		}
 
 		// Use glob() for reliable file listing (normalize path for Windows)
 		$svg_dir_normalized = str_replace('\\', '/', $svg_dir);
 		$svg_files = glob($svg_dir_normalized . '*.svg');
-		if (! $svg_files || ! is_array($svg_files)) {
+		if (!$svg_files || !is_array($svg_files)) {
 			return self::$svg_cache;
 		}
 
@@ -268,7 +294,7 @@ class Template_Tags
 		foreach ($svg_files as $file_path) {
 			// Normalize path for Windows
 			$file_path_normalized = str_replace('\\', '/', $file_path);
-			if (! is_file($file_path_normalized)) {
+			if (!is_file($file_path_normalized)) {
 				continue;
 			}
 
@@ -279,9 +305,9 @@ class Template_Tags
 				$content = @file_get_contents($file_path_normalized);
 			}
 
-			if (false !== $content && ! empty($content)) {
+			if (false !== $content && !empty($content)) {
 				$file_name = basename($file_path_normalized, '.svg');
-				$filename  = strtolower($file_name);
+				$filename = strtolower($file_name);
 				self::$svg_cache[$filename] = $content;
 			}
 		}
@@ -326,9 +352,10 @@ class Template_Tags
 			return self::$svg_sprite_cache;
 		}
 
-		$sprite_path = get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
+		$sprite_path =
+			get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
 
-		if (! file_exists($sprite_path)) {
+		if (!file_exists($sprite_path)) {
 			return null;
 		}
 
@@ -346,7 +373,7 @@ class Template_Tags
 			$content = @file_get_contents($sprite_path);
 		}
 
-		if (false !== $content && ! empty($content)) {
+		if (false !== $content && !empty($content)) {
 			self::$svg_sprite_cache = $content;
 			return self::$svg_sprite_cache;
 		}
@@ -361,20 +388,23 @@ class Template_Tags
 	 * @param array $args Optional. Additional attributes for the SVG element.
 	 * @return string SVG markup with <use> element pointing to external sprite or empty string if sprite not found.
 	 */
-	public function get_svg_icon_from_sprite(string $icon_name, array $args = array()): string
-	{
+	public function get_svg_icon_from_sprite(
+		string $icon_name,
+		array $args = [],
+	): string {
 		// Check if sprite exists
-		$sprite_path = get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
-		if (! file_exists($sprite_path)) {
+		$sprite_path =
+			get_template_directory() . '/assets/images/icons/sprite-svg/sprite.svg';
+		if (!file_exists($sprite_path)) {
 			return '';
 		}
 
-		$defaults = array(
+		$defaults = [
 			'width' => '',
 			'height' => '',
 			'class' => '',
 			'style' => '',
-		);
+		];
 
 		$args = wp_parse_args($args, $defaults);
 
@@ -384,11 +414,22 @@ class Template_Tags
 			$icon_id = 'icon-' . $icon_name;
 		}
 
-		$sprite_url = esc_url(get_template_directory_uri() . '/assets/images/icons/sprite-svg/sprite.svg');
-		$width = ! empty($args['width']) ? ' width="' . esc_attr($args['width']) . '"' : '';
-		$height = ! empty($args['height']) ? ' height="' . esc_attr($args['height']) . '"' : '';
-		$class = ! empty($args['class']) ? ' class="' . esc_attr($args['class']) . '"' : '';
-		$style = ! empty($args['style']) ? ' style="' . esc_attr($args['style']) . '"' : '';
+		$sprite_url = esc_url(
+			get_template_directory_uri() .
+				'/assets/images/icons/sprite-svg/sprite.svg',
+		);
+		$width = !empty($args['width'])
+			? ' width="' . esc_attr($args['width']) . '"'
+			: '';
+		$height = !empty($args['height'])
+			? ' height="' . esc_attr($args['height']) . '"'
+			: '';
+		$class = !empty($args['class'])
+			? ' class="' . esc_attr($args['class']) . '"'
+			: '';
+		$style = !empty($args['style'])
+			? ' style="' . esc_attr($args['style']) . '"'
+			: '';
 
 		return sprintf(
 			'<svg%s%s%s%s><use href="%s#%s"></use></svg>',
@@ -397,7 +438,7 @@ class Template_Tags
 			$class,
 			$style,
 			$sprite_url,
-			esc_attr($icon_id)
+			esc_attr($icon_id),
 		);
 	}
 
@@ -408,8 +449,10 @@ class Template_Tags
 	 * @param array $args Optional. Additional attributes for the SVG element.
 	 * @return void
 	 */
-	public function the_svg_icon_from_sprite(string $icon_name, array $args = array()): void
-	{
+	public function the_svg_icon_from_sprite(
+		string $icon_name,
+		array $args = [],
+	): void {
 		echo $this->get_svg_icon_from_sprite($icon_name, $args);
 	}
 }

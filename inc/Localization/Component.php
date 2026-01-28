@@ -15,8 +15,8 @@ use function get_template_directory;
 /**
  * Class for managing localization.
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Absolute path to the translation directory.
 	 *
@@ -27,7 +27,8 @@ class Component implements Component_Interface {
 	/**
 	 * Constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		// Define the translation directory.
 		$this->translation_directory = get_template_directory() . '/languages';
 	}
@@ -37,21 +38,24 @@ class Component implements Component_Interface {
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'localization';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'after_setup_theme', array( $this, 'action_load_textdomain' ), 1 );
+	public function initialize()
+	{
+		add_action('after_setup_theme', [$this, 'action_load_textdomain'], 1);
 	}
 
 	/**
 	 * Loads the theme textdomain.
 	 */
-	public function action_load_textdomain() {
+	public function action_load_textdomain()
+	{
 		/*
 		 * Make the theme available for translation. Translations can be filed in the /languages/ directory.
 		 *
@@ -59,6 +63,6 @@ class Component implements Component_Interface {
 		 * should not bundle translations in your theme. In that case you also need to get rid of the
 		 * second parameter in the following function call.
 		 */
-		load_theme_textdomain( 'wp-rig', $this->translation_directory );
+		load_theme_textdomain('wp-rig', $this->translation_directory);
 	}
 }

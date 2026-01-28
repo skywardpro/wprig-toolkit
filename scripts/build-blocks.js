@@ -11,9 +11,7 @@ try {
 	console.log('Building blocks using @wordpress/scripts...');
 
 	// Run the appropriate npm script
-	const command = isWatchMode
-		? 'npm run start:blocks'
-		: 'npm run build:blocks';
+	const command = isWatchMode ? 'npm run start:blocks' : 'npm run build:blocks';
 
 	execSync(command, { stdio: 'inherit' });
 

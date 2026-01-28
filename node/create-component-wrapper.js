@@ -17,17 +17,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Get the directory name
-const __dirname = path.dirname( fileURLToPath( import.meta.url ) );
-const mainScriptPath = path.join( __dirname, 'create-rig-component.mjs' );
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const mainScriptPath = path.join(__dirname, 'create-rig-component.mjs');
 
 // Get all arguments
-const args = process.argv.slice( 2 );
+const args = process.argv.slice(2);
 
 // Forward arguments to the main script
-const child = spawn( 'node', [ mainScriptPath, ...args ], {
+const child = spawn('node', [mainScriptPath, ...args], {
 	stdio: 'inherit',
-} );
+});
 
-child.on( 'close', ( code ) => {
-	process.exit( code );
-} );
+child.on('close', (code) => {
+	process.exit(code);
+});

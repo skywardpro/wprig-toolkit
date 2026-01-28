@@ -7,8 +7,8 @@
  * Inspired by a Gist from @Eomerx: https://gist.github.com/Eomerx/d69ccaf5fec88040b431
  */
 
-@use "sass:list";
-@use "sass:meta";
+@use 'sass:list';
+@use 'sass:meta';
 
 // Define margin and padding values
 // Each key represents a spacing value in 0.1rem units (e.g., "2" = 0.2rem, "100" = 10rem)
@@ -16,83 +16,83 @@
 // Values from 100 to 200 (10rem to 20rem) use 0.4rem step (104, 108, 112, ... 200)
 // The "!important" rule is used to ensure that these spacing classes take precedence in styling conflicts.
 $space-values: (
-	"auto": auto !important,
-	"0": 0 !important,
-	"2": 0.2rem !important,
-	"4": 0.4rem !important,
-	"6": 0.6rem !important,
-	"8": 0.8rem !important,
-	"10": 1rem !important,
-	"12": 1.2rem !important,
-	"14": 1.4rem !important,
-	"16": 1.6rem !important,
-	"18": 1.8rem !important,
-	"20": 2rem !important,
-	"22": 2.2rem !important,
-	"24": 2.4rem !important,
-	"26": 2.6rem !important,
-	"28": 2.8rem !important,
-	"30": 3rem !important,
-	"32": 3.2rem !important,
-	"34": 3.4rem !important,
-	"36": 3.6rem !important,
-	"38": 3.8rem !important,
-	"40": 4rem !important,
-	"42": 4.2rem !important,
-	"44": 4.4rem !important,
-	"46": 4.6rem !important,
-	"48": 4.8rem !important,
-	"50": 5rem !important,
-	"52": 5.2rem !important,
-	"54": 5.4rem !important,
-	"56": 5.6rem !important,
-	"58": 5.8rem !important,
-	"60": 6rem !important,
-	"62": 6.2rem !important,
-	"64": 6.4rem !important,
-	"66": 6.6rem !important,
-	"68": 6.8rem !important,
-	"70": 7rem !important,
-	"72": 7.2rem !important,
-	"74": 7.4rem !important,
-	"76": 7.6rem !important,
-	"78": 7.8rem !important,
-	"80": 8rem !important,
-	"82": 8.2rem !important,
-	"84": 8.4rem !important,
-	"86": 8.6rem !important,
-	"88": 8.8rem !important,
-	"90": 9rem !important,
-	"92": 9.2rem !important,
-	"94": 9.4rem !important,
-	"96": 9.6rem !important,
-	"98": 9.8rem !important,
-	"100": 10rem !important,
-	"104": 10.4rem !important,
-	"108": 10.8rem !important,
-	"112": 11.2rem !important,
-	"116": 11.6rem !important,
-	"120": 12rem !important,
-	"124": 12.4rem !important,
-	"128": 12.8rem !important,
-	"132": 13.2rem !important,
-	"136": 13.6rem !important,
-	"140": 14rem !important,
-	"144": 14.4rem !important,
-	"148": 14.8rem !important,
-	"152": 15.2rem !important,
-	"156": 15.6rem !important,
-	"160": 16rem !important,
-	"164": 16.4rem !important,
-	"168": 16.8rem !important,
-	"172": 17.2rem !important,
-	"176": 17.6rem !important,
-	"180": 18rem !important,
-	"184": 18.4rem !important,
-	"188": 18.8rem !important,
-	"192": 19.2rem !important,
-	"196": 19.6rem !important,
-	"200": 20rem !important,
+	'auto': auto !important,
+	'0': 0 !important,
+	'2': 0.2rem !important,
+	'4': 0.4rem !important,
+	'6': 0.6rem !important,
+	'8': 0.8rem !important,
+	'10': 1rem !important,
+	'12': 1.2rem !important,
+	'14': 1.4rem !important,
+	'16': 1.6rem !important,
+	'18': 1.8rem !important,
+	'20': 2rem !important,
+	'22': 2.2rem !important,
+	'24': 2.4rem !important,
+	'26': 2.6rem !important,
+	'28': 2.8rem !important,
+	'30': 3rem !important,
+	'32': 3.2rem !important,
+	'34': 3.4rem !important,
+	'36': 3.6rem !important,
+	'38': 3.8rem !important,
+	'40': 4rem !important,
+	'42': 4.2rem !important,
+	'44': 4.4rem !important,
+	'46': 4.6rem !important,
+	'48': 4.8rem !important,
+	'50': 5rem !important,
+	'52': 5.2rem !important,
+	'54': 5.4rem !important,
+	'56': 5.6rem !important,
+	'58': 5.8rem !important,
+	'60': 6rem !important,
+	'62': 6.2rem !important,
+	'64': 6.4rem !important,
+	'66': 6.6rem !important,
+	'68': 6.8rem !important,
+	'70': 7rem !important,
+	'72': 7.2rem !important,
+	'74': 7.4rem !important,
+	'76': 7.6rem !important,
+	'78': 7.8rem !important,
+	'80': 8rem !important,
+	'82': 8.2rem !important,
+	'84': 8.4rem !important,
+	'86': 8.6rem !important,
+	'88': 8.8rem !important,
+	'90': 9rem !important,
+	'92': 9.2rem !important,
+	'94': 9.4rem !important,
+	'96': 9.6rem !important,
+	'98': 9.8rem !important,
+	'100': 10rem !important,
+	'104': 10.4rem !important,
+	'108': 10.8rem !important,
+	'112': 11.2rem !important,
+	'116': 11.6rem !important,
+	'120': 12rem !important,
+	'124': 12.4rem !important,
+	'128': 12.8rem !important,
+	'132': 13.2rem !important,
+	'136': 13.6rem !important,
+	'140': 14rem !important,
+	'144': 14.4rem !important,
+	'148': 14.8rem !important,
+	'152': 15.2rem !important,
+	'156': 15.6rem !important,
+	'160': 16rem !important,
+	'164': 16.4rem !important,
+	'168': 16.8rem !important,
+	'172': 17.2rem !important,
+	'176': 17.6rem !important,
+	'180': 18rem !important,
+	'184': 18.4rem !important,
+	'188': 18.8rem !important,
+	'192': 19.2rem !important,
+	'196': 19.6rem !important,
+	'200': 20rem !important,
 ) !default;
 
 // Margin and padding shorthand configurations
@@ -138,21 +138,16 @@ $breakpoints: (
 ) !default;
 
 @mixin print-default-values($breakpoint-name, $prefixes, $values) {
-
 	@each $attr-short, $attr-long in $prefixes {
-
 		@each $value-name, $value-size in $values {
-
 			.#{$attr-short}-#{$value-name} {
-
-				@if (meta.type-of($attr-long) == 'list' and list.length($attr-long) > 0) {
-
+				@if (
+					meta.type-of($attr-long) == 'list' and list.length($attr-long) > 0
+				) {
 					@each $a in $attr-long {
 						#{$a}: #{$value-size};
 					}
-				}
-
-				@else {
+				} @else {
 					#{$attr-long}: #{$value-size};
 				}
 			}
@@ -161,21 +156,16 @@ $breakpoints: (
 }
 
 @mixin print-values($breakpoint-name, $prefixes, $values) {
-
 	@each $attr-short, $attr-long in $prefixes {
-
 		@each $value-name, $value-size in $values {
-
 			.#{$attr-short}-#{$value-name}__#{$breakpoint-name} {
-
-				@if (meta.type-of($attr-long) == 'list' and list.length($attr-long) > 0) {
-
+				@if (
+					meta.type-of($attr-long) == 'list' and list.length($attr-long) > 0
+				) {
 					@each $a in $attr-long {
 						#{$a}: #{$value-size};
 					}
-				}
-
-				@else {
+				} @else {
 					#{$attr-long}: #{$value-size};
 				}
 			}
@@ -185,18 +175,14 @@ $breakpoints: (
 
 // Main function definition
 @mixin make-space($values, $prefixes, $breakpoints) {
-
 	@each $breakpoint-name, $breakpoint-value in $breakpoints {
 		// if xs value = 0, set it global without media queries
 		@if ($breakpoint-value == 0) {
-
 			@include print-default-values($breakpoint-name, $prefixes, $values);
 		}
 		// breakpoint values that not equal to 0
 		@else {
-
 			@media screen and (min-width: $breakpoint-value) {
-
 				@include print-values($breakpoint-name, $prefixes, $values);
 			}
 		}

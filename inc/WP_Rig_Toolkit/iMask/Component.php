@@ -20,38 +20,43 @@ use function wp_localize_script;
 /**
  * Class for managing iMask.
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug() : string {
+	public function get_slug(): string
+	{
 		return 'imask';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_enqueue_sticky_files' ) );
+	public function initialize()
+	{
+		add_action('wp_enqueue_scripts', [$this, 'action_enqueue_sticky_files']);
 	}
 
 	/**
 	 * Enqueues script.
 	 */
-	public function action_enqueue_sticky_files() {
+	public function action_enqueue_sticky_files()
+	{
 		// Enqueue the sticky script.
 		wp_enqueue_script(
 			'imask',
-			get_theme_file_uri( '/assets/js/vendor/imask/imask.min.js' ),
-			array(),
-			wp_rig()->get_asset_version( get_theme_file_path( '/assets/js/vendor/imask/imask.min.js' ) ),
-			false
+			get_theme_file_uri('/assets/js/vendor/imask/imask.min.js'),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/vendor/imask/imask.min.js'),
+			),
+			false,
 		);
 
-		wp_script_add_data( 'imask', 'defer', true );
-		wp_script_add_data( 'imask', 'precache', true );
+		wp_script_add_data('imask', 'defer', true);
+		wp_script_add_data('imask', 'precache', true);
 	}
 }

@@ -29,7 +29,6 @@ use function wp_localize_script;
  */
 class Component implements Component_Interface
 {
-
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
@@ -40,15 +39,17 @@ class Component implements Component_Interface
 		return 'lightgallery';
 	}
 
-
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
 	public function initialize()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'action_activate_lightgallery'), 200);
+		add_action(
+			'wp_enqueue_scripts',
+			[$this, 'action_activate_lightgallery'],
+			200,
+		);
 	}
-
 
 	/**
 	 * Enqueues scripts and styles.
@@ -58,10 +59,16 @@ class Component implements Component_Interface
 		// Enqueue scripts.
 		wp_enqueue_script(
 			'lightgallery',
-			get_theme_file_uri('/assets/js/vendor/lightgallery/lightgallery.umd.min.js'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/vendor/lightgallery/lightgallery.umd.min.js')),
-			true // Load in footer
+			get_theme_file_uri(
+				'/assets/js/vendor/lightgallery/lightgallery.umd.min.js',
+			),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path(
+					'/assets/js/vendor/lightgallery/lightgallery.umd.min.js',
+				),
+			),
+			true, // Load in footer
 		);
 
 		wp_script_add_data('lightgallery', 'defer', true);
@@ -70,9 +77,15 @@ class Component implements Component_Interface
 		// Enqueue styles.
 		wp_enqueue_style(
 			'lightgallery',
-			get_theme_file_uri('/assets/css/vendor/lightgallery/lightgallery-bundle.min.css'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/css/vendor/lightgallery/lightgallery-bundle.min.css'))
+			get_theme_file_uri(
+				'/assets/css/vendor/lightgallery/lightgallery-bundle.min.css',
+			),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path(
+					'/assets/css/vendor/lightgallery/lightgallery-bundle.min.css',
+				),
+			),
 		);
 	}
 }

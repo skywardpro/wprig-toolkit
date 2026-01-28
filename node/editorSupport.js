@@ -6,18 +6,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Initialize __dirname manually
-const __filename = fileURLToPath( import.meta.url );
-const __dirname = path.dirname( __filename );
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Specify the paths to the files you want to modify.
-const fseFolders = [ '../parts', '../templates' ];
+const fseFolders = ['../parts', '../templates'];
 
 /**
  * Generates a theme.json file in the theme's root directory.
  * This file provides default settings for the block editor.
  */
 function generateThemeJson() {
-	console.log( 'Generating theme.json...' );
+	console.log('Generating theme.json...');
 
 	// Define the structure and content of the theme.json file.
 	const themeJsonData = {
@@ -80,59 +80,51 @@ function generateThemeJson() {
 	};
 
 	// Define the output path for the theme.json file (theme root).
-	const outputPath = path.resolve( __dirname, '../theme.json' );
+	const outputPath = path.resolve(__dirname, '../theme.json');
 
 	// Write the theme.json file.
 	try {
-		fs.writeFileSync(
-			outputPath,
-			JSON.stringify( themeJsonData, null, 2 )
-		);
-		console.log(
-			`✅ theme.json generated successfully at ${ outputPath }`
-		);
-	} catch ( error ) {
-		console.error( `❌ Error generating theme.json: ${ error.message }` );
+		fs.writeFileSync(outputPath, JSON.stringify(themeJsonData, null, 2));
+		console.log(`✅ theme.json generated successfully at ${outputPath}`);
+	} catch (error) {
+		console.error(`❌ Error generating theme.json: ${error.message}`);
 	}
 }
 
-function checkAndCreateFolders( folderPaths ) {
-	folderPaths.forEach( ( folderPath ) => {
+function checkAndCreateFolders(folderPaths) {
+	folderPaths.forEach((folderPath) => {
 		try {
 			// Check if the folder exists.
-			const fullPath = path.resolve( __dirname, folderPath );
-			if ( ! fs.existsSync( fullPath ) ) {
+			const fullPath = path.resolve(__dirname, folderPath);
+			if (!fs.existsSync(fullPath)) {
 				// If the folder does not exist, create it.
-				fs.mkdirSync( fullPath );
-				console.log( `Folder "${ fullPath }" created.` );
+				fs.mkdirSync(fullPath);
+				console.log(`Folder "${fullPath}" created.`);
 			} else {
-				console.log( `Folder "${ fullPath }" already exists.` );
+				console.log(`Folder "${fullPath}" already exists.`);
 			}
-		} catch ( error ) {
+		} catch (error) {
 			console.error(
-				`Error checking/creating folder "${ folderPath }": ${ error.message }`
+				`Error checking/creating folder "${folderPath}": ${error.message}`
 			);
 		}
-	} );
+	});
 }
 
-function createIndexHtmlWithStarterContent( templatesFolderPath ) {
+function createIndexHtmlWithStarterContent(templatesFolderPath) {
 	try {
 		// Ensure the templates folder exists.
-		const fullTemplatesPath = path.resolve(
-			__dirname,
-			templatesFolderPath
-		);
-		if ( ! fs.existsSync( fullTemplatesPath ) ) {
-			fs.mkdirSync( fullTemplatesPath, { recursive: true } );
+		const fullTemplatesPath = path.resolve(__dirname, templatesFolderPath);
+		if (!fs.existsSync(fullTemplatesPath)) {
+			fs.mkdirSync(fullTemplatesPath, { recursive: true });
 		}
 
 		// Create the path for the new index.html file.
-		const indexPath = path.join( fullTemplatesPath, 'index.html' );
+		const indexPath = path.join(fullTemplatesPath, 'index.html');
 
 		// Check if the file already exists.
-		if ( fs.existsSync( indexPath ) ) {
-			console.log( `index.html already exists at ${ indexPath }.` );
+		if (fs.existsSync(indexPath)) {
+			console.log(`index.html already exists at ${indexPath}.`);
 			return;
 		}
 
@@ -150,17 +142,17 @@ function createIndexHtmlWithStarterContent( templatesFolderPath ) {
         `;
 
 		// Write starter content to index.html.
-		fs.writeFileSync( indexPath, starterContent, 'utf8' );
+		fs.writeFileSync(indexPath, starterContent, 'utf8');
 		console.log(
-			`index.html with starter content created at ${ indexPath } successfully.`
+			`index.html with starter content created at ${indexPath} successfully.`
 		);
-	} catch ( error ) {
-		console.error( `Error creating index.html: ${ error.message }` );
+	} catch (error) {
+		console.error(`Error creating index.html: ${error.message}`);
 	}
 }
 
 // --- SCRIPT EXECUTION ---
 
-checkAndCreateFolders( fseFolders );
-createIndexHtmlWithStarterContent( '../templates' );
+checkAndCreateFolders(fseFolders);
+createIndexHtmlWithStarterContent('../templates');
 generateThemeJson(); // Call the new function to create theme.json

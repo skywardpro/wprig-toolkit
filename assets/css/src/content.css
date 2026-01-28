@@ -15,8 +15,8 @@
 /*--------------------------------------------------------------
 # Imports
 --------------------------------------------------------------*/
-@import "_blocks.css";
-@import "_media.css";
+@import '_blocks.css';
+@import '_media.css';
 
 /*--------------------------------------------------------------
 # Post and page content
@@ -96,7 +96,6 @@
 }
 
 @media (--content-query) {
-
 	.entry-content > ul,
 	.entry-content > ol {
 		padding-left: 2.5em;
@@ -125,7 +124,6 @@
 }
 
 @media (--content-query) {
-
 	.entry-footer {
 		padding-right: 0;
 		padding-left: 0;
@@ -173,7 +171,6 @@
 }
 
 @media (--content-query) {
-
 	.page-content > .alignleft,
 	.entry-content > .alignleft,
 	.entry-summary > .alignleft {
@@ -188,7 +185,6 @@
 }
 
 @media (--sidebar-query) {
-
 	.has-sidebar .page-content > .alignleft,
 	.has-sidebar .entry-content > .alignleft,
 	.has-sidebar .entry-summary > .alignleft {
