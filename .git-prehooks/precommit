@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Run CSS linting
+echo "Running CSS linting..."
+npm run lint:css
+if [ $? -ne 0 ]; then
+    echo "❌ CSS linting failed. Commit aborted."
+    exit 1
+fi
+
+# Run Prettier to format files
+echo "Running Prettier..."
+npm run prettier:fix
+if [ $? -ne 0 ]; then
+    echo "❌ Prettier failed. Commit aborted."
+    exit 1
+fi
+
+# Add formatted files back to staging area
+git add -u
+
+echo "✅ Pre-commit checks passed!"
