@@ -24,7 +24,7 @@ if (is_home()) {
   <?php wp_rig()->the_svg_icon_from_sprite('baths', [
   	'width' => '30',
   	'height' => '30',
-  	'style' => 'fill: red;',
+  	'style' => 'fill: red; margin-right: 10px;',
   ]); ?>
 
 
