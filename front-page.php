@@ -27,6 +27,7 @@ if (is_home()) {
   	'style' => 'fill: red;',
   ]); ?>
 
+
   <svg width="20" height="20" style="fill: red;">
     <use href="<?php echo esc_url(
     	get_stylesheet_directory_uri(),
