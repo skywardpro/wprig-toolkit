@@ -6,7 +6,12 @@ const target = process.env.FILE || process.argv[2] || "assets/css/src";
 
 try {
 	// Run the Stylelint command on the resolved target
-	execSync(`npx stylelint "${target}"`, { stdio: "inherit" });
+	execSync(
+		`npx stylelint "${target}/**/*.css" --config .stylelintrc --fix`,
+		{
+			stdio: 'inherit',
+		}
+	);
 } catch (error) {
 	console.error("Stylelint failed. Check the error above."); // Log any errors
 	process.exit(1); // Ensure the script exits with a failure code

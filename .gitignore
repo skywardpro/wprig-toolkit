@@ -41,7 +41,7 @@
 !functions
 
 !.babelrc
-!.stylelintrcrc
+!.stylelintrc
 !.eslintrc
 !eslint.config.js
 !gulpfile.js

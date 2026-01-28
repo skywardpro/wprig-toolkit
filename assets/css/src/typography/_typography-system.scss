@@ -58,8 +58,10 @@ $breakpoints: (
 
 // Mixin to generate base typography styles.
 @mixin print-base-styles($styles) {
+
     @each $class, $style in $styles {
         .#{$class} {
+
             @each $property, $value in $style {
                 #{$property}: $value !important;
             }
@@ -69,11 +71,16 @@ $breakpoints: (
 
 // Mixin to generate responsive typography styles with specific class suffixes.
 @mixin print-responsive-styles($breakpoints, $styles) {
+
     @each $breakpoint-name, $breakpoint-value in $breakpoints {
+
         @if $breakpoint-value != 0 {
+
             @media (min-width: $breakpoint-value) {
+
                 @each $class, $style in $styles {
                     .#{$class}__#{$breakpoint-name} {
+
                         @each $property, $value in $style {
                             #{$property}: $value !important;
                         }
