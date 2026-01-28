@@ -9,7 +9,7 @@
 
 /* fix for sticky position for admins */
 .admin-bar .site-header.is-sticky {
-    top: 32px !important;
+	top: 32px !important;
 }
 
 .header-image {
@@ -65,7 +65,6 @@
 }
 
 @media (--narrow-menu-query) {
-
 	header#masthead:has(nav) {
 		display: flex;
 
@@ -91,7 +90,6 @@
 }
 
 nav div.wp-block-navigation__responsive-dialog {
-
 	@media (--narrow-menu-query) {
 		margin: 1em;
 	}

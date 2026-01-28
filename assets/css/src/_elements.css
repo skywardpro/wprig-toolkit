@@ -1,4 +1,4 @@
-@import "_custom-properties.css";
+@import '_custom-properties.css';
 
 /*--------------------------------------------------------------
 # Elements
@@ -53,8 +53,8 @@ ol {
 	list-style: decimal;
 }
 
-li>ul,
-li>ol {
+li > ul,
+li > ol {
 	margin-bottom: 0;
 }
 
@@ -84,7 +84,6 @@ table {
 	margin: 0 0 1.5em;
 	width: 100%;
 }
-
 
 .test-section {
 	display: grid;

@@ -10,12 +10,9 @@
 	--dropdown-symbol-width: 0.7em;
 
 	/* Typography */
-	--global-font-family: "Crimson Text", serif;
+	--global-font-family: 'Crimson Text', serif;
 	--highlight-font-family:
-		"Roboto Condensed",
-		"Helvetica Neue",
-		"Arial Narrow",
-		sans-serif;
+		'Roboto Condensed', 'Helvetica Neue', 'Arial Narrow', sans-serif;
 	--global-font-size: 1.6rem;
 	--global-line-height: 1.62;
 
@@ -70,12 +67,12 @@
 	--color-form-list-item-current: #e36d60;
 
 	/* Form validation colors */
-	--color-form-error: #FFF5F3;
-	--color-form-error-border: #F8C2C1;
-	--color-form-success: #F6FFF9;
-	--color-form-success-border: #48C1B5;
-	--color-form-warning: #FFF8EC;
-	--color-form-warning-border: #F7D9A4;
+	--color-form-error: #fff5f3;
+	--color-form-error-border: #f8c2c1;
+	--color-form-success: #f6fff9;
+	--color-form-success-border: #48c1b5;
+	--color-form-warning: #fff8ec;
+	--color-form-warning-border: #f7d9a4;
 
 	/* Selection color */
 	--color-selection: #41848f;

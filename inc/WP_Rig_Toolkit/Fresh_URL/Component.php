@@ -18,39 +18,42 @@ use function get_theme_file_path;
 use function wp_script_add_data;
 use function wp_localize_script;
 
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug() : string {
+	public function get_slug(): string
+	{
 		return 'fresh_url';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_activate_fresh_url' ), 200 );
+	public function initialize()
+	{
+		add_action('wp_enqueue_scripts', [$this, 'action_activate_fresh_url'], 200);
 	}
 
 	/**
 	 * Enqueues a script.
 	 */
-	public function action_activate_fresh_url() {
-
+	public function action_activate_fresh_url()
+	{
 		// Enqueue the Fresh_URL script.
 		wp_enqueue_script(
 			'fresh-url',
-			get_theme_file_uri( '/assets/js/vendor/fresh-url/fresh-url.min.js' ),
-			array(),
-			wp_rig()->get_asset_version( get_theme_file_path( '/assets/js/vendor/fresh-url/fresh-url.min.js' ) ),
-			false
+			get_theme_file_uri('/assets/js/vendor/fresh-url/fresh-url.min.js'),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/vendor/fresh-url/fresh-url.min.js'),
+			),
+			false,
 		);
-		wp_script_add_data( 'fresh-url', 'defer', true );
-		wp_script_add_data( 'fresh-url', 'precache', true );
-
+		wp_script_add_data('fresh-url', 'defer', true);
+		wp_script_add_data('fresh-url', 'precache', true);
 	}
 }

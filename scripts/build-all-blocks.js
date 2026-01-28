@@ -62,8 +62,7 @@ const transformImportsPlugin = {
 						const importLines = imports.split(',').map((item) => {
 							const parts = item.trim().split(' as ');
 							const importName = parts[0].trim();
-							const localName =
-								parts.length > 1 ? parts[1].trim() : importName;
+							const localName = parts.length > 1 ? parts[1].trim() : importName;
 
 							return `const ${localName} = ${globalPrefix}.${importName};`;
 						});
@@ -77,9 +76,7 @@ const transformImportsPlugin = {
 					/import\s+(\w+)\s+from\s+['"](@wordpress\/[^'"]+|react|react-dom)['"]/g,
 					(match, importName, pkg) => {
 						const globalVar = getWpGlobal(pkg);
-						console.log(
-							`Transforming default import ${pkg} to ${globalVar}`
-						);
+						console.log(`Transforming default import ${pkg} to ${globalVar}`);
 
 						return `const ${importName} = ${globalVar};`;
 					}
@@ -105,16 +102,12 @@ const transformImportsPlugin = {
 					transformedCode.includes('React,')
 				) {
 					console.log('Adding React availability check');
-					transformedCode =
-						'const React = window.React;\n' + transformedCode;
+					transformedCode = 'const React = window.React;\n' + transformedCode;
 				}
 
 				return {
 					contents: transformedCode,
-					loader:
-						path.extname(args.path).substring(1) === 'ts'
-							? 'ts'
-							: 'jsx',
+					loader: path.extname(args.path).substring(1) === 'ts' ? 'ts' : 'jsx',
 				};
 			} catch (error) {
 				return null; // Let esbuild handle it normally
@@ -182,9 +175,7 @@ try {
 			}
 
 			if (entryFiles.length === 0) {
-				console.log(
-					`No entry files found for block ${block}. Skipping.`
-				);
+				console.log(`No entry files found for block ${block}. Skipping.`);
 				continue;
 			}
 
@@ -200,9 +191,7 @@ try {
 					target: 'es2015',
 					format: 'iife',
 					globalName:
-						'WPRigBlock' +
-						block.charAt(0).toUpperCase() +
-						block.slice(1),
+						'WPRigBlock' + block.charAt(0).toUpperCase() + block.slice(1),
 					sourcemap: isWatch ? 'inline' : false,
 					jsx: 'transform',
 					jsxFactory: 'wp.element.createElement',

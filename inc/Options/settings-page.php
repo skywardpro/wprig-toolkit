@@ -6,11 +6,8 @@
  * @package wp_rig
  */
 
-wp_enqueue_style(
-	'wp-components'
-);
-?>
+wp_enqueue_style('wp-components'); ?>
 <div class="wrap">
-	<h1><?php esc_html_e( 'Theme Settings', 'wp-rig' ); ?></h1>
+	<h1><?php esc_html_e('Theme Settings', 'wp-rig'); ?></h1>
 	<div id="wp-rig-settings-page"></div>
-</div><?php
+</div>

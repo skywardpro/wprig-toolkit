@@ -50,26 +50,27 @@ WP Rig is built to lay a solid theme foundation, which makes it excellent for bo
 ### How to install WP Rig:
 
 1. Clone or download this repository to the themes folder of a WordPress site on your development environment.
-	- DO NOT give the WP Rig theme directory the same name as your eventual production theme. Suggested directory names
-	  are `wprig` or `wprig-themeslug`. For instance, if your theme will eventually be named “Excalibur” your
-	  development directory could be named `wprig-excalibur`. The `excalibur` directory will be automatically created
-	  during the production process and should not exist beforehand.
+   - DO NOT give the WP Rig theme directory the same name as your eventual production theme. Suggested directory names
+     are `wprig` or `wprig-themeslug`. For instance, if your theme will eventually be named “Excalibur” your
+     development directory could be named `wprig-excalibur`. The `excalibur` directory will be automatically created
+     during the production process and should not exist beforehand.
 2. Configure theme settings, including the theme slug and name.
-	- View `./config/config.default.json` for the default settings.
-	- Place custom theme settings in `./config/config.json` to override default settings.
-		- You do not have to include all settings from config.default.json. Just the settings you want to override.
-	- Place local-only theme settings in `./config/config.local.json`, e.g. potentially sensitive info like the path to
-	  your BrowserSync certificate.
-		- Again, only include the settings you want to override.
+   - View `./config/config.default.json` for the default settings.
+   - Place custom theme settings in `./config/config.json` to override default settings.
+     - You do not have to include all settings from config.default.json. Just the settings you want to override.
+   - Place local-only theme settings in `./config/config.local.json`, e.g. potentially sensitive info like the path to
+     your BrowserSync certificate.
+     - Again, only include the settings you want to override.
 3. In the command line, run `npm run rig-init` to install necessary node and Composer dependencies.
 4. In the command line, run `npm run dev` to process source files, build the development theme, and watch files for
    subsequent changes.
-	- `npm run build` can be used to process the source files and build the development theme without watching files
-	  afterwards.
-	- `npm run childify` can be used to convert your WP Rig theme into a lightweight child theme that inherits from any parent theme.
+   - `npm run build` can be used to process the source files and build the development theme without watching files
+     afterwards.
+   - `npm run childify` can be used to convert your WP Rig theme into a lightweight child theme that inherits from any parent theme.
 5. In WordPress admin, activate the WP Rig development theme.
 
 #### Recommended Git Workflow
+
 When working with WP Rig, it is important to understand the appropriate Git workflow depending on what you are working on.
 If you are using WP Rig as a starting point for a new theme, you should use the following workflow:
 
@@ -134,15 +135,18 @@ If your local environment uses a specific port number, for example, `8888`, add 
 4. The production theme can be activated or uploaded to a production environment.
 
 Build, watch, and bundle integration
+
 - JS: `build-js.js` discovers `assets/blocks/**/src/index.(js|ts|tsx)` (and optional `view.*`) and outputs to `assets/blocks/<slug>/build/`.
 - CSS: `build-css.js` compiles each block’s `style.css` -> `build/style.css` and `editor.css` -> `build/editor.css` (with sourcemaps in dev; none in build/bundle).
 - Dev/watch: `npm run dev` or `bun run dev` runs the dev servers and rebuilds on changes to any block’s `src` or CSS, with live reload.
 - Production: `npm run bundle` or `bun run bundle` includes the compiled block assets in the production bundle.
 
 i18n
+
 - Block JavaScript uses `@wordpress/i18n`. The CLI templates set the `textdomain` to your theme slug so WordPress can load translations automatically.
 
 Notes and validation
+
 - Namespacing: Use `<namespace>/<slug>`; namespace defaults to your theme’s slug if omitted.
 - If a directory already exists for the slug, `block:new` fails with a friendly message.
 - Dynamic vs static: Use `--dynamic` when you want server-side rendering via `render.php`. Otherwise, the block is static (no `render` in block.json).
@@ -150,7 +154,6 @@ Notes and validation
 We have a new Documentation area that can be found on the [WP Rig website](https://wprig.io/documentation/).
 If you would like to contribute to our documentation efforts, please submit a request on
 our [contribute page](https://wprig.io/contribute/) on our website.
-
 
 ### Wiki: Recommended code editor extensions
 
@@ -181,30 +184,32 @@ iterate quickly.
 For a faster, Vite-like development experience without BrowserSync, use the new modern dev server:
 
 - Configure your local proxy in config/config.json under dev.browserSync:
-	- live: true
-	- proxyURL: "localwprigenv.test" (or include a port, e.g., "localwprigenv.test:8888")
-	- https: false (set true if your local site is HTTPS)
-	- keyPath/certPath: file paths to your SSL key/cert if https is true
-	- devPort: 3000 (port for the local proxy server)
+  - live: true
+  - proxyURL: "localwprigenv.test" (or include a port, e.g., "localwprigenv.test:8888")
+  - https: false (set true if your local site is HTTPS)
+  - keyPath/certPath: file paths to your SSL key/cert if https is true
+  - devPort: 3000 (port for the local proxy server)
 - Start it with: npm run dev:modern
 - Visit: http://localhost:3000 (or https if configured)
 
 Notes
+
 - This should be considered a beta dev/watch server. We have not done enough testing to fully replace BrowserSync yet.
-However, the legacy system should be considered deprecated and will be fully replaced in later versions.
+  However, the legacy system should be considered deprecated and will be fully replaced in later versions.
 - Livereload is auto-injected only when browsing via the dev proxy. No code changes required.
 - JS is rebuilt with esbuild on save. CSS is built via Lightning CSS and watched for changes.
 - PHP/template edits trigger soft reloads.
 - Legacy dev flow is untouched; set dev.browserSync.live=false to disable modern server and use npm run dev instead.
 
 #### Debugging the modern dev server
+
 - Run in verbose mode: `npm run dev:modern:debug` (or `bun run dev:modern:debug`), which enables extra logging and stack traces.
 - Environment variable: set `WPRIG_DEBUG=1` to toggle debug logs.
 - Common checks:
-	- Ensure `config/config.json` has the correct `dev.browserSync.proxyURL` (and `https`, `keyPath`, `certPath` if needed).
-	- Verify ports are free: proxy `devPort` (default 3000) and LiveReload 35729. Change `devPort` in config if needed.
-	- If the process exits with code 1, re-run in debug to see detailed error logs.
-	- Check Node version (>= 20) and that dev deps are installed: `npm i`.
+  - Ensure `config/config.json` has the correct `dev.browserSync.proxyURL` (and `https`, `keyPath`, `certPath` if needed).
+  - Verify ports are free: proxy `devPort` (default 3000) and LiveReload 35729. Change `devPort` in config if needed.
+  - If the process exits with code 1, re-run in debug to see detailed error logs.
+  - Check Node version (>= 20) and that dev deps are installed: `npm i`.
 
 #### `translate` process
 
@@ -276,25 +281,26 @@ WP Rig includes a helper to strip classic-only code from the Base_Support compon
 
 - Command: `npm run block-based`
 - Options:
-	- `--dry-run` Print a summary of intended changes without writing any files.
-	- `--prune-html5` Also remove the `add_theme_support( 'html5', ... )` block if present.
-	- `--drop-title-tag` Also remove the `action_title_tag_support()` method and its `init` hook.
+  - `--dry-run` Print a summary of intended changes without writing any files.
+  - `--prune-html5` Also remove the `add_theme_support( 'html5', ... )` block if present.
+  - `--drop-title-tag` Also remove the `action_title_tag_support()` method and its `init` hook.
 
 What it removes by default:
+
 - initialize() hooks for: `action_add_pingback_header`, `filter_body_classes_add_hfeed`, `filter_embed_dimensions`, `filter_script_loader_tag`.
 - Entire method definitions for: `action_add_pingback_header()`, `filter_body_classes_add_hfeed()`, `filter_embed_dimensions()`, `filter_script_loader_tag()`.
 - `add_theme_support( 'automatic-feed-links' )` and `add_theme_support( 'customize-selective-refresh-widgets' )` inside `action_essential_theme_support()`.
 - Optional with flags: the HTML5 support block and title-tag support as described above.
 
 Notes:
+
 - Only the Base_Support file is modified: `inc/Base_Support/Component.php`.
 - The script is idempotent: running it multiple times after the first change will result in "unchanged".
 - When writing changes, a one-time backup is created at `inc/Base_Support/Component.php.bak`.
 - Example:
-	- `npm run block-based`
-	- `npm run block-based -- --dry-run`
-	- `npm run block-based -- --prune-html5 --drop-title-tag`
-
+  - `npm run block-based`
+  - `npm run block-based -- --dry-run`
+  - `npm run block-based -- --prune-html5 --drop-title-tag`
 
 #### WP CLI Commands
 
@@ -322,6 +328,7 @@ in `./config/config.default.json`. Place local-only/untracked theme settings in 
 example, if you want to set local information for BrowserSync.
 
 WP Rig ships with advanced features, including:
+
 - Easily add custom Customizer settings using .json file
 - Progressive loading of CSS
 - Modern CSS features and layouts
@@ -349,6 +356,7 @@ npm run create-rig-component "Related Posts" --templating --tests
 ```
 
 This command will:
+
 1. Create a new component at `inc/Related_Posts/Component.php`
 2. Implement both Component_Interface and Templating_Component_Interface
 3. Add an empty template_tags() method ready to be customized
@@ -356,47 +364,52 @@ This command will:
 5. Auto-register the component in Theme.php
 
 ### Theme-scoped Blocks (Gutenberg)
+
 WP Rig includes a built-in system for creating and managing theme-scoped Gutenberg blocks, powered by `@wordpress/create-block` under the hood and fully integrated with the theme’s build and dev workflows (Node and Bun).
 
 Key features:
+
 - Scaffold blocks inside the theme (never as a plugin) using `assets/blocks/<slug>/`.
 - Auto-registration: the theme automatically discovers and registers blocks on init.
 - Build integration: JS and CSS for blocks are built and watched by existing commands.
 - Supports both npm and bun for all commands.
 
 Quick start
+
 - Create a block (static):
-	- npm: `npm run block:new -- hero --title="Hero"` (namespace defaults to your theme slug)
-	- bun: `bun run block:new hero --title="Hero"`
+  - npm: `npm run block:new -- hero --title="Hero"` (namespace defaults to your theme slug)
+  - bun: `bun run block:new hero --title="Hero"`
 - Create a dynamic block (server-rendered with render.php):
-	- npm (simplest): `npm run block:new:dynamic testimonial` (title auto-generated from slug)
-	- npm (explicit flags): `npm run block:new -- testimonial -d --title="Testimonial"`
-	- bun: `bun run block:new testimonial -d --title="Testimonial"`
+  - npm (simplest): `npm run block:new:dynamic testimonial` (title auto-generated from slug)
+  - npm (explicit flags): `npm run block:new -- testimonial -d --title="Testimonial"`
+  - bun: `bun run block:new testimonial -d --title="Testimonial"`
 - List blocks: `npm run block:list` or `bun run block:list`
 - Remove a block (prompts to confirm): `npm run block:remove wprig/hero`
 - Promote to a plugin (exports minimal plugin skeleton): `npm run block:promote-plugin wprig/hero`
 
 Command reference
+
 - `block:new <namespace>/<slug>` or `<slug>`
-	- If no namespace is provided, it defaults to your theme slug from config (e.g., `wprig`).
-	- Options:
-		- `--title <string>`: Human title for the block
-		- `-d, --dynamic`: Generate a dynamic block with `render.php` and set `block.json.render` to `file:./render.php`
-		- `--ts`: Use TypeScript template (`.tsx`)
-		- `--category <string>`: Defaults to `widgets`
-		- `--icon <dashicon|svg>`
-		- `--description <string>`
-		- `--keywords "word1,word2"`
-		- `--no-style`: Do not create `style.css` or wire `file:./build/style.css`
-		- `--no-editor-style`: Do not create `editor.css` or wire `file:./build/editor.css`
-		- `--view`: Also generate an optional frontend-only script (`build/view.js`) and set `block.json.script`
-	- npm note: when passing flags via `npm run`, include a `--` before script args (e.g., `npm run block:new -- hero -d`).
+  - If no namespace is provided, it defaults to your theme slug from config (e.g., `wprig`).
+  - Options:
+    - `--title <string>`: Human title for the block
+    - `-d, --dynamic`: Generate a dynamic block with `render.php` and set `block.json.render` to `file:./render.php`
+    - `--ts`: Use TypeScript template (`.tsx`)
+    - `--category <string>`: Defaults to `widgets`
+    - `--icon <dashicon|svg>`
+    - `--description <string>`
+    - `--keywords "word1,word2"`
+    - `--no-style`: Do not create `style.css` or wire `file:./build/style.css`
+    - `--no-editor-style`: Do not create `editor.css` or wire `file:./build/editor.css`
+    - `--view`: Also generate an optional frontend-only script (`build/view.js`) and set `block.json.script`
+  - npm note: when passing flags via `npm run`, include a `--` before script args (e.g., `npm run block:new -- hero -d`).
 - `block:list` – prints discovered theme-scoped blocks.
 - `block:remove <namespace>/<slug>` – safe delete with confirmation prompt.
 - `block:promote-plugin <namespace>/<slug>` – exports the block to `optional/promoted-blocks/<slug>-block` with a minimal plugin wrapper.
 
 Filesystem layout
 Each block lives under `assets/blocks/<slug>/`:
+
 - `block.json`
 - `src/index.(js|ts|tsx)` – entry point (editorScript)
 - `src/edit.(js|ts|tsx)` – edit component
@@ -407,6 +420,7 @@ Each block lives under `assets/blocks/<slug>/`:
 
 block.json conventions
 WP Rig rewrites block.json so assets reference built files via `file:` protocol:
+
 - `editorScript: "file:./build/index.js"`
 - Optional `script: "file:./build/view.js"` when `--view` is used
 - `style: "file:./build/style.css"` (included by default; disable with `--no-style`)
@@ -415,13 +429,13 @@ WP Rig rewrites block.json so assets reference built files via `file:` protocol:
 - `textdomain` is set to the theme’s slug (from config)
 
 Auto-registration in PHP
+
 - The theme component at `inc/Blocks/Component.php` scans `assets/blocks/*/block.json` on `init`.
 - If `render.php` exists, it is automatically included before `register_block_type($dir)`.
 - No manual PHP changes are required after scaffolding a new block.
 
-
 For more information about the advanced features in WP Rig and how to use them, visit
-the [Advanced Features Wiki page](https://github.com/wprig/wprig/wiki/Advanced-Features-(and-how-to-use-them)).
+the [Advanced Features Wiki page](<https://github.com/wprig/wprig/wiki/Advanced-Features-(and-how-to-use-them)>).
 
 ## License
 

@@ -8,4 +8,4 @@ import { initExampleElement } from './elements/exampleElement';
 
 document.addEventListener('DOMContentLoaded', () => {
 	initExampleElement();
-});	
+});

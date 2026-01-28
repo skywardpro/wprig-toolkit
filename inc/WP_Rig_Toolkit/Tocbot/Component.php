@@ -20,49 +20,56 @@ use function wp_localize_script;
 /**
  * Class for managing Table of contents
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug() : string {
+	public function get_slug(): string
+	{
 		return 'table-of-contents__tocbot';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_enqueue_toc_files' ) );
+	public function initialize()
+	{
+		add_action('wp_enqueue_scripts', [$this, 'action_enqueue_toc_files']);
 	}
 
 	/**
 	 * Enqueues scripts and styles.
 	 */
-	public function action_enqueue_toc_files() {
-		if (is_singular( 'blog_post' ) ) {
+	public function action_enqueue_toc_files()
+	{
+		if (is_singular('blog_post')) {
 			// Enqueue script.
 			wp_enqueue_script(
 				'table_of_contents__tocbot',
-				get_theme_file_uri( '/assets/js/vendor/tocbot/tocbot.min.js' ),
-				array(),
-				wp_rig()->get_asset_version( get_theme_file_path( '/assets/js/vendor/tocbot/tocbot.min.js' ) ),
-				false
+				get_theme_file_uri('/assets/js/vendor/tocbot/tocbot.min.js'),
+				[],
+				wp_rig()->get_asset_version(
+					get_theme_file_path('/assets/js/vendor/tocbot/tocbot.min.js'),
+				),
+				false,
 			);
 		}
 
-		wp_script_add_data( 'table_of_contents__tocbot', 'defer', true );
-		wp_script_add_data( 'table_of_contents__tocbot', 'precache', true );
+		wp_script_add_data('table_of_contents__tocbot', 'defer', true);
+		wp_script_add_data('table_of_contents__tocbot', 'precache', true);
 
-		if (is_singular( 'blog_post' ) ) {
+		if (is_singular('blog_post')) {
 			// Enqueue styles.
 			wp_enqueue_style(
 				'table_of_contents__tocbot',
-				get_theme_file_uri( '/assets/css/vendor/tocbot/tocbot.min.css' ),
-				array(),
-				wp_rig()->get_asset_version( get_theme_file_path( '/assets/css/vendor/tocbot/tocbot.min.css' ) )
+				get_theme_file_uri('/assets/css/vendor/tocbot/tocbot.min.css'),
+				[],
+				wp_rig()->get_asset_version(
+					get_theme_file_path('/assets/css/vendor/tocbot/tocbot.min.css'),
+				),
 			);
 		}
 	}

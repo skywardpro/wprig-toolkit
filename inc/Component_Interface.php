@@ -10,8 +10,8 @@ namespace WP_Rig\WP_Rig;
 /**
  * Interface for a theme component.
  */
-interface Component_Interface {
-
+interface Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *

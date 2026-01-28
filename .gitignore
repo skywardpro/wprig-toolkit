@@ -44,6 +44,8 @@
 !.stylelintrc
 !.eslintrc
 !eslint.config.js
+!.prettierrc
+!.prettierignore
 !gulpfile.js
 !lint-css.js
 !composer.json

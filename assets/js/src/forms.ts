@@ -1,8 +1,8 @@
 /**
-* File forms.ts
-*
-* Contains functions, inits, and configurations for all sort of forms.
-*/
+ * File forms.ts
+ *
+ * Contains functions, inits, and configurations for all sort of forms.
+ */
 
 const FORMCARRY_ENDPOINT_FORM = 'https://formcarry.com/s/XXXXXXXXXXXX';
 
@@ -41,7 +41,9 @@ let countrySelectorInitialized = false; // Flag to track if country selector eve
 let countrySelectorHandler: ((e: Event) => void) | null = null; // Store the handler function
 
 // Function to initialize phone masking for specific forms (e.g., in modal)
-export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElement> | HTMLFormElement[]): Promise<void> {
+export async function initPhoneMaskingForForms(
+	forms?: NodeListOf<HTMLFormElement> | HTMLFormElement[]
+): Promise<void> {
 	if (typeof (window as any).IMask === 'undefined') {
 		console.warn('[Forms] IMask not available, phone masking will not work');
 		return;
@@ -51,14 +53,18 @@ export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElemen
 		const country = await getCountryFromClientIp();
 		if (country) {
 			// Get forms to initialize - if not provided, use all forms
-			const targetForms = forms ? Array.from(forms) : Array.from(document.querySelectorAll('form'));
-			
+			const targetForms = forms
+				? Array.from(forms)
+				: Array.from(document.querySelectorAll('form'));
+
 			targetForms.forEach((form) => {
 				// Skip if form doesn't have .form__countries selector
 				if (!form.querySelector('.form__countries')) {
 					return;
 				}
-				const phoneInputs = form.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
+				const phoneInputs = form.querySelectorAll(
+					'input[type="tel"]'
+				) as NodeListOf<HTMLInputElement>;
 				phoneInputs.forEach((phoneInput) => {
 					// Skip if already initialized
 					if (phoneMasks.has(phoneInput)) {
@@ -66,17 +72,21 @@ export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElemen
 					}
 
 					// Update flag and country code in selector for this form
-					const formCountries = form.querySelectorAll('.form__countries__current__flag img');
+					const formCountries = form.querySelectorAll(
+						'.form__countries__current__flag img'
+					);
 					formCountries.forEach((flag) => {
 						flag.setAttribute('src', country.flag);
 						flag.setAttribute('data-src', country.flag);
 					});
-					
-					const formCodes = form.querySelectorAll('.form__countries__current__code');
+
+					const formCodes = form.querySelectorAll(
+						'.form__countries__current__code'
+					);
 					formCodes.forEach((codeElement) => {
 						codeElement.textContent = country.code;
 					});
-					
+
 					// Create mask
 					const mask = (window as any).IMask(phoneInput, {
 						mask: country.mask,
@@ -85,30 +95,35 @@ export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElemen
 						autofix: true,
 					});
 					phoneMasks.set(phoneInput, mask);
-					
+
 					// Set placeholder
-					phoneInput.setAttribute('placeholder', country.mask.replaceAll('0', '0'));
+					phoneInput.setAttribute(
+						'placeholder',
+						country.mask.replaceAll('0', '0')
+					);
 					phoneInput.setAttribute('data-initialized', 'true');
 				});
 			});
-			
+
 			// Create countries list if it doesn't exist
 			const existingList = document.querySelector('.form__countries__list');
 			if (!existingList || existingList.children.length === 0) {
 				createCountriesList(country);
 			}
-			
+
 			// Initialize country selector handler if not already done
 			if (!countrySelectorInitialized && !countrySelectorHandler) {
 				countrySelectorHandler = (e: Event) => {
 					const target = e.target as HTMLElement;
 					if (
-						target.className === "form__countries__current" ||
-						target.className === "form__countries__current__flag" ||
-						target.className === "form__countries__current__arrow" ||
-						target.className === "form__countries__current__code"
+						target.className === 'form__countries__current' ||
+						target.className === 'form__countries__current__flag' ||
+						target.className === 'form__countries__current__arrow' ||
+						target.className === 'form__countries__current__code'
 					) {
-						const holder = target.closest('.form__countries')?.querySelector('.form__countries__list-holder') as HTMLElement;
+						const holder = target
+							.closest('.form__countries')
+							?.querySelector('.form__countries__list-holder') as HTMLElement;
 						if (holder) {
 							if (holder.classList.contains('show')) {
 								holder.classList.remove('show', 'show--top', 'show--bottom');
@@ -130,8 +145,10 @@ export async function initPhoneMaskingForForms(forms?: NodeListOf<HTMLFormElemen
 						}
 					}
 				};
-				
-				document.querySelector('body')?.addEventListener("click", countrySelectorHandler);
+
+				document
+					.querySelector('body')
+					?.addEventListener('click', countrySelectorHandler);
 				countrySelectorInitialized = true;
 			}
 		}
@@ -145,15 +162,31 @@ declare const IMask: any;
 
 type Errors = Record<string, string[]> | undefined;
 type Constraints = Record<string, any>;
-type SubmitButton = HTMLButtonElement | (HTMLInputElement & { type: 'submit' }) | HTMLSelectElement;
+type SubmitButton =
+	| HTMLButtonElement
+	| (HTMLInputElement & { type: 'submit' })
+	| HTMLSelectElement;
 type FormattedFormData = Record<string, any>;
 
 // Assume that validate is a globally available function (e.g. from validate.js)
 interface ValidateFunction {
-	(values: Record<string, unknown>, constraints: Record<string, unknown>): Record<string, string[]> | undefined;
+	(
+		values: Record<string, unknown>,
+		constraints: Record<string, unknown>
+	): Record<string, string[]> | undefined;
 	validators: {
-		file?: (value: File | undefined, options: { extensions?: string[]; maxSize?: number }) => string | undefined;
-		[key: string]: ((value: any, options?: any, key?: string, attributes?: any) => string | undefined) | undefined;
+		file?: (
+			value: File | undefined,
+			options: { extensions?: string[]; maxSize?: number }
+		) => string | undefined;
+		[key: string]:
+			| ((
+					value: any,
+					options?: any,
+					key?: string,
+					attributes?: any
+			  ) => string | undefined)
+			| undefined;
 	};
 }
 
@@ -185,21 +218,21 @@ const defaultFormConstraints: Record<string, Constraints> = {
 		phone: {
 			presence: {
 				allowEmpty: false,
-				message: "Phone number is required"
+				message: 'Phone number is required',
 			},
 			length: {
 				minimum: 7,
 				maximum: 20,
-				tooShort: "Phone number must be at least %{count} characters",
-				tooLong: "Phone number must be no more than %{count} characters"
+				tooShort: 'Phone number must be at least %{count} characters',
+				tooLong: 'Phone number must be no more than %{count} characters',
 			},
 			format: {
 				pattern: /^\+?[\d\s\-()]+$/,
-				message: "Phone number format is invalid"
-			}
+				message: 'Phone number format is invalid',
+			},
 		},
 	},
-	'default': {
+	default: {
 		email: {
 			presence: {
 				allowEmpty: false,
@@ -210,25 +243,25 @@ const defaultFormConstraints: Record<string, Constraints> = {
 				maximum: 50,
 			},
 		},
-	}
+	},
 };
 
 // Get form constraints from global variable or use defaults
 function getFormConstraints(formId: string | null): Constraints {
-	const globalConstraints = (window as any).formConstraints as Record<string, Constraints> | undefined;
+	const globalConstraints = (window as any).formConstraints as
+		| Record<string, Constraints>
+		| undefined;
 	const constraintsMap = globalConstraints || defaultFormConstraints;
-	
+
 	if (formId && constraintsMap[formId]) {
 		return constraintsMap[formId];
 	}
-	
+
 	return constraintsMap['default'] || defaultFormConstraints['default'];
 }
 
 // Function to update validation classes on submit
 function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
-
-
 	// Remove 'not-valid' class from all inputs
 	form.querySelectorAll('input').forEach((input) => {
 		input.classList.remove('not-valid');
@@ -239,18 +272,19 @@ function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
 		el.remove();
 	});
 
-
 	// Add 'not-valid' class to inputs with errors
 	let errorCounter = 0;
 	if (errors) {
 		Object.keys(errors).forEach((key) => {
 			errorCounter++;
-			const field = form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${key}"]`);
+			const field = form.querySelector<HTMLInputElement | HTMLSelectElement>(
+				`[name="${key}"]`
+			);
 			if (field) {
 				field.classList.add('not-valid');
 				// display error message under the input
 				const errorMsg = document.createElement('span');
-				errorMsg.classList.add('error-message', 'color--red')
+				errorMsg.classList.add('error-message', 'color--red');
 				errorMsg.innerText = errors[key][0];
 				field.after(errorMsg);
 			}
@@ -264,7 +298,10 @@ function updateValidationWarnings(errors: Errors, form: HTMLFormElement): void {
 }
 
 // Function to update validation on input change
-function updateValidationInputClass(errors: Errors, input: HTMLInputElement | HTMLSelectElement): void {
+function updateValidationInputClass(
+	errors: Errors,
+	input: HTMLInputElement | HTMLSelectElement
+): void {
 	// Add 'not-valid' class to inputs with errors
 	if (errors) {
 		input.classList.add('not-valid');
@@ -279,7 +316,7 @@ function validateField(event: Event, constraints: Constraints): void {
 	const target = event.target as HTMLInputElement;
 	const fieldName = target.name;
 	const value: Record<string, unknown> = {};
-	
+
 	// For phone inputs, use unmasked value for validation
 	if (target.type === 'tel' && phoneMasks.has(target)) {
 		const mask = phoneMasks.get(target);
@@ -303,9 +340,17 @@ function validateField(event: Event, constraints: Constraints): void {
 
 	// Log validation errors for debugging
 	if (errors && errors[fieldName]) {
-		console.error('[Forms] Validation errors for', fieldName, ':', errors[fieldName]);
+		console.error(
+			'[Forms] Validation errors for',
+			fieldName,
+			':',
+			errors[fieldName]
+		);
 		if (target.type === 'tel') {
-			console.log('[Forms] Phone unmasked value length:', value[fieldName] ? String(value[fieldName]).length : 0);
+			console.log(
+				'[Forms] Phone unmasked value length:',
+				value[fieldName] ? String(value[fieldName]).length : 0
+			);
 		}
 	}
 }
@@ -315,72 +360,72 @@ function correctEmailDomain(email: string): string {
 	// Define a map of typos and their corrections
 	const domainCorrections: Record<string, string> = {
 		// Common typos for .com
-		".con": ".com",
-		".cob": ".com",
-		".co,": ".com",
-		".cok": ".com",
-		".coj": ".com",
-		".vom": ".com",
-		".xom": ".com",
-		".cpm": ".com",
-		".cim": ".com",
+		'.con': '.com',
+		'.cob': '.com',
+		'.co,': '.com',
+		'.cok': '.com',
+		'.coj': '.com',
+		'.vom': '.com',
+		'.xom': '.com',
+		'.cpm': '.com',
+		'.cim': '.com',
 
 		// Common typos for .net
-		".ner": ".net",
-		".nrt": ".net",
-		".neq": ".net",
-		".met": ".net",
-		".nte": ".net",
-		".bet": ".net",
+		'.ner': '.net',
+		'.nrt': '.net',
+		'.neq': '.net',
+		'.met': '.net',
+		'.nte': '.net',
+		'.bet': '.net',
 
 		// Common typos for .org
-		".irg": ".org",
-		".prg": ".org",
-		".ogr": ".org",
-		".ofg": ".org",
-		".og": ".org",
-		".0rg": ".org",
+		'.irg': '.org',
+		'.prg': '.org',
+		'.ogr': '.org',
+		'.ofg': '.org',
+		'.og': '.org',
+		'.0rg': '.org',
 
 		// Common typos for .edu
-		".edj": ".edu",
-		".edk": ".edu",
-		".edl": ".edu",
-		".rdu": ".edu",
-		".esu": ".edu",
+		'.edj': '.edu',
+		'.edk': '.edu',
+		'.edl': '.edu',
+		'.rdu': '.edu',
+		'.esu': '.edu',
 
 		// Common typos for .gov
-		".gob": ".gov",
-		".gof": ".gov",
-		".g0v": ".gov",
-		".hov": ".gov",
-		".govb": ".gov",
+		'.gob': '.gov',
+		'.gof': '.gov',
+		'.g0v': '.gov',
+		'.hov': '.gov',
+		'.govb': '.gov',
 
 		// Common typos for .co (e.g., .co domains like example.co)
-		".cp": ".co",
-		".cp,": ".co",
-		".coo": ".co",
-		".ci": ".co",
-		".xo": ".co",
+		'.cp': '.co',
+		'.cp,': '.co',
+		'.coo': '.co',
+		'.ci': '.co',
+		'.xo': '.co',
 
 		// Common typos for .io (e.g., example.io)
-		".lo": ".io",
-		".i0": ".io",
-		".po": ".io",
-		".ik": ".io",
-		".jo": ".io",
+		'.lo': '.io',
+		'.i0': '.io',
+		'.po': '.io',
+		'.ik': '.io',
+		'.jo': '.io',
 
 		// Common typos for .biz
-		".buz": ".biz",
-		".viz": ".biz",
-		".bix": ".biz",
-		".biv": ".biz",
+		'.buz': '.biz',
+		'.viz': '.biz',
+		'.bix': '.biz',
+		'.biv': '.biz',
 
 		// Common typos for .info
-		".imfo": ".info",
-		".inro": ".info",
-		".ibfo": ".info",
-		".infp": ".info",
-		".9nfo": ".info",
+		'.imfo': '.info',
+		'.inro': '.info',
+		'.ibfo': '.info',
+		'.infp': '.info',
+		'.9nfo': '.info',
 	};
 
 	// Extract the domain part of the email
@@ -411,7 +456,7 @@ async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
 		// Check for Google reCAPTCHA v2/v3
 		if (typeof (window as any).grecaptcha !== 'undefined') {
 			const grecaptcha = (window as any).grecaptcha;
-			
+
 			// Try to find captcha widget in form
 			const captchaWidget = form.querySelector('[data-sitekey]') as HTMLElement;
 			if (captchaWidget) {
@@ -423,23 +468,28 @@ async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
 					}
 				}
 			}
-			
+
 			// For reCAPTCHA v3, execute with action
 			if (grecaptcha.execute) {
 				return new Promise((resolve) => {
-					grecaptcha.execute(CAPTCHA_SITE_KEY, { action: 'submit' }).then((token: string) => {
-						resolve(token);
-					}).catch(() => {
-						resolve(null);
-					});
+					grecaptcha
+						.execute(CAPTCHA_SITE_KEY, { action: 'submit' })
+						.then((token: string) => {
+							resolve(token);
+						})
+						.catch(() => {
+							resolve(null);
+						});
 				});
 			}
 		}
-		
+
 		// Check for Cloudflare Turnstile
 		if (typeof (window as any).turnstile !== 'undefined') {
 			const turnstile = (window as any).turnstile;
-			const turnstileWidget = form.querySelector('[data-sitekey]') as HTMLElement;
+			const turnstileWidget = form.querySelector(
+				'[data-sitekey]'
+			) as HTMLElement;
 			if (turnstileWidget) {
 				const widgetId = turnstileWidget.getAttribute('data-widget-id');
 				if (widgetId) {
@@ -450,11 +500,13 @@ async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
 				}
 			}
 		}
-		
+
 		// Check for hCaptcha
 		if (typeof (window as any).hcaptcha !== 'undefined') {
 			const hcaptcha = (window as any).hcaptcha;
-			const hcaptchaWidget = form.querySelector('[data-sitekey]') as HTMLElement;
+			const hcaptchaWidget = form.querySelector(
+				'[data-sitekey]'
+			) as HTMLElement;
 			if (hcaptchaWidget) {
 				const widgetId = hcaptchaWidget.getAttribute('data-widget-id');
 				if (widgetId) {
@@ -465,7 +517,7 @@ async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
 				}
 			}
 		}
-		
+
 		console.warn('[Forms] Captcha widget not found or not completed');
 		return null;
 	} catch (error) {
@@ -477,18 +529,22 @@ async function validateCaptcha(form: HTMLFormElement): Promise<string | null> {
 // Submit forms
 async function submitFormViaFormCarry(form: HTMLFormElement): Promise<void> {
 	console.log('[Forms] submitFormViaFormCarry called for form:', form.id);
-	
+
 	// Check if form is already submitting
 	if ((form as any)._isSubmitting) {
-		console.warn('[Forms] Form is already submitting, ignoring duplicate submission');
+		console.warn(
+			'[Forms] Form is already submitting, ignoring duplicate submission'
+		);
 		return;
 	}
-	
+
 	// Mark form as submitting
 	(form as any)._isSubmitting = true;
-	
+
 	// Disable submit button to prevent multiple submissions
-	const submitButton = form.querySelector<SubmitButton>('button[type="submit"], input[type="submit"]');
+	const submitButton = form.querySelector<SubmitButton>(
+		'button[type="submit"], input[type="submit"]'
+	);
 	if (submitButton) {
 		submitButton.disabled = true;
 		console.log('[Forms] Submit button disabled');
@@ -503,7 +559,7 @@ async function submitFormViaFormCarry(form: HTMLFormElement): Promise<void> {
 		}
 		return;
 	}
-	
+
 	console.log('[Forms] Form action:', formAction);
 
 	// Validate captcha if enabled
@@ -512,7 +568,11 @@ async function submitFormViaFormCarry(form: HTMLFormElement): Promise<void> {
 		captchaToken = await validateCaptcha(form);
 		if (!captchaToken) {
 			console.error('[Forms] Captcha validation failed');
-			showNotification(form, 'Please complete the captcha verification.', 'fail');
+			showNotification(
+				form,
+				'Please complete the captcha verification.',
+				'fail'
+			);
 			(form as any)._isSubmitting = false;
 			if (submitButton) {
 				submitButton.disabled = false;
@@ -542,12 +602,17 @@ async function submitFormViaFormCarry(form: HTMLFormElement): Promise<void> {
 }
 
 function resetFormFileInputs(form: HTMLFormElement) {
-	const fileInputs = form.querySelectorAll<HTMLInputElement>('input[type="file"]');
+	const fileInputs =
+		form.querySelectorAll<HTMLInputElement>('input[type="file"]');
 
 	fileInputs.forEach((input) => {
 		const parentForm = input.closest('form');
-		const spanLabel = parentForm?.querySelector('.form-file-label') as HTMLElement | null;
-		const spanRemoveFile = parentForm?.querySelector('.form-file-label__remove-file-btn__text') as HTMLElement | null;
+		const spanLabel = parentForm?.querySelector(
+			'.form-file-label'
+		) as HTMLElement | null;
+		const spanRemoveFile = parentForm?.querySelector(
+			'.form-file-label__remove-file-btn__text'
+		) as HTMLElement | null;
 
 		input.classList.remove('has-file');
 		if (spanLabel) spanLabel.classList.remove('has-file');
@@ -556,7 +621,11 @@ function resetFormFileInputs(form: HTMLFormElement) {
 	});
 }
 
-async function sendFormData(form: HTMLFormElement, data: FormattedFormData, submitButton: SubmitButton | null) {
+async function sendFormData(
+	form: HTMLFormElement,
+	data: FormattedFormData,
+	submitButton: SubmitButton | null
+) {
 	const formAction = getFormActionHref(form);
 	console.log('[Forms] Sending form data to:', formAction);
 	console.log('[Forms] Request payload:', data);
@@ -564,14 +633,14 @@ async function sendFormData(form: HTMLFormElement, data: FormattedFormData, subm
 	try {
 		const headers = {
 			'Content-Type': 'application/json',
-			'Accept': 'application/json'
+			Accept: 'application/json',
 		};
 
 		const response = await fetch(formAction, {
-				method: 'POST',
-				headers,
-				body: JSON.stringify(data)
-			});
+			method: 'POST',
+			headers,
+			body: JSON.stringify(data),
+		});
 
 		console.log('[Forms] Response status:', response.status);
 		console.log('[Forms] Response ok:', response.ok);
@@ -581,32 +650,64 @@ async function sendFormData(form: HTMLFormElement, data: FormattedFormData, subm
 			console.error('[Forms] Error response:', errorResponse);
 			switch (errorResponse.code) {
 				case 429:
-					showNotification(form, "Too many requests. Please try again in a few minutes.", "fail");
+					showNotification(
+						form,
+						'Too many requests. Please try again in a few minutes.',
+						'fail'
+					);
 					break;
 				case 422:
-					showNotification(form, "Please check the form fields and correct any errors.", "fail");
+					showNotification(
+						form,
+						'Please check the form fields and correct any errors.',
+						'fail'
+					);
 					break;
 				case 400:
-					showNotification(form, "Invalid request. Please check your input and try again.", "fail");
+					showNotification(
+						form,
+						'Invalid request. Please check your input and try again.',
+						'fail'
+					);
 					break;
 				case 403:
-					showNotification(form, "Access denied. Please refresh the page and try again.", "fail");
+					showNotification(
+						form,
+						'Access denied. Please refresh the page and try again.',
+						'fail'
+					);
 					break;
 				case 404:
-					showNotification(form, "Form endpoint not found. Please contact support.", "fail");
+					showNotification(
+						form,
+						'Form endpoint not found. Please contact support.',
+						'fail'
+					);
 					break;
 				case 500:
-					showNotification(form, "Server error occurred. Please try again later.", "fail");
+					showNotification(
+						form,
+						'Server error occurred. Please try again later.',
+						'fail'
+					);
 					break;
 				default:
-					showNotification(form, "An error occurred while processing your request. Please try again.", "fail");
+					showNotification(
+						form,
+						'An error occurred while processing your request. Please try again.',
+						'fail'
+					);
 					break;
 			}
 		} else {
 			const responseData = await response.json();
 			console.log('[Forms] Success response:', responseData);
-			if (responseData.status === "success") {
-				showNotification(form, "Your request is successfully received!", "success");
+			if (responseData.status === 'success') {
+				showNotification(
+					form,
+					'Your request is successfully received!',
+					'success'
+				);
 				form.reset();
 				resetFormFileInputs(form);
 
@@ -616,7 +717,7 @@ async function sendFormData(form: HTMLFormElement, data: FormattedFormData, subm
 		}
 	} catch (error) {
 		console.error('[Forms] Error sending form data:', error);
-		showNotification(form, "Error processing your request. Try again.", "fail");
+		showNotification(form, 'Error processing your request. Try again.', 'fail');
 	} finally {
 		// Reset submitting flag
 		(form as any)._isSubmitting = false;
@@ -637,7 +738,6 @@ async function sendFormData(form: HTMLFormElement, data: FormattedFormData, subm
  * @returns Structured object with field names as keys
  */
 function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
-
 	const formData = new FormData(form);
 	const formattedData: FormattedFormData = {};
 
@@ -646,11 +746,18 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 		if (inputName.endsWith('_complete')) {
 			return;
 		}
-		
-		const inputEl = form.querySelector(`[name="${inputName}"]`) as HTMLInputElement | HTMLSelectElement | null;
+
+		const inputEl = form.querySelector(`[name="${inputName}"]`) as
+			| HTMLInputElement
+			| HTMLSelectElement
+			| null;
 
 		// Handle multiple checkboxes
-		if (inputEl && inputEl instanceof HTMLInputElement && inputEl.type === "checkbox") {
+		if (
+			inputEl &&
+			inputEl instanceof HTMLInputElement &&
+			inputEl.type === 'checkbox'
+		) {
 			if (!formattedData[inputName]) {
 				formattedData[inputName] = [];
 			}
@@ -659,14 +766,21 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 			}
 		}
 		// Handle select elements
-		else if (inputEl && inputEl.tagName === "SELECT") {
+		else if (inputEl && inputEl.tagName === 'SELECT') {
 			const selectElement = inputEl as HTMLSelectElement;
-			formattedData[inputName] = selectElement.options[selectElement.selectedIndex].text;
+			formattedData[inputName] =
+				selectElement.options[selectElement.selectedIndex].text;
 		}
 		// Handle phone fields - use complete number if available
-		else if (inputEl && inputEl instanceof HTMLInputElement && inputEl.type === "tel") {
+		else if (
+			inputEl &&
+			inputEl instanceof HTMLInputElement &&
+			inputEl.type === 'tel'
+		) {
 			// Check if there's a hidden field with complete number
-			const completeInput = form.querySelector(`input[name="${inputName}_complete"]`) as HTMLInputElement;
+			const completeInput = form.querySelector(
+				`input[name="${inputName}_complete"]`
+			) as HTMLInputElement;
 			if (completeInput && completeInput.value) {
 				formattedData[inputName] = completeInput.value;
 			} else {
@@ -676,7 +790,7 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 		// Handle other form fields
 		else {
 			// Correct the email domain if the field is "email"
-			if (inputName === "email" && typeof inputValue === "string") {
+			if (inputName === 'email' && typeof inputValue === 'string') {
 				inputValue = correctEmailDomain(inputValue);
 			}
 			formattedData[inputName] = inputValue;
@@ -688,24 +802,26 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 
 // Helper function to check if form is a CF7 form
 function isCF7Form(form: HTMLFormElement): boolean {
-	return form.classList.contains('wpcf7-form') || 
-		   form.querySelector('.wpcf7-form-control-wrap') !== null ||
-		   form.hasAttribute('data-status') ||
-		   form.closest('.wpcf7') !== null;
+	return (
+		form.classList.contains('wpcf7-form') ||
+		form.querySelector('.wpcf7-form-control-wrap') !== null ||
+		form.hasAttribute('data-status') ||
+		form.closest('.wpcf7') !== null
+	);
 }
 
 // Attach input event listeners to all input fields
 export function attachFormValidation(): void {
 	// Регистрируем кастомный валидатор для файлов один раз
 	if (!validate.validators.file) {
-		validate.validators.file = function(value, options) {
+		validate.validators.file = function (value, options) {
 			if (!value) {
 				return; // presence проверяется отдельно
 			}
-			
+
 			// value будет объектом File
 			const file = value;
-			
+
 			// Проверка расширения
 			if (options.extensions && file.name) {
 				const ext = file.name.split('.').pop()?.toLowerCase();
@@ -713,12 +829,12 @@ export function attachFormValidation(): void {
 					return `resume must be one of the following extensions: ${options.extensions.join(', ')}`;
 				}
 			}
-			
+
 			// Проверка размера (в байтах)
 			if (options.maxSize && file.size > options.maxSize) {
 				return `resume size must be less than ${Math.round(options.maxSize / 1024 / 1024)} MB`;
 			}
-			
+
 			return undefined; // no errors
 		};
 	}
@@ -729,7 +845,7 @@ export function attachFormValidation(): void {
 			console.log('[Forms] Skipping CF7 form:', form.id || 'unnamed');
 			return;
 		}
-		
+
 		// Get constraints from global variables
 		const formId = form.getAttribute('id');
 		const constraints = getFormConstraints(formId);
@@ -741,15 +857,25 @@ export function attachFormValidation(): void {
 		// Listener to validate on input change and blur
 		form.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
 			// Validate on change (when user leaves the field)
-			input.addEventListener('change', (event) => validateField(event, constraints as Constraints));
+			input.addEventListener('change', (event) =>
+				validateField(event, constraints as Constraints)
+			);
 			// Also validate on blur for better UX (especially for phone numbers)
-			input.addEventListener('blur', (event) => validateField(event, constraints as Constraints));
+			input.addEventListener('blur', (event) =>
+				validateField(event, constraints as Constraints)
+			);
 		});
 
-		form.querySelectorAll<HTMLTextAreaElement>('textarea').forEach((textarea) => {
-			textarea.addEventListener('change', (event) => validateField(event, constraints as Constraints));
-			textarea.addEventListener('blur', (event) => validateField(event, constraints as Constraints));
-		});
+		form
+			.querySelectorAll<HTMLTextAreaElement>('textarea')
+			.forEach((textarea) => {
+				textarea.addEventListener('change', (event) =>
+					validateField(event, constraints as Constraints)
+				);
+				textarea.addEventListener('blur', (event) =>
+					validateField(event, constraints as Constraints)
+				);
+			});
 
 		// Validate select elements
 		form.querySelectorAll<HTMLSelectElement>('select').forEach((select) => {
@@ -781,15 +907,14 @@ export function attachFormValidation(): void {
 				target.value = target.value.slice(0, 30);
 			}
 		}
-		
 
 		// Add listeners for name inputs
-		const nameInputs = document.querySelectorAll<HTMLInputElement>('input[name="name"]');
+		const nameInputs =
+			document.querySelectorAll<HTMLInputElement>('input[name="name"]');
 
-		nameInputs.forEach(input => {
+		nameInputs.forEach((input) => {
 			input.addEventListener('input', restrictToLetters);
 		});
-
 
 		function restrictLargeEmail(event: Event): void {
 			const target = event.target as HTMLInputElement;
@@ -800,30 +925,39 @@ export function attachFormValidation(): void {
 			target.value = target.value.replace(/\s+/g, '');
 		}
 
-		const emailInputs = document.querySelectorAll<HTMLInputElement>('input[type="email"]');
-		emailInputs.forEach(input => {
+		const emailInputs = document.querySelectorAll<HTMLInputElement>(
+			'input[type="email"]'
+		);
+		emailInputs.forEach((input) => {
 			input.addEventListener('input', restrictLargeEmail);
 		});
 
 		// Phone input restrictions are handled by IMask, no need for additional restrictions
 
 		// Handle file inputs - add class when file is selected and update label
-		const fileInputs = form.querySelectorAll<HTMLInputElement>('input[type="file"]#form-resume');
-		fileInputs.forEach(input => {
-
+		const fileInputs = form.querySelectorAll<HTMLInputElement>(
+			'input[type="file"]#form-resume'
+		);
+		fileInputs.forEach((input) => {
 			const parentForm = input.closest('form');
 
 			if (!parentForm) return;
 
-			const spanLabel = parentForm.querySelector('.form-file-label') as HTMLElement;
+			const spanLabel = parentForm.querySelector(
+				'.form-file-label'
+			) as HTMLElement;
 
 			if (!spanLabel) return;
 
-			const spanRemoveFile = parentForm.querySelector('.form-file-label__remove-file-btn__text') as HTMLElement;
+			const spanRemoveFile = parentForm.querySelector(
+				'.form-file-label__remove-file-btn__text'
+			) as HTMLElement;
 
 			if (!spanRemoveFile) return;
 
-			const removeFileBtn = parentForm.querySelector('.form-file-label__remove-file-btn') as HTMLButtonElement;
+			const removeFileBtn = parentForm.querySelector(
+				'.form-file-label__remove-file-btn'
+			) as HTMLButtonElement;
 
 			// Function to update file state
 			const updateFileState = (files: FileList | null) => {
@@ -834,7 +968,8 @@ export function attachFormValidation(): void {
 					if (fileName.length > 15) {
 						const positionDot = fileName.lastIndexOf('.');
 						if (positionDot !== -1) {
-							fileName = fileName.slice(0, 15) + '... ' + fileName.slice(positionDot);
+							fileName =
+								fileName.slice(0, 15) + '... ' + fileName.slice(positionDot);
 						} else {
 							fileName = fileName.slice(0, 15) + '...';
 						}
@@ -853,15 +988,15 @@ export function attachFormValidation(): void {
 			if (input.files && input.files.length > 0) {
 				updateFileState(input.files);
 			}
-			
+
 			// Handle file input change
-			input.addEventListener('change', function() {
+			input.addEventListener('change', function () {
 				updateFileState(this.files);
 			});
 
 			// Handle remove file button
 			if (removeFileBtn) {
-				removeFileBtn.addEventListener('click', function(e) {
+				removeFileBtn.addEventListener('click', function (e) {
 					e.preventDefault();
 					e.stopPropagation();
 					updateFileState(null);
@@ -872,37 +1007,39 @@ export function attachFormValidation(): void {
 			const container = spanLabel.closest('.is-relative') as HTMLElement;
 			if (container) {
 				// Prevent default drag behaviors
-				['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-					container.addEventListener(eventName, function(e) {
+				['dragenter', 'dragover', 'dragleave', 'drop'].forEach((eventName) => {
+					container.addEventListener(eventName, function (e) {
 						e.preventDefault();
 						e.stopPropagation();
 					});
 				});
 
 				// Highlight drop area when item is dragged over it
-				container.addEventListener('dragenter', function() {
+				container.addEventListener('dragenter', function () {
 					container.classList.add('is-dragover');
 				});
 
-				container.addEventListener('dragleave', function(e) {
+				container.addEventListener('dragleave', function (e) {
 					// Only remove highlight if we're leaving the container itself
 					if (!container.contains(e.relatedTarget as Node)) {
 						container.classList.remove('is-dragover');
 					}
 				});
 
-				container.addEventListener('drop', function(e) {
+				container.addEventListener('drop', function (e) {
 					container.classList.remove('is-dragover');
-					
+
 					const dt = e.dataTransfer;
 					if (dt && dt.files && dt.files.length > 0) {
 						// Create a new FileList-like object and assign to input
 						const dataTransfer = new DataTransfer();
 						dataTransfer.items.add(dt.files[0]);
 						input.files = dataTransfer.files;
-						
+
 						// Trigger change event to update UI
-						const changeEvent = new Event('change', { bubbles: true });
+						const changeEvent = new Event('change', {
+							bubbles: true,
+						});
 						input.dispatchEvent(changeEvent);
 					}
 				});
@@ -913,114 +1050,136 @@ export function attachFormValidation(): void {
 
 		// Check if form already has submit handler to prevent duplicate handlers
 		if ((form as any)._formHandlerAttached) {
-			console.log('[Forms] Form', form.id, 'already has submit handler, skipping');
+			console.log(
+				'[Forms] Form',
+				form.id,
+				'already has submit handler, skipping'
+			);
 			return;
 		}
-		
+
 		// Mark form as having handler attached
 		(form as any)._formHandlerAttached = true;
 
 		// Handle form submission
-		form.addEventListener('submit', function (event: Event): void {
-			console.log('[Forms] Submit event triggered for form:', form.id);
-			event.preventDefault();
-			event.stopImmediatePropagation(); // Prevent other handlers
+		form.addEventListener(
+			'submit',
+			function (event: Event): void {
+				console.log('[Forms] Submit event triggered for form:', form.id);
+				event.preventDefault();
+				event.stopImmediatePropagation(); // Prevent other handlers
 
-			// Check if already submitting
-			if ((form as any)._isSubmitting) {
-				console.warn('[Forms] Form already submitting, preventing duplicate');
-				return;
-			}
-
-			const values: Record<string, any> = {};
-
-			form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((input) => {
-				// Обработка файлов
-				if (input instanceof HTMLInputElement && input.type === 'file') {
-					if (input.files && input.files.length > 0) {
-						values[input.name] = input.files[0]; // Передаем File объект для валидации
-					} else {
-						values[input.name] = undefined; // Для presence валидации
-					}
+				// Check if already submitting
+				if ((form as any)._isSubmitting) {
+					console.warn('[Forms] Form already submitting, preventing duplicate');
 					return;
 				}
 
-				if (
-					!(input instanceof HTMLTextAreaElement)
-					&& (input.type === 'radio' || input.type === 'checkbox')
-				) {
-					if (input.checked) {
-						if (!values[input.name]) {
-							values[input.name] = [];
-						}
-						values[input.name].push(input.value);
-					}
-				} else {
-					// For phone inputs, get unmasked value if IMask is available
-					if (input instanceof HTMLInputElement && input.type === 'tel') {
-						// Try to get unmasked value from IMask
-						if (phoneMasks.has(input)) {
-							const mask = phoneMasks.get(input);
-							const unmaskedValue = mask.unmaskedValue || '';
-							// Clean unmasked value to get only digits for validation
-							let cleanValue = unmaskedValue.replace(/[^\d+]/g, '');
-							// Remove leading + if present for length validation (we count only digits)
-							if (cleanValue.startsWith('+')) {
-								cleanValue = cleanValue.substring(1);
+				const values: Record<string, any> = {};
+
+				form
+					.querySelectorAll<
+						HTMLInputElement | HTMLTextAreaElement
+					>('input, textarea')
+					.forEach((input) => {
+						// Обработка файлов
+						if (input instanceof HTMLInputElement && input.type === 'file') {
+							if (input.files && input.files.length > 0) {
+								values[input.name] = input.files[0]; // Передаем File объект для валидации
+							} else {
+								values[input.name] = undefined; // Для presence валидации
 							}
-							values[input.name] = cleanValue || '';
+							return;
+						}
+
+						if (
+							!(input instanceof HTMLTextAreaElement) &&
+							(input.type === 'radio' || input.type === 'checkbox')
+						) {
+							if (input.checked) {
+								if (!values[input.name]) {
+									values[input.name] = [];
+								}
+								values[input.name].push(input.value);
+							}
 						} else {
-							// Remove mask characters manually if no mask instance
-							let cleanValue = input.value.replace(/[^\d+]/g, '');
-							if (cleanValue.startsWith('+')) {
-								cleanValue = cleanValue.substring(1);
+							// For phone inputs, get unmasked value if IMask is available
+							if (input instanceof HTMLInputElement && input.type === 'tel') {
+								// Try to get unmasked value from IMask
+								if (phoneMasks.has(input)) {
+									const mask = phoneMasks.get(input);
+									const unmaskedValue = mask.unmaskedValue || '';
+									// Clean unmasked value to get only digits for validation
+									let cleanValue = unmaskedValue.replace(/[^\d+]/g, '');
+									// Remove leading + if present for length validation (we count only digits)
+									if (cleanValue.startsWith('+')) {
+										cleanValue = cleanValue.substring(1);
+									}
+									values[input.name] = cleanValue || '';
+								} else {
+									// Remove mask characters manually if no mask instance
+									let cleanValue = input.value.replace(/[^\d+]/g, '');
+									if (cleanValue.startsWith('+')) {
+										cleanValue = cleanValue.substring(1);
+									}
+									values[input.name] = cleanValue || '';
+								}
+							} else {
+								values[input.name] = input.value;
 							}
-							values[input.name] = cleanValue || '';
 						}
-					} else {
-						values[input.name] = input.value;
+					});
+
+				// Convert single checkboxes and radios to single value instead of array
+				for (const key in values) {
+					if (Array.isArray(values[key]) && values[key].length === 1) {
+						values[key] = values[key][0];
 					}
 				}
-			});
 
-			// Convert single checkboxes and radios to single value instead of array
-			for (const key in values) {
-				if (Array.isArray(values[key]) && values[key].length === 1) {
-					values[key] = values[key][0];
+				console.log('[Forms] Form values for validation:', values);
+
+				// Validate the form
+				const errors = validate(values, currentConstraints);
+
+				// Update validation warning messages and hilights
+				updateValidationWarnings(errors, form);
+
+				if (errors) {
+					console.error('[Forms] Validation errors:', errors);
+				} else {
+					console.log('[Forms] Form validation passed, submitting...');
+					submitFormViaFormCarry(form).catch((error) => {
+						console.error('[Forms] Error submitting form:', error);
+						(form as any)._isSubmitting = false;
+						const submitButton = form.querySelector<SubmitButton>(
+							'button[type="submit"], input[type="submit"]'
+						);
+						if (submitButton) {
+							submitButton.disabled = false;
+						}
+					});
 				}
-			}
-
-			console.log('[Forms] Form values for validation:', values);
-
-			// Validate the form
-			const errors = validate(values, currentConstraints);
-
-			// Update validation warning messages and hilights
-			updateValidationWarnings(errors, form);
-
-			if (errors) {
-				console.error('[Forms] Validation errors:', errors);
-			} else {
-				console.log('[Forms] Form validation passed, submitting...');
-				submitFormViaFormCarry(form).catch((error) => {
-					console.error('[Forms] Error submitting form:', error);
-					(form as any)._isSubmitting = false;
-					const submitButton = form.querySelector<SubmitButton>('button[type="submit"], input[type="submit"]');
-					if (submitButton) {
-						submitButton.disabled = false;
-					}
-				});
-			}
-		}, { once: false }); // Allow multiple submissions but prevent duplicates with flag
+			},
+			{ once: false }
+		); // Allow multiple submissions but prevent duplicates with flag
 	});
 }
 
 /*
  * Custom notification for forms
  */
-function showNotification(form: HTMLFormElement, message: string, type: 'fail' | 'success'): void {
+function showNotification(
+	form: HTMLFormElement,
+	message: string,
+	type: 'fail' | 'success'
+): void {
 	const el = document.createElement('div');
-	el.classList.add('form-notification', 'typo--body-big__desktop', 'typo--medium');
+	el.classList.add(
+		'form-notification',
+		'typo--body-big__desktop',
+		'typo--medium'
+	);
 	el.textContent = message;
 	if (type === 'fail') {
 		el.classList.add('form-notification--failed');
@@ -1036,7 +1195,7 @@ function showNotification(form: HTMLFormElement, message: string, type: 'fail' |
 // Function to set the form action based on the form's ID
 function getFormActionHref(form: HTMLFormElement): string {
 	const formActions: Record<string, string> = {
-		'example-form': FORMCARRY_ENDPOINT_FORM
+		'example-form': FORMCARRY_ENDPOINT_FORM,
 	};
 
 	const formId = form.getAttribute('id') ?? '';
@@ -1051,7 +1210,10 @@ async function getCountryFromClientIp(): Promise<Country | null> {
 	try {
 		// If API key is not set, use default country
 		if (!IPSTACK_API_KEY) {
-			console.log('[Forms] IP Stack API key not set, using default country:', DEFAULT_COUNTRY_ISO);
+			console.log(
+				'[Forms] IP Stack API key not set, using default country:',
+				DEFAULT_COUNTRY_ISO
+			);
 			const countries = await fetchCountries();
 			const country = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
 			if (country) {
@@ -1080,14 +1242,17 @@ async function getCountryFromClientIp(): Promise<Country | null> {
 		if (country) {
 			return country;
 		}
-		
+
 		// If API call failed, fallback to default country
-		console.log('[Forms] Failed to detect country, using default country:', DEFAULT_COUNTRY_ISO);
+		console.log(
+			'[Forms] Failed to detect country, using default country:',
+			DEFAULT_COUNTRY_ISO
+		);
 		const defaultCountry = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
 		if (defaultCountry) {
 			return defaultCountry;
 		}
-		
+
 		return null;
 	} catch (error) {
 		console.error('[Forms] Error in processing:', error);
@@ -1096,7 +1261,10 @@ async function getCountryFromClientIp(): Promise<Country | null> {
 			const countries = await fetchCountries();
 			const defaultCountry = findCountryByIso(countries, DEFAULT_COUNTRY_ISO);
 			if (defaultCountry) {
-				console.log('[Forms] Using default country due to error:', DEFAULT_COUNTRY_ISO);
+				console.log(
+					'[Forms] Using default country due to error:',
+					DEFAULT_COUNTRY_ISO
+				);
 				return defaultCountry;
 			}
 		} catch (fetchError) {
@@ -1110,7 +1278,7 @@ function getClientIp(): Promise<string> {
 	if (!IPSTACK_API_KEY) {
 		return Promise.reject(new Error('IP Stack API key is not set'));
 	}
-	
+
 	const myUrl = `https://api.ipstack.com/check?access_key=${IPSTACK_API_KEY}`;
 	return fetch(myUrl)
 		.then((response) => {
@@ -1130,7 +1298,9 @@ function getClientIp(): Promise<string> {
 }
 
 function fetchCountries(): Promise<Country[]> {
-	return fetch((window as any).themeUrl?.baseUrl + '/assets/data/countries.json')
+	return fetch(
+		(window as any).themeUrl?.baseUrl + '/assets/data/countries.json'
+	)
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
@@ -1138,28 +1308,39 @@ function fetchCountries(): Promise<Country[]> {
 			return response.json();
 		})
 		.catch((error) => {
-			console.error('There has been a problem with your fetch operation:', error);
+			console.error(
+				'There has been a problem with your fetch operation:',
+				error
+			);
 			throw error;
 		});
 }
 
-function findCountryByIso(countries: Country[], isoCode: string): Country | undefined {
+function findCountryByIso(
+	countries: Country[],
+	isoCode: string
+): Country | undefined {
 	return countries.find((country) => country.iso === isoCode);
 }
 
 function resetPhoneField(phoneInput: HTMLInputElement): void {
-	const countryCodeElement = phoneInput.closest('.form__field--tel')?.querySelector('.form__countries__current__code');
+	const countryCodeElement = phoneInput
+		.closest('.form__field--tel')
+		?.querySelector('.form__countries__current__code');
 	const countryCode = countryCodeElement?.textContent || '';
-	
+
 	if (countryCode && phoneInput.value) {
 		// Remove all occurrences of the country code from the beginning
 		let cleanValue = phoneInput.value;
-		const countryCodePattern = new RegExp(`^${countryCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'g');
+		const countryCodePattern = new RegExp(
+			`^${countryCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`,
+			'g'
+		);
 		cleanValue = cleanValue.replace(countryCodePattern, '');
-		
+
 		// Remove any extra spaces at the beginning
 		cleanValue = cleanValue.trim();
-		
+
 		// Only update if we actually cleaned something
 		if (cleanValue !== phoneInput.value) {
 			phoneInput.value = cleanValue;
@@ -1168,31 +1349,36 @@ function resetPhoneField(phoneInput: HTMLInputElement): void {
 }
 
 function getCompletePhoneNumber(phoneInput: HTMLInputElement): string {
-	const countryCodeElement = phoneInput.closest('.form__field--tel')?.querySelector('.form__countries__current__code');
+	const countryCodeElement = phoneInput
+		.closest('.form__field--tel')
+		?.querySelector('.form__countries__current__code');
 	const countryCode = countryCodeElement?.textContent || '';
 	let phoneNumber = phoneInput.value || '';
-	
+
 	if (phoneNumber && countryCode) {
 		// Clean the phone number by removing any existing country codes
 		let cleanPhoneNumber = phoneNumber;
-		
+
 		// Remove the country code if it's already at the beginning
 		if (cleanPhoneNumber.startsWith(countryCode + ' ')) {
 			cleanPhoneNumber = cleanPhoneNumber.substring((countryCode + ' ').length);
 		}
-		
+
 		// Also check for multiple occurrences and clean them up
-		const countryCodePattern = new RegExp(`^${countryCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`, 'g');
+		const countryCodePattern = new RegExp(
+			`^${countryCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*`,
+			'g'
+		);
 		cleanPhoneNumber = cleanPhoneNumber.replace(countryCodePattern, '');
-		
+
 		// Remove any extra spaces at the beginning
 		cleanPhoneNumber = cleanPhoneNumber.trim();
-		
+
 		if (cleanPhoneNumber) {
 			// Clean the phone number to keep only digits and +
 			const cleanDigits = cleanPhoneNumber.replace(/[^\d+]/g, '');
 			const completeNumber = countryCode.replace(/[^\d+]/g, '') + cleanDigits;
-			
+
 			return completeNumber;
 		} else {
 			// If no phone number left after cleaning, just return the country code
@@ -1200,39 +1386,49 @@ function getCompletePhoneNumber(phoneInput: HTMLInputElement): string {
 			return cleanCountryCode;
 		}
 	}
-	
+
 	return phoneNumber;
 }
 
 function setNewCountry(el: HTMLElement): void {
-	document.querySelectorAll('.form__countries__list-holder').forEach((phoneList) => {
-		phoneList.classList.remove('show');
-		(phoneList as HTMLElement).style.display = 'none';
-	});
+	document
+		.querySelectorAll('.form__countries__list-holder')
+		.forEach((phoneList) => {
+			phoneList.classList.remove('show');
+			(phoneList as HTMLElement).style.display = 'none';
+		});
 
-	document.querySelectorAll('.form__countries__list__item').forEach((countryListItem) => {
-		countryListItem.classList.remove('active');
-		(countryListItem as HTMLElement).style.display = 'flex';
-	});
+	document
+		.querySelectorAll('.form__countries__list__item')
+		.forEach((countryListItem) => {
+			countryListItem.classList.remove('active');
+			(countryListItem as HTMLElement).style.display = 'flex';
+		});
 
 	const code = el.getAttribute('code');
 	const mask = el.getAttribute('mask');
 	const image = el.getAttribute('image-url');
-	
+
 	if (!code || !mask || !image) return;
 
 	// Update flag and country code in selector
-	document.querySelectorAll('.form__countries__current__flag img').forEach(el => {
-		el.setAttribute('src', image);
-		el.setAttribute('data-src', image);
-	});
-	
-	// Update country code in selector
-	document.querySelectorAll('.form__countries__current__code').forEach((codeElement) => {
-		codeElement.textContent = code;
-	});
+	document
+		.querySelectorAll('.form__countries__current__flag img')
+		.forEach((el) => {
+			el.setAttribute('src', image);
+			el.setAttribute('data-src', image);
+		});
 
-	const phoneInputs = document.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
+	// Update country code in selector
+	document
+		.querySelectorAll('.form__countries__current__code')
+		.forEach((codeElement) => {
+			codeElement.textContent = code;
+		});
+
+	const phoneInputs = document.querySelectorAll(
+		'input[type="tel"]'
+	) as NodeListOf<HTMLInputElement>;
 	phoneInputs.forEach((phoneInput) => {
 		if (phoneMasks.has(phoneInput)) {
 			phoneMasks.get(phoneInput).destroy();
@@ -1256,9 +1452,11 @@ function setNewCountry(el: HTMLElement): void {
 		phoneInput.setAttribute('placeholder', mask.replaceAll('0', '0'));
 	});
 
-	document.querySelectorAll('.form__countries__list__item[code="' + code + '"]').forEach((countryListItemCurrent) => {
-		countryListItemCurrent.classList.add('active');
-	});
+	document
+		.querySelectorAll('.form__countries__list__item[code="' + code + '"]')
+		.forEach((countryListItemCurrent) => {
+			countryListItemCurrent.classList.add('active');
+		});
 }
 
 function createCountriesList(currentCountry: Country | null): void {
@@ -1267,7 +1465,8 @@ function createCountriesList(currentCountry: Country | null): void {
 			let listHtml = '';
 
 			countries.forEach((country) => {
-				const activeClass = currentCountry && country.iso === currentCountry.iso ? 'active' : '';
+				const activeClass =
+					currentCountry && country.iso === currentCountry.iso ? 'active' : '';
 				const countryCode = country.code.replaceAll('\\', '');
 				listHtml += `
 					<div class="form__countries__list__item ${activeClass}" image-url="${country.flag}" code="${countryCode}" mask="${country.mask}">
@@ -1281,20 +1480,30 @@ function createCountriesList(currentCountry: Country | null): void {
 				phoneList.innerHTML = listHtml;
 			});
 
-			document.querySelectorAll('.form__countries__list__item').forEach((countryElement) => {
-				countryElement.addEventListener('click', function () {
-					setNewCountry(this as HTMLElement);
+			document
+				.querySelectorAll('.form__countries__list__item')
+				.forEach((countryElement) => {
+					countryElement.addEventListener('click', function () {
+						setNewCountry(this as HTMLElement);
+					});
 				});
-			});
 
-			const searchInputs = document.querySelectorAll('#countrySearchInput') as NodeListOf<HTMLInputElement>;
+			const searchInputs = document.querySelectorAll(
+				'#countrySearchInput'
+			) as NodeListOf<HTMLInputElement>;
 			searchInputs.forEach((searchInput) => {
 				searchInput.addEventListener('input', function () {
 					const searchValue = this.value.toLowerCase();
-					document.querySelectorAll('.form__countries__list__item').forEach((countryElement) => {
-						const countryName = countryElement.querySelector('.countries-list__name')?.textContent?.toLowerCase() || '';
-						(countryElement as HTMLElement).style.display = countryName.includes(searchValue) ? '' : 'none';
-					});
+					document
+						.querySelectorAll('.form__countries__list__item')
+						.forEach((countryElement) => {
+							const countryName =
+								countryElement
+									.querySelector('.countries-list__name')
+									?.textContent?.toLowerCase() || '';
+							(countryElement as HTMLElement).style.display =
+								countryName.includes(searchValue) ? '' : 'none';
+						});
 				});
 			});
 		})
@@ -1316,32 +1525,40 @@ export async function initPhoneMasking(): Promise<void> {
 	// Check if there are any forms with .form__countries selector
 	const formsWithCountries = document.querySelectorAll('form .form__countries');
 	if (formsWithCountries.length === 0) {
-		console.log('[Forms] No forms with .form__countries found, skipping phone masking initialization');
+		console.log(
+			'[Forms] No forms with .form__countries found, skipping phone masking initialization'
+		);
 		return;
 	}
 
 	(window as any).formsScriptLoaded = true;
-	
+
 	// Set flag immediately to prevent multiple calls
 	phoneMaskingInitialized = true;
-	
+
 	try {
 		const country = await getCountryFromClientIp();
 		if (country) {
 			// Update flag and country code in selector
-			document.querySelectorAll('.form__countries__current__flag img').forEach((flag) => {
-				flag.setAttribute('src', country.flag);
-				flag.setAttribute('data-src', country.flag);
-			});
-			
+			document
+				.querySelectorAll('.form__countries__current__flag img')
+				.forEach((flag) => {
+					flag.setAttribute('src', country.flag);
+					flag.setAttribute('data-src', country.flag);
+				});
+
 			// Update country code in selector
-			document.querySelectorAll('.form__countries__current__code').forEach((codeElement) => {
-				codeElement.textContent = country.code;
-			});
+			document
+				.querySelectorAll('.form__countries__current__code')
+				.forEach((codeElement) => {
+					codeElement.textContent = country.code;
+				});
 
 			// Create mask without the country code (only the number part)
 			// Only initialize phone inputs that are inside forms with .form__countries
-			const phoneInputs = document.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
+			const phoneInputs = document.querySelectorAll(
+				'input[type="tel"]'
+			) as NodeListOf<HTMLInputElement>;
 			phoneInputs.forEach((phoneInput) => {
 				// Check if this phone input is inside a form with .form__countries
 				const form = phoneInput.closest('form');
@@ -1356,7 +1573,7 @@ export async function initPhoneMasking(): Promise<void> {
 				if (phoneMasks.has(phoneInput)) {
 					return;
 				}
-				
+
 				// Use only the mask part (without country code) for the input
 				if (typeof (window as any).IMask !== 'undefined') {
 					const mask = (window as any).IMask(phoneInput, {
@@ -1367,7 +1584,10 @@ export async function initPhoneMasking(): Promise<void> {
 				}
 
 				// Set placeholder without country code
-				phoneInput.setAttribute('placeholder', country.mask.replaceAll('0', '0'));
+				phoneInput.setAttribute(
+					'placeholder',
+					country.mask.replaceAll('0', '0')
+				);
 				phoneInput.setAttribute('data-initialized', 'true');
 			});
 
@@ -1382,39 +1602,43 @@ export async function initPhoneMasking(): Promise<void> {
 				countrySelectorHandler = (e: Event) => {
 					const target = e.target as HTMLElement;
 					if (
-						target.className === "form__countries__current" ||
-						target.className === "form__countries__current__flag" ||
-						target.className === "form__countries__current__arrow" ||
-						target.className === "form__countries__current__code"
+						target.className === 'form__countries__current' ||
+						target.className === 'form__countries__current__flag' ||
+						target.className === 'form__countries__current__arrow' ||
+						target.className === 'form__countries__current__code'
 					) {
-						const holder = target.closest('.form__countries')?.querySelector('.form__countries__list-holder') as HTMLElement;
+						const holder = target
+							.closest('.form__countries')
+							?.querySelector('.form__countries__list-holder') as HTMLElement;
 						if (holder) {
 							if (holder.classList.contains('show')) {
 								holder.classList.remove('show', 'show--top', 'show--bottom');
 								holder.style.display = 'none';
-                            } else {
-                                // Show temporarily to measure
-                                holder.style.display = 'block';
-                                const holderRect = holder.getBoundingClientRect();
-                                const windowHeight = window.innerHeight;
-                                const bottomSpace = windowHeight - holderRect.bottom;
+							} else {
+								// Show temporarily to measure
+								holder.style.display = 'block';
+								const holderRect = holder.getBoundingClientRect();
+								const windowHeight = window.innerHeight;
+								const bottomSpace = windowHeight - holderRect.bottom;
 
-                                holder.classList.remove('show--top', 'show--bottom');
-                                holder.classList.add('show');
-                                if (bottomSpace < 100) {
-                                    holder.classList.add('show--top');
-                                } else {
-                                    holder.classList.add('show--bottom');
-                                }
-                            }
-                        }
-                    }
-                };
-                
-                document.querySelector('body')?.addEventListener("click", countrySelectorHandler);
-                countrySelectorInitialized = true;
-            }
-        } else {
+								holder.classList.remove('show--top', 'show--bottom');
+								holder.classList.add('show');
+								if (bottomSpace < 100) {
+									holder.classList.add('show--top');
+								} else {
+									holder.classList.add('show--bottom');
+								}
+							}
+						}
+					}
+				};
+
+				document
+					.querySelector('body')
+					?.addEventListener('click', countrySelectorHandler);
+				countrySelectorInitialized = true;
+			}
+		} else {
 			// Only create countries list if it doesn't exist yet
 			const existingList = document.querySelector('.form__countries__list');
 			if (!existingList || existingList.children.length === 0) {
@@ -1431,18 +1655,22 @@ export async function initPhoneMasking(): Promise<void> {
 function updatePhoneWithCountryCode(form: HTMLFormElement): void {
 	// Check if we've already updated this form in this submission cycle
 	if ((form as any)._phoneUpdated) {
-			return;
-		}
+		return;
+	}
 
-	const phoneInputs = form.querySelectorAll('input[type="tel"]') as NodeListOf<HTMLInputElement>;
-	
+	const phoneInputs = form.querySelectorAll(
+		'input[type="tel"]'
+	) as NodeListOf<HTMLInputElement>;
+
 	phoneInputs.forEach((phoneInput) => {
 		// Get the complete phone number with country code
 		const completeNumber = getCompletePhoneNumber(phoneInput);
-		
+
 		if (completeNumber) {
 			// Create or update hidden input with complete number
-			let hiddenInput = form.querySelector(`input[name="${phoneInput.name}_complete"]`) as HTMLInputElement;
+			let hiddenInput = form.querySelector(
+				`input[name="${phoneInput.name}_complete"]`
+			) as HTMLInputElement;
 			if (!hiddenInput) {
 				hiddenInput = document.createElement('input');
 				hiddenInput.type = 'hidden';
@@ -1450,90 +1678,95 @@ function updatePhoneWithCountryCode(form: HTMLFormElement): void {
 				form.appendChild(hiddenInput);
 			}
 			hiddenInput.value = completeNumber;
-			
+
 			// Keep the visible input unchanged - user should not see country code added
 			// The complete number will be sent via hidden field
 		}
 	});
-	
+
 	// Mark this form as updated to prevent multiple calls
 	(form as any)._phoneUpdated = true;
-	
+
 	// Reset the flag after a short delay to allow for future submissions
-    setTimeout(() => {
+	setTimeout(() => {
 		(form as any)._phoneUpdated = false;
 	}, 1000);
 }
 
 // Custom select initialization
 function initCustomSelects(): void {
-	const selects = document.querySelectorAll<HTMLSelectElement>('form select:not(.wpcf7-select)');
-	
+	const selects = document.querySelectorAll<HTMLSelectElement>(
+		'form select:not(.wpcf7-select)'
+	);
+
 	selects.forEach((select) => {
 		// Skip if already initialized
 		if (select.hasAttribute('data-custom-select-initialized')) {
 			return;
 		}
-		
+
 		// Skip CF7 selects
 		if (select.closest('.wpcf7-form')) {
 			return;
 		}
-		
+
 		// Create custom select wrapper
 		const wrapper = document.createElement('div');
 		wrapper.className = 'form__select-custom';
-		
+
 		// Create custom select button
 		const button = document.createElement('button');
 		button.type = 'button';
 		button.className = 'form__select-custom__current';
 		button.setAttribute('aria-haspopup', 'listbox');
 		button.setAttribute('aria-expanded', 'false');
-		
+
 		// Create custom select text span
 		const textSpan = document.createElement('span');
 		textSpan.className = 'form__select-custom__current__text';
-		
+
 		// Set initial text
 		const selectedOption = select.options[select.selectedIndex];
 		if (selectedOption && selectedOption.value) {
 			textSpan.textContent = selectedOption.textContent || selectedOption.value;
 		} else {
 			// Use placeholder if available
-			const placeholder = select.getAttribute('data-placeholder') || select.getAttribute('placeholder') || 'Select an option...';
+			const placeholder =
+				select.getAttribute('data-placeholder') ||
+				select.getAttribute('placeholder') ||
+				'Select an option...';
 			textSpan.textContent = placeholder;
 			textSpan.classList.add('placeholder');
 		}
-		
+
 		button.appendChild(textSpan);
-		
+
 		// Create arrow
 		const arrow = document.createElement('span');
 		arrow.className = 'form__select-custom__current__arrow';
 		button.appendChild(arrow);
-		
+
 		// Create dropdown list
 		const listHolder = document.createElement('div');
 		listHolder.className = 'form__select-custom__list-holder';
 		listHolder.style.display = 'none';
-		
+
 		const list = document.createElement('ul');
 		list.className = 'form__select-custom__list';
 		list.setAttribute('role', 'listbox');
-		
+
 		// Create options
 		Array.from(select.options).forEach((option, index) => {
 			if (option.value === '' && option.textContent === '') {
 				return; // Skip empty placeholder options
 			}
-			
+
 			const listItem = document.createElement('li');
 			listItem.className = 'form__select-custom__list__item';
 			listItem.setAttribute('role', 'option');
 			listItem.setAttribute('data-value', option.value);
 			listItem.textContent = option.textContent || option.value;
-			
+
 			if (select.selectedIndex === index && option.value) {
 				listItem.classList.add('active');
 				textSpan.textContent = option.textContent || option.value;
@@ -1541,60 +1774,66 @@ function initCustomSelects(): void {
 				// Set initial has-value class for floating labels
 				select.classList.add('has-value');
 			}
-			
+
 			listItem.addEventListener('click', () => {
 				// Update native select
 				select.selectedIndex = index;
-				
+
 				// Update has-value class for floating labels
 				if (select.value && select.value !== '') {
 					select.classList.add('has-value');
 				} else {
 					select.classList.remove('has-value');
 				}
-				
+
 				select.dispatchEvent(new Event('change', { bubbles: true }));
-				
+
 				// Update custom select display
 				textSpan.textContent = option.textContent || option.value;
 				textSpan.classList.remove('placeholder');
-				
+
 				// Update active state
-				list.querySelectorAll('.form__select-custom__list__item').forEach(item => {
-					item.classList.remove('active');
-				});
+				list
+					.querySelectorAll('.form__select-custom__list__item')
+					.forEach((item) => {
+						item.classList.remove('active');
+					});
 				listItem.classList.add('active');
-				
+
 				// Close dropdown
 				listHolder.style.display = 'none';
 				listHolder.classList.remove('show', 'show--top', 'show--bottom');
 				button.setAttribute('aria-expanded', 'false');
 			});
-			
+
 			list.appendChild(listItem);
 		});
-		
+
 		listHolder.appendChild(list);
-		
+
 		// Toggle dropdown
 		button.addEventListener('click', (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-			
+
 			const isOpen = listHolder.classList.contains('show');
-			
+
 			// Close all other selects
-			document.querySelectorAll('.form__select-custom__list-holder.show').forEach((otherHolder) => {
-				if (otherHolder !== listHolder) {
-					(otherHolder as HTMLElement).style.display = 'none';
-					otherHolder.classList.remove('show', 'show--top', 'show--bottom');
-					const otherButton = otherHolder.closest('.form__select-custom')?.querySelector('.form__select-custom__current') as HTMLElement;
-					if (otherButton) {
-						otherButton.setAttribute('aria-expanded', 'false');
+			document
+				.querySelectorAll('.form__select-custom__list-holder.show')
+				.forEach((otherHolder) => {
+					if (otherHolder !== listHolder) {
+						(otherHolder as HTMLElement).style.display = 'none';
+						otherHolder.classList.remove('show', 'show--top', 'show--bottom');
+						const otherButton = otherHolder
+							.closest('.form__select-custom')
+							?.querySelector('.form__select-custom__current') as HTMLElement;
+						if (otherButton) {
+							otherButton.setAttribute('aria-expanded', 'false');
+						}
 					}
-				}
-			});
-			
+				});
+
 			if (isOpen) {
 				listHolder.style.display = 'none';
 				listHolder.classList.remove('show', 'show--top', 'show--bottom');
@@ -1610,7 +1849,7 @@ function initCustomSelects(): void {
 				const holderRect = listHolder.getBoundingClientRect();
 				const windowHeight = window.innerHeight;
 				const bottomSpace = windowHeight - holderRect.bottom;
-				
+
 				listHolder.classList.remove('show--top', 'show--bottom');
 				listHolder.classList.add('show');
 				if (bottomSpace < 100) {
@@ -1623,7 +1862,7 @@ function initCustomSelects(): void {
 				select.classList.add('has-value');
 			}
 		});
-		
+
 		// Close dropdown when clicking outside
 		document.addEventListener('click', (e) => {
 			if (!wrapper.contains(e.target as Node)) {
@@ -1638,11 +1877,11 @@ function initCustomSelects(): void {
 				}
 			}
 		});
-		
+
 		// Save parent and next sibling before moving select
 		const parent = select.parentNode;
 		const nextSibling = select.nextSibling;
-		
+
 		// Hide native select
 		select.style.position = 'absolute';
 		select.style.opacity = '0';
@@ -1652,12 +1891,12 @@ function initCustomSelects(): void {
 		select.setAttribute('aria-hidden', 'true');
 		select.setAttribute('tabindex', '-1');
 		select.setAttribute('data-custom-select-initialized', 'true');
-		
+
 		// Add all elements to wrapper
 		wrapper.appendChild(select);
 		wrapper.appendChild(button);
 		wrapper.appendChild(listHolder);
-		
+
 		// Replace select with wrapper in DOM
 		if (parent) {
 			if (nextSibling) {
@@ -1671,15 +1910,21 @@ function initCustomSelects(): void {
 
 // Initialize floating labels
 function initFloatingLabels(): void {
-	const floatingLabelForms = document.querySelectorAll<HTMLFormElement>('form.floating-label');
-	
+	const floatingLabelForms = document.querySelectorAll<HTMLFormElement>(
+		'form.floating-label'
+	);
+
 	floatingLabelForms.forEach((form) => {
 		// Handle input and textarea fields
-		const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type="submit"]):not([type="button"]):not([type="file"]), textarea');
-		
+		const inputs = form.querySelectorAll<
+			HTMLInputElement | HTMLTextAreaElement
+		>(
+			'input:not([type="submit"]):not([type="button"]):not([type="file"]), textarea'
+		);
+
 		inputs.forEach((input) => {
 			const field = input.closest('.form__field');
-			
+
 			// Check initial state
 			const updateFloatingLabel = () => {
 				if (input.value && input.value.trim() !== '') {
@@ -1694,14 +1939,14 @@ function initFloatingLabels(): void {
 					}
 				}
 			};
-			
+
 			// Set initial state
 			updateFloatingLabel();
-			
+
 			// Update on input
 			input.addEventListener('input', updateFloatingLabel);
 			input.addEventListener('change', updateFloatingLabel);
-			
+
 			// Handle focus/blur for field state
 			input.addEventListener('focus', () => {
 				if (field) {
@@ -1715,7 +1960,7 @@ function initFloatingLabels(): void {
 				updateFloatingLabel();
 			});
 		});
-		
+
 		// Handle select fields
 		const selects = form.querySelectorAll<HTMLSelectElement>('select');
 		selects.forEach((select) => {
@@ -1733,15 +1978,17 @@ function initFloatingLabels(): void {
 					}
 				}
 			};
-			
+
 			// Set initial state
 			updateSelectLabel();
-			
+
 			// Update on change
 			select.addEventListener('change', updateSelectLabel);
-			
+
 			// Also update when custom select button is focused
-			const customSelectButton = select.closest('.form__select-custom')?.querySelector('.form__select-custom__current');
+			const customSelectButton = select
+				.closest('.form__select-custom')
+				?.querySelector('.form__select-custom__current');
 			if (customSelectButton) {
 				customSelectButton.addEventListener('focus', () => {
 					select.classList.add('has-value');
@@ -1767,27 +2014,31 @@ function initFloatingLabels(): void {
 }
 
 // Attach form validation
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
 	console.log('[Forms] Initializing forms...');
 	attachFormValidation();
-	
+
 	// Initialize custom selects first (so floating labels can work with them)
 	initCustomSelects();
-	
+
 	// Initialize floating labels after custom selects are ready
 	// Use setTimeout to ensure DOM is fully updated
 	setTimeout(() => {
 		initFloatingLabels();
 	}, 0);
-	
+
 	// Initialize phone masking only if IMask is available and forms with .form__countries exist
 	if (typeof (window as any).IMask !== 'undefined') {
 		// Check if there are forms with .form__countries before initializing
-		const formsWithCountries = document.querySelectorAll('form .form__countries');
+		const formsWithCountries = document.querySelectorAll(
+			'form .form__countries'
+		);
 		if (formsWithCountries.length > 0) {
 			initPhoneMasking();
 		} else {
-			console.log('[Forms] No forms with .form__countries found, skipping phone masking');
+			console.log(
+				'[Forms] No forms with .form__countries found, skipping phone masking'
+			);
 		}
 	} else {
 		console.warn('[Forms] IMask not available, phone masking will not work');

@@ -1,4 +1,4 @@
-@import "_custom-properties.css";
+@import '_custom-properties.css';
 
 .entry {
 	font-family: var(--global-font-family);
@@ -11,14 +11,11 @@
 }
 
 @media (--content-query) {
-
 	.entry {
 		padding: 0;
 
 		& .inner {
 			margin: 1rem;
 		}
-
 	}
-
 }

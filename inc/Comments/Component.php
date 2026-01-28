@@ -23,22 +23,27 @@ use function the_comments_navigation;
  * Exposes template tags:
  * * `wp_rig()->the_comments( array $args = array() )`
  */
-class Component implements Component_Interface, Templating_Component_Interface {
-
+class Component implements Component_Interface, Templating_Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'comments';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_enqueue_comment_reply_script' ) );
+	public function initialize()
+	{
+		add_action('wp_enqueue_scripts', [
+			$this,
+			'action_enqueue_comment_reply_script',
+		]);
 	}
 
 	/**
@@ -48,20 +53,21 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *               a callable or an array with key 'callable'. This approach is used to reserve the possibility of
 	 *               adding support for further arguments in the future.
 	 */
-	public function template_tags(): array {
-		return array(
-			'the_comments' => array( $this, 'the_comments' ),
-		);
+	public function template_tags(): array
+	{
+		return [
+			'the_comments' => [$this, 'the_comments'],
+		];
 	}
 
 	/**
 	 * Enqueues the WordPress core 'comment-reply' script as necessary.
 	 */
-	public function action_enqueue_comment_reply_script() {
-
+	public function action_enqueue_comment_reply_script()
+	{
 		// Enqueue comment script on singular post/page views only.
-		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-			wp_enqueue_script( 'comment-reply' );
+		if (is_singular() && comments_open() && get_option('thread_comments')) {
+			wp_enqueue_script('comment-reply');
 		}
 	}
 
@@ -73,10 +79,12 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @param array $args The default comment form arguments.
 	 * @return array      Modified comment form arguments.
 	 */
-	public function filter_comment_form_defaults( array $args ): array {
-		if ( ! get_comments_number() ) {
-			$args['title_reply_before'] = '<h2 id="reply-title" class="comment-reply-title">';
-			$args['title_reply_after']  = '</h2>';
+	public function filter_comment_form_defaults(array $args): array
+	{
+		if (!get_comments_number()) {
+			$args['title_reply_before'] =
+				'<h2 id="reply-title" class="comment-reply-title">';
+			$args['title_reply_after'] = '</h2>';
 		}
 
 		return $args;
@@ -91,21 +99,15 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @param array $args Optional. Array of arguments. See `wp_list_comments()` documentation for a list of supported
 	 *                    arguments.
 	 */
-	public function the_comments( array $args = array() ) {
-		$args = array_merge(
-			$args,
-			array(
-				'style'      => 'ol',
-				'short_ping' => true,
-			)
-		);
-
-		?>
+	public function the_comments(array $args = [])
+	{
+		$args = array_merge($args, [
+			'style' => 'ol',
+			'short_ping' => true,
+		]); ?>
 		<ol class="comment-list">
-			<?php wp_list_comments( $args ); ?>
+			<?php wp_list_comments($args); ?>
 		</ol><!-- .comment-list -->
-		<?php
-
-		the_comments_navigation();
+		<?php the_comments_navigation();
 	}
 }

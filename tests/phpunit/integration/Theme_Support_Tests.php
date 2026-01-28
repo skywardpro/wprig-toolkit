@@ -14,8 +14,8 @@ use WP_Rig\WP_Rig\Tests\Framework\Integration_Test_Case;
  *
  * @group hooks
  */
-class Theme_Support_Tests extends Integration_Test_Case {
-
+class Theme_Support_Tests extends Integration_Test_Case
+{
 	/**
 	 * Tests that the theme support features are present.
 	 *
@@ -23,8 +23,9 @@ class Theme_Support_Tests extends Integration_Test_Case {
 	 *
 	 * @dataProvider data_theme_support_features
 	 */
-	public function test_theme_support_features( string $feature ) {
-		$this->assertTrue( current_theme_supports( $feature ) );
+	public function test_theme_support_features(string $feature)
+	{
+		$this->assertTrue(current_theme_supports($feature));
 	}
 
 	/**
@@ -32,63 +33,35 @@ class Theme_Support_Tests extends Integration_Test_Case {
 	 *
 	 * @return array List of test datasets.
 	 */
-	public function data_theme_support_features(): array {
-		return array(
-			array(
-				'automatic-feed-links',
-			),
-			array(
-				'post-thumbnails',
-			),
-			array(
-				'html5',
-			),
-			array(
-				'custom-background',
-			),
-			array(
-				'customize-selective-refresh-widgets',
-			),
-			array(
-				'responsive-embeds',
-			),
-			array(
-				'custom-logo',
-			),
-			array(
-				'wp-block-styles',
-			),
-			array(
-				'align-wide',
-			),
-			array(
-				'editor-color-palette',
-			),
-			array(
-				'editor-font-sizes',
-			),
-			array(
-				'custom-header',
-			),
-		);
+	public function data_theme_support_features(): array
+	{
+		return [
+			['automatic-feed-links'],
+			['post-thumbnails'],
+			['html5'],
+			['custom-background'],
+			['customize-selective-refresh-widgets'],
+			['responsive-embeds'],
+			['custom-logo'],
+			['wp-block-styles'],
+			['align-wide'],
+			['editor-color-palette'],
+			['editor-font-sizes'],
+			['custom-header'],
+		];
 	}
 
 	/**
 	 * Tests that HTML5 theme support is added for all required areas.
 	 */
-	public function test_theme_support_html5() {
-		$html5_support = get_theme_support( 'html5' );
+	public function test_theme_support_html5()
+	{
+		$html5_support = get_theme_support('html5');
 
-		$this->assertIsArray( $html5_support );
+		$this->assertIsArray($html5_support);
 		$this->assertEqualSets(
-			array(
-				'search-form',
-				'comment-form',
-				'comment-list',
-				'gallery',
-				'caption',
-			),
-			$html5_support[0]
+			['search-form', 'comment-form', 'comment-list', 'gallery', 'caption'],
+			$html5_support[0],
 		);
 	}
 }

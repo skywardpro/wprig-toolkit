@@ -14,7 +14,6 @@ namespace WP_Rig\WP_Rig\Blocks;
 use WP_Rig\WP_Rig\Component_Interface;
 use WP_Rig\WP_Rig\Templating_Component_Interface;
 
-
 /**
  * Defines the Component class, responsible for managing and registering blocks within the WordPress Rig framework.
  *
@@ -22,14 +21,15 @@ use WP_Rig\WP_Rig\Templating_Component_Interface;
  * for scanning the block directories, registering blocks with WordPress, and defining utility methods
  * related to block attributes and rendering.
  */
-class Component implements Component_Interface, Templating_Component_Interface {
-
+class Component implements Component_Interface, Templating_Component_Interface
+{
 	/**
 	 * Retrieve the slug identifying the component or module.
 	 *
 	 * @return string The slug, typically used as an identifier.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'blocks';
 	}
 
@@ -38,10 +38,10 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return void
 	 */
-	public function initialize(): void {
-		add_action( 'init', array( $this, 'register_blocks' ) );
+	public function initialize(): void
+	{
+		add_action('init', [$this, 'register_blocks']);
 	}
-
 
 	/**
 	 * Registers custom blocks from a specified directory.
@@ -53,79 +53,92 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return void No return value.
 	 */
-	public function register_blocks(): void {
-		$theme_dir  = get_template_directory();
-		$theme_uri  = get_template_directory_uri();
-		$blocks_dir = trailingslashit( $theme_dir ) . 'assets/blocks';
-		$blocks_uri = trailingslashit( $theme_uri ) . 'assets/blocks';
+	public function register_blocks(): void
+	{
+		$theme_dir = get_template_directory();
+		$theme_uri = get_template_directory_uri();
+		$blocks_dir = trailingslashit($theme_dir) . 'assets/blocks';
+		$blocks_uri = trailingslashit($theme_uri) . 'assets/blocks';
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if (defined('WP_DEBUG') && WP_DEBUG) {
 			// Log block registrar initialization.
-			do_action( 'wp_rig_log', '[WP Rig Blocks] init registrar at ' . $blocks_dir );
+			do_action(
+				'wp_rig_log',
+				'[WP Rig Blocks] init registrar at ' . $blocks_dir,
+			);
 		}
-		if ( ! is_dir( $blocks_dir ) ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if (!is_dir($blocks_dir)) {
+			if (defined('WP_DEBUG') && WP_DEBUG) {
 				// Log missing blocks directory.
-				do_action( 'wp_rig_log', '[WP Rig Blocks] blocks dir missing' );
+				do_action('wp_rig_log', '[WP Rig Blocks] blocks dir missing');
 			}
 			return;
 		}
-		$dirs = glob( $blocks_dir . '/*', GLOB_ONLYDIR );
-		if ( empty( $dirs ) ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		$dirs = glob($blocks_dir . '/*', GLOB_ONLYDIR);
+		if (empty($dirs)) {
+			if (defined('WP_DEBUG') && WP_DEBUG) {
 				// Log when no block directories are found.
-				do_action( 'wp_rig_log', '[WP Rig Blocks] no block directories found' );
+				do_action('wp_rig_log', '[WP Rig Blocks] no block directories found');
 			}
 			return;
 		}
 
-		foreach ( $dirs as $dir ) {
+		foreach ($dirs as $dir) {
 			$block_json = $dir . '/block.json';
-			if ( ! file_exists( $block_json ) ) {
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			if (!file_exists($block_json)) {
+				if (defined('WP_DEBUG') && WP_DEBUG) {
 					// Log skipped block due to missing block.json.
-					do_action( 'wp_rig_log', '[WP Rig Blocks] skipping (no block.json): ' . $dir );
+					do_action(
+						'wp_rig_log',
+						'[WP Rig Blocks] skipping (no block.json): ' . $dir,
+					);
 				}
 				continue;
 			}
 
 			// Get the block name from the directory name.
-			$block_name = basename( $dir );
+			$block_name = basename($dir);
 
 			// Register block scripts directly.
 			$src_dir = $dir . '/src';
-			if ( file_exists( $src_dir ) ) {
+			if (file_exists($src_dir)) {
 				$editor_js = $src_dir . '/index.js';
-				if ( file_exists( $editor_js ) ) {
+				if (file_exists($editor_js)) {
 					// Register unminified script for development.
 					wp_register_script(
 						"wprig-{$block_name}-editor",
 						"{$blocks_uri}/{$block_name}/src/index.js",
-						array(
+						[
 							'wp-blocks',
 							'wp-element',
 							'wp-i18n',
 							'wp-block-editor',
 							'wp-components',
 							'wp-server-side-render',
-						),
-						filemtime( $editor_js ),
-						true
+						],
+						filemtime($editor_js),
+						true,
 					);
 				}
 			}
 
 			try {
 				// Register the block using WordPress core function.
-				register_block_type( $dir );
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				register_block_type($dir);
+				if (defined('WP_DEBUG') && WP_DEBUG) {
 					// Log successful block registration.
-					do_action( 'wp_rig_log', '[WP Rig Blocks] registered: ' . $dir );
+					do_action('wp_rig_log', '[WP Rig Blocks] registered: ' . $dir);
 				}
-			} catch ( \Throwable $e ) {
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			} catch (\Throwable $e) {
+				if (defined('WP_DEBUG') && WP_DEBUG) {
 					// Log block registration failure.
-					do_action( 'wp_rig_log', '[WP Rig Blocks] failed to register ' . $dir . ' :: ' . $e->getMessage() );
+					do_action(
+						'wp_rig_log',
+						'[WP Rig Blocks] failed to register ' .
+							$dir .
+							' :: ' .
+							$e->getMessage(),
+					);
 				}
 			}
 		}
@@ -140,13 +153,14 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return array An associative array of template tag names and their callbacks.
 	 */
-	public function template_tags(): array {
-		return array(
-			'block_get_type'           => array( $this, 'block_get_type' ),
-			'block_get_title'          => array( $this, 'block_get_title' ),
-			'sanitize_classes'         => array( $this, 'sanitize_classes' ),
-			'block_wrapper_attributes' => array( $this, 'block_wrapper_attributes' ),
-		);
+	public function template_tags(): array
+	{
+		return [
+			'block_get_type' => [$this, 'block_get_type'],
+			'block_get_title' => [$this, 'block_get_title'],
+			'sanitize_classes' => [$this, 'sanitize_classes'],
+			'block_wrapper_attributes' => [$this, 'block_wrapper_attributes'],
+		];
 	}
 
 	/**
@@ -163,15 +177,19 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 * @return \WP_Block_Type|null The block type object if found, or null if the block type cannot
 	 *                             be determined or is invalid.
 	 */
-	public function block_get_type( mixed $block ): ?\WP_Block_Type {
-		if ( $block instanceof \WP_Block ) {
-			if ( isset( $block->block_type ) && $block->block_type instanceof \WP_Block_Type ) {
+	public function block_get_type(mixed $block): ?\WP_Block_Type
+	{
+		if ($block instanceof \WP_Block) {
+			if (
+				isset($block->block_type) &&
+				$block->block_type instanceof \WP_Block_Type
+			) {
 				return $block->block_type;
 			}
-			if ( ! empty( $block->name ) && is_string( $block->name ) ) {
-				$registry   = \WP_Block_Type_Registry::get_instance();
-				$block_type = $registry->get_registered( $block->name );
-				if ( $block_type instanceof \WP_Block_Type ) {
+			if (!empty($block->name) && is_string($block->name)) {
+				$registry = \WP_Block_Type_Registry::get_instance();
+				$block_type = $registry->get_registered($block->name);
+				if ($block_type instanceof \WP_Block_Type) {
 					return $block_type;
 				}
 			}
@@ -191,19 +209,28 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return string The title of the block. If the title cannot be determined, an empty string is returned.
 	 */
-	public function block_get_title( mixed $block ): string {
-		$block_type = $this->block_get_type( $block );
-		if ( $block_type instanceof \WP_Block_Type && ! empty( $block_type->title ) && is_string( $block_type->title ) ) {
+	public function block_get_title(mixed $block): string
+	{
+		$block_type = $this->block_get_type($block);
+		if (
+			$block_type instanceof \WP_Block_Type &&
+			!empty($block_type->title) &&
+			is_string($block_type->title)
+		) {
 			// Ensure the title is properly decoded.
-			return html_entity_decode( $block_type->title, ENT_QUOTES, 'UTF-8' );
+			return html_entity_decode($block_type->title, ENT_QUOTES, 'UTF-8');
 		}
 
-		if ( $block instanceof \WP_Block && ! empty( $block->name ) && is_string( $block->name ) ) {
+		if (
+			$block instanceof \WP_Block &&
+			!empty($block->name) &&
+			is_string($block->name)
+		) {
 			// Fallback: "namespace/your-block" -> "Your Block".
-			$pos = strpos( $block->name, '/' );
-			if ( false !== $pos ) {
-				$slug = substr( $block->name, $pos + 1 );
-				return ucwords( str_replace( '-', ' ', (string) $slug ) );
+			$pos = strpos($block->name, '/');
+			if (false !== $pos) {
+				$slug = substr($block->name, $pos + 1);
+				return ucwords(str_replace('-', ' ', (string) $slug));
 			}
 		}
 
@@ -222,21 +249,22 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return string A sanitized, space-separated string of unique class names.
 	 */
-	public function sanitize_classes( array $classes ): string {
-		$flat = array();
-		foreach ( $classes as $class ) {
-			if ( '' === $class || null === $class ) {
+	public function sanitize_classes(array $classes): string
+	{
+		$flat = [];
+		foreach ($classes as $class) {
+			if ('' === $class || null === $class) {
 				continue;
 			}
-			foreach ( preg_split( '/\s+/', (string) $class ) as $part ) {
-				$part = trim( (string) $part );
-				if ( '' !== $part ) {
-					$flat[] = sanitize_html_class( $part );
+			foreach (preg_split('/\s+/', (string) $class) as $part) {
+				$part = trim((string) $part);
+				if ('' !== $part) {
+					$flat[] = sanitize_html_class($part);
 				}
 			}
 		}
-		$flat = array_filter( array_unique( $flat ) );
-		return implode( ' ', $flat );
+		$flat = array_filter(array_unique($flat));
+		return implode(' ', $flat);
 	}
 
 	/**
@@ -252,34 +280,28 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return string The generated block wrapper attributes including the necessary classes.
 	 */
-	public function block_wrapper_attributes( array $extra_classes = array(), array $attributes = array() ): string {
-		$classes = $this->sanitize_classes( $extra_classes );
+	public function block_wrapper_attributes(
+		array $extra_classes = [],
+		array $attributes = [],
+	): string {
+		$classes = $this->sanitize_classes($extra_classes);
 
-		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			return get_block_wrapper_attributes(
-				array(
-					'class' => $classes,
-				)
-			);
+		if (function_exists('get_block_wrapper_attributes')) {
+			return get_block_wrapper_attributes([
+				'class' => $classes,
+			]);
 		}
 
 		// Fallback when get_block_wrapper_attributes() isn't available.
-		$fallback_classes = array(
+		$fallback_classes = [
 			'wp-block',
-			isset( $attributes['className'] ) ? (string) $attributes['className'] : '',
+			isset($attributes['className']) ? (string) $attributes['className'] : '',
 			$classes,
-		);
+		];
 
 		return sprintf(
 			'class="%s"',
-			esc_attr(
-				trim(
-					implode(
-						' ',
-						array_filter( $fallback_classes )
-					)
-				)
-			)
+			esc_attr(trim(implode(' ', array_filter($fallback_classes)))),
 		);
 	}
 }

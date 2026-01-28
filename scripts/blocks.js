@@ -39,9 +39,7 @@ function parseName(input) {
 	} else if (parts.length === 2) {
 		[ns, slug] = parts;
 	} else {
-		throw new Error(
-			'Invalid name. Use <namespace>/<slug> (e.g., wprig/hero).'
-		);
+		throw new Error('Invalid name. Use <namespace>/<slug> (e.g., wprig/hero).');
 	}
 	slug = slug
 		.toLowerCase()
@@ -129,17 +127,16 @@ async function createMinimalBlockJson(dir, options) {
 	const raw = {
 		name: `${options.namespace}/${options.slug}`,
 		apiVersion: 2,
-		title:
-			(options.title ?
-				options.title.replace(/&quot;/g, '"')
+		title: options.title
+			? options.title
+					.replace(/&quot;/g, '"')
 					.replace(/&amp;/g, '&')
 					.replace(/&lt;/g, '<')
 					.replace(/&gt;/g, '>')
 					.replace(/&#39;/g, "'")
-				:
-				options.slug
+			: options.slug
 					.replace(/[-_]/g, ' ')
-					.replace(/\b\w/g, (m) => m.toUpperCase())),
+					.replace(/\b\w/g, (m) => m.toUpperCase()),
 		category: options.category || 'widgets',
 		icon: options.icon || 'block-default',
 		description: options.description || '',
@@ -179,7 +176,8 @@ function decodeHtmlEntities(text) {
 
 	// For Node.js environment, we need a different approach
 	// This simple regex handles the most common entities like &quot;
-	return decoded.replace(/&quot;/g, '"')
+	return decoded
+		.replace(/&quot;/g, '"')
 		.replace(/&amp;/g, '&')
 		.replace(/&lt;/g, '<')
 		.replace(/&gt;/g, '>')
@@ -196,7 +194,8 @@ async function adjustBlockJson(dir, options) {
 	raw.name = `${options.namespace}/${options.slug}`;
 	if (options.title) {
 		// Decode HTML entities in the title to prevent &quot; artifacts
-		raw.title = options.title.replace(/&quot;/g, '"')
+		raw.title = options.title
+			.replace(/&quot;/g, '"')
 			.replace(/&amp;/g, '&')
 			.replace(/&lt;/g, '<')
 			.replace(/&gt;/g, '>')
@@ -316,9 +315,7 @@ async function writeTemplates(dir, opts) {
 		await fse.writeFile(path.join(dir, 'jest.config.cjs'), jestCfg);
 	}
 	if (
-		!pathExists(
-			path.join(dir, 'src', `index.test.${opts.ts ? 'ts' : 'js'}`)
-		)
+		!pathExists(path.join(dir, 'src', `index.test.${opts.ts ? 'ts' : 'js'}`))
 	) {
 		const testTpl = await fse.readFile(
 			path.join(
@@ -507,14 +504,8 @@ program
 	.option('--description <description>', 'Block description')
 	.option('--keywords <csv>', 'Comma-separated keywords')
 	.option('--no-style', 'Do not generate style.css or wire style')
-	.option(
-		'--no-editor-style',
-		'Do not generate editor.css or wire editorStyle'
-	)
-	.option(
-		'--view',
-		'Generate separate frontend script loaded on frontend only'
-	)
+	.option('--no-editor-style', 'Do not generate editor.css or wire editorStyle')
+	.option('--view', 'Generate separate frontend script loaded on frontend only')
 	.action((name, opts) => {
 		cmdNew(name, opts).catch((e) => {
 			console.error(e?.message || e);

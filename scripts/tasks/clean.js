@@ -17,16 +17,16 @@ import { paths } from '../lib/constants.js';
  */
 export function cleanCSS() {
 	const delPath = [
-		`${ paths.styles.dest }/**/*.css`,
-		`!${ paths.styles.srcDir }`,
-		`!${ paths.styles.srcDir }/**`,
+		`${paths.styles.dest}/**/*.css`,
+		`!${paths.styles.srcDir}`,
+		`!${paths.styles.srcDir}/**`,
 	];
 
 	const keepExportPath = paths.export.src
-		.filter( ( path ) => path.indexOf( '/css/' ) !== -1 )
-		.map( ( path ) => `!${ path }` );
+		.filter((path) => path.indexOf('/css/') !== -1)
+		.map((path) => `!${path}`);
 
-	return deleteAsync( delPath.concat( keepExportPath ) );
+	return deleteAsync(delPath.concat(keepExportPath));
 }
 
 /**
@@ -35,14 +35,14 @@ export function cleanCSS() {
  */
 export function cleanJS() {
 	const delPath = [
-		`${ paths.scripts.dest }/**/*.js`,
-		`!${ paths.scripts.srcDir }`,
-		`!${ paths.scripts.srcDir }/**`,
+		`${paths.scripts.dest}/**/*.js`,
+		`!${paths.scripts.srcDir}`,
+		`!${paths.scripts.srcDir}/**`,
 	];
 
 	const keepExportPath = paths.export.src
-		.filter( ( path ) => path.indexOf( '/js/' ) !== -1 )
-		.map( ( path ) => `!${ path }` );
+		.filter((path) => path.indexOf('/js/') !== -1)
+		.map((path) => `!${path}`);
 
-	return deleteAsync( delPath.concat( keepExportPath ) );
+	return deleteAsync(delPath.concat(keepExportPath));
 }

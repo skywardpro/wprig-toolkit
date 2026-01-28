@@ -25,50 +25,57 @@ use function wp_localize_script;
  *
  * @link https://wordpress.org/plugins/amp/
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug() : string {
+	public function get_slug(): string
+	{
 		return 'popup-tingle';
 	}
-
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_activate_popup_tingle' ), 200 );
+	public function initialize()
+	{
+		add_action(
+			'wp_enqueue_scripts',
+			[$this, 'action_activate_popup_tingle'],
+			200,
+		);
 	}
-
 
 	/**
 	 * Enqueues scripts and styles.
 	 */
-	public function action_activate_popup_tingle() {
-
+	public function action_activate_popup_tingle()
+	{
 		// Enqueue scripts.
 		wp_enqueue_script(
 			'popup__tingle',
-			get_theme_file_uri( '/assets/js/vendor/tingle/tingle.min.js' ),
-			array(),
-			wp_rig()->get_asset_version( get_theme_file_path( '/assets/js/vendor/tingle/tingle.min.js' ) ),
-			false
+			get_theme_file_uri('/assets/js/vendor/tingle/tingle.min.js'),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/vendor/tingle/tingle.min.js'),
+			),
+			false,
 		);
 
-		wp_script_add_data( 'popup__tingle', 'defer', true );
-		wp_script_add_data( 'popup__tingle', 'precache', true );
+		wp_script_add_data('popup__tingle', 'defer', true);
+		wp_script_add_data('popup__tingle', 'precache', true);
 
 		// Enqueue styles.
 		wp_enqueue_style(
 			'popup__tingle',
-			get_theme_file_uri( '/assets/css/vendor/tingle/tingle.min.css' ),
-			array(),
-			wp_rig()->get_asset_version( get_theme_file_path( '/assets/css/vendor/tingle/tingle.min.css' ) )
+			get_theme_file_uri('/assets/css/vendor/tingle/tingle.min.css'),
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/css/vendor/tingle/tingle.min.css'),
+			),
 		);
-
 	}
 }

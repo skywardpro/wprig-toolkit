@@ -1,33 +1,35 @@
 # Changelog
 
 ## 3.1.0
- - New header and mobile nav experience. Props @robruiz
- - HMR alternative for BrowserSync added. BrowserSync will now be considered deprecated. Props @robruiz
- - Added a download local wp cli command to download google fonts to the theme fonts folder. Props @robruiz
- - Updated rig-init command now provides better DX to devs during new installs. Props @robruiz
- - Added a new command to convert WP Rig into a child theme build system. Props @robruiz
- - Added a new theme-level block authoring/development and management system. Props @robruiz
- - Added a new command to scaffold new PHP components. Props @robruiz
- - Removed Gulp from WP Rig. Processes are now replaced with custom script while
-dramatically increasing build and bundle performance. Props @robruiz
- - Users can now use Bun or Node. Props @robruiz
- - Now using Github CI/CD pipeline for automated testing. Props @robruiz
+
+- New header and mobile nav experience. Props @robruiz
+- HMR alternative for BrowserSync added. BrowserSync will now be considered deprecated. Props @robruiz
+- Added a download local wp cli command to download google fonts to the theme fonts folder. Props @robruiz
+- Updated rig-init command now provides better DX to devs during new installs. Props @robruiz
+- Added a new command to convert WP Rig into a child theme build system. Props @robruiz
+- Added a new theme-level block authoring/development and management system. Props @robruiz
+- Added a new command to scaffold new PHP components. Props @robruiz
+- Removed Gulp from WP Rig. Processes are now replaced with custom script while
+  dramatically increasing build and bundle performance. Props @robruiz
+- Users can now use Bun or Node. Props @robruiz
+- Now using Github CI/CD pipeline for automated testing. Props @robruiz
 
 ## 3.0.3
- - Reorganization of the CSS source files. Props @robruiz
- - Fixed js minification and removes obsolete dev dependency. Props @robruiz
- - Fixed corruption for files during the bundle for filesToCopy files. Props @skywardpro
- - Minor accessibility improvements to navigation. Props @SinghCod3r
- - Improvements to eslint system, TS compiling, styles and js minification. Props @erdmann040
- - Improvements to asset bundling. Props @robruiz
- - Theme.json file now created when block-based conversion is run. Props @SinghCod3r
- - New relative image path generation during css transpile. Props @robruiz
- - Added new cli command to auto-generate menu items. Props @robruiz
- - Fixed initial tests. All tests should pass now on fresh install. Props @robruiz
- - Removed outdated/deprecated/unnecessary deps. Props @robruiz
- - Fixed a bug that caused Gulp to crash frequently. Props @erdmann040
- - Fixed CSS source maps; now consistent & configurable. Props @erdmann040
- - Removed package-lock.json from repo. Devs should manually add this. Props @robruiz
+
+- Reorganization of the CSS source files. Props @robruiz
+- Fixed js minification and removes obsolete dev dependency. Props @robruiz
+- Fixed corruption for files during the bundle for filesToCopy files. Props @skywardpro
+- Minor accessibility improvements to navigation. Props @SinghCod3r
+- Improvements to eslint system, TS compiling, styles and js minification. Props @erdmann040
+- Improvements to asset bundling. Props @robruiz
+- Theme.json file now created when block-based conversion is run. Props @SinghCod3r
+- New relative image path generation during css transpile. Props @robruiz
+- Added new cli command to auto-generate menu items. Props @robruiz
+- Fixed initial tests. All tests should pass now on fresh install. Props @robruiz
+- Removed outdated/deprecated/unnecessary deps. Props @robruiz
+- Fixed a bug that caused Gulp to crash frequently. Props @erdmann040
+- Fixed CSS source maps; now consistent & configurable. Props @erdmann040
+- Removed package-lock.json from repo. Devs should manually add this. Props @robruiz
 
 ## 3.0.2
 

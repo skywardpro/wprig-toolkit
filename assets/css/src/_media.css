@@ -1,4 +1,4 @@
-@import "_custom-properties.css";
+@import '_custom-properties.css';
 
 /*--------------------------------------------------------------
 # Media
@@ -27,7 +27,7 @@ object {
 	max-width: 100%;
 }
 
-.wp-caption img[class*="wp-image-"] {
+.wp-caption img[class*='wp-image-'] {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
@@ -42,7 +42,6 @@ object {
 }
 
 @media (--content-query) {
-
 	.wp-caption.alignright,
 	.wp-block-image.alignright {
 		margin-right: calc((100% - var(--content-width)) / 2);
@@ -52,7 +51,6 @@ object {
 	.wp-block-image.alignleft {
 		margin-left: calc((100% - var(--content-width)) / 2);
 	}
-
 }
 
 /*--------------------------------------------------------------
@@ -66,7 +64,6 @@ object {
 }
 
 @media screen and (min-width: 40em) {
-
 	.gallery-columns-2 {
 		grid-template-columns: repeat(2, 1fr);
 	}

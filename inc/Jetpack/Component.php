@@ -19,22 +19,24 @@ use function get_post_type;
 /**
  * Class for adding Jetpack plugin support.
  */
-class Component implements Component_Interface {
-
+class Component implements Component_Interface
+{
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'jetpack';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize() {
-		add_action( 'after_setup_theme', array( $this, 'action_add_jetpack_support' ) );
+	public function initialize()
+	{
+		add_action('after_setup_theme', [$this, 'action_add_jetpack_support']);
 	}
 
 	/**
@@ -44,43 +46,37 @@ class Component implements Component_Interface {
 	 * See: https://jetpack.com/support/responsive-videos/
 	 * See: https://jetpack.com/support/content-options/
 	 */
-	public function action_add_jetpack_support() {
-
+	public function action_add_jetpack_support()
+	{
 		// Add theme support for Infinite Scroll.
-		add_theme_support(
-			'infinite-scroll',
-			array(
-				'container' => 'primary',
-				'footer'    => 'page',
-				'render'    => function () {
-					while ( have_posts() ) {
-						the_post();
-						if ( is_search() ) {
-							get_template_part( 'template-parts/content/entry', 'search' );
-						} else {
-							get_template_part( 'template-parts/content/entry', get_post_type() );
-						}
+		add_theme_support('infinite-scroll', [
+			'container' => 'primary',
+			'footer' => 'page',
+			'render' => function () {
+				while (have_posts()) {
+					the_post();
+					if (is_search()) {
+						get_template_part('template-parts/content/entry', 'search');
+					} else {
+						get_template_part('template-parts/content/entry', get_post_type());
 					}
-				},
-			)
-		);
+				}
+			},
+		]);
 
 		// Add theme support for Responsive Videos.
-		add_theme_support( 'jetpack-responsive-videos' );
+		add_theme_support('jetpack-responsive-videos');
 
 		// Add theme support for Content Options.
-		add_theme_support(
-			'jetpack-content-options',
-			array(
-				'post-details' => array(
-					'stylesheet' => 'wp-rig-content',
-					'date'       => '.posted-on',
-					'categories' => '.category-links',
-					'tags'       => '.tag-links',
-					'author'     => '.posted-by',
-					'comment'    => '.comments-link',
-				),
-			)
-		);
+		add_theme_support('jetpack-content-options', [
+			'post-details' => [
+				'stylesheet' => 'wp-rig-content',
+				'date' => '.posted-on',
+				'categories' => '.category-links',
+				'tags' => '.tag-links',
+				'author' => '.posted-by',
+				'comment' => '.comments-link',
+			],
+		]);
 	}
 }

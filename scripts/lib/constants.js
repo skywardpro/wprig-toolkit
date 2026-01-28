@@ -16,17 +16,17 @@ import config from '../../config/themeConfig.js';
 
 // Root path is where npm run commands happen
 export const rootPath = process.cwd();
-export const testPath = `${ rootPath }/scripts/tests`;
+export const testPath = `${rootPath}/scripts/tests`;
 
 // Dev or production
 export const isProd = process.env.NODE_ENV === 'production';
 
 // Directory for assets (CSS, JS, images)
-export const assetsDir = `${ rootPath }/assets`;
+export const assetsDir = `${rootPath}/assets`;
 
 // PHPCS options
 export const PHPCSOptions = {
-	bin: `${ rootPath }/vendor/bin/phpcs`,
+	bin: `${rootPath}/vendor/bin/phpcs`,
 	showSniffCode: true,
 	report: 'full',
 	reporter: 'log',
@@ -50,114 +50,106 @@ export const nameFieldDefaults = {
 
 // Default Theme Paths
 export const prodThemePath = isProd
-	? path.normalize( `${ rootPath }/../${ config.theme.slug }` )
+	? path.normalize(`${rootPath}/../${config.theme.slug}`)
 	: undefined;
-export const prodAssetsDir = isProd ? `${ prodThemePath }/assets` : assetsDir;
+export const prodAssetsDir = isProd ? `${prodThemePath}/assets` : assetsDir;
 
 // Project paths
 export const paths = {
 	assetsDir,
 	browserSync: {
-		dir: `${ rootPath }/BrowserSync`,
-		cert: `${ rootPath }/BrowserSync/wp-rig-browser-sync-cert.crt`,
-		caCert: `${ rootPath }/BrowserSync/wp-rig-browser-sync-root-cert.crt`,
-		key: `${ rootPath }/BrowserSync/wp-rig-browser-sync-key.key`,
+		dir: `${rootPath}/BrowserSync`,
+		cert: `${rootPath}/BrowserSync/wp-rig-browser-sync-cert.crt`,
+		caCert: `${rootPath}/BrowserSync/wp-rig-browser-sync-root-cert.crt`,
+		key: `${rootPath}/BrowserSync/wp-rig-browser-sync-key.key`,
 	},
 	config: {
-		themeConfig: `${ rootPath }/config/themeConfig.js`,
+		themeConfig: `${rootPath}/config/themeConfig.js`,
 	},
 	php: {
 		src: [
-			`${ rootPath }/**/*.php`,
-			`!${ rootPath }/optional/**/*.*`,
-			`!${ rootPath }/tests/**/*.*`,
-			`!${ rootPath }/vendor/**/*.*`,
-			`!${ rootPath }/wp-cli/**/*.*`,
-			`!${ rootPath }/node_modules/**/*.*`,
-			`!${ rootPath }/childify_backup/**/*.*`,
-			`!${ rootPath }/scripts/**/*.*`,
-			`!${ rootPath }/scrips/**/*.*`,
+			`${rootPath}/**/*.php`,
+			`!${rootPath}/optional/**/*.*`,
+			`!${rootPath}/tests/**/*.*`,
+			`!${rootPath}/vendor/**/*.*`,
+			`!${rootPath}/wp-cli/**/*.*`,
+			`!${rootPath}/node_modules/**/*.*`,
+			`!${rootPath}/childify_backup/**/*.*`,
+			`!${rootPath}/scripts/**/*.*`,
+			`!${rootPath}/scrips/**/*.*`,
 		],
-		dest: `${ rootPath }/`,
+		dest: `${rootPath}/`,
 	},
 	styles: {
 		editorSrc: [
-			`${ assetsDir }/css/src/editor/**/*.css`,
+			`${assetsDir}/css/src/editor/**/*.css`,
 			// Ignore partial files.
-			`!${ assetsDir }/css/src/**/_*.css`,
+			`!${assetsDir}/css/src/**/_*.css`,
 		],
-		editorSrcDir: `${ assetsDir }/css/src/editor`,
-		editorDest: `${ assetsDir }/css/editor`,
+		editorSrcDir: `${assetsDir}/css/src/editor`,
+		editorDest: `${assetsDir}/css/editor`,
 		src: [
-			`${ assetsDir }/css/src/**/*.css`,
+			`${assetsDir}/css/src/**/*.css`,
 			// Ignore partial files.
-			`!${ assetsDir }/css/src/**/_*.css`,
+			`!${assetsDir}/css/src/**/_*.css`,
 			// Ignore editor source css.
-			`!${ assetsDir }/css/src/editor/**/*.css`,
+			`!${assetsDir}/css/src/editor/**/*.css`,
 		],
-		srcDir: `${ assetsDir }/css/src`,
-		dest: `${ assetsDir }/css`,
+		srcDir: `${assetsDir}/css/src`,
+		dest: `${assetsDir}/css`,
 	},
 	scripts: {
-		src: [
-			`${ assetsDir }/js/src/**/*.js`,
-			`!${ assetsDir }/js/src/**/_*.js`,
-		],
-		srcDir: `${ assetsDir }/js/src`,
-		dest: `${ assetsDir }/js`,
+		src: [`${assetsDir}/js/src/**/*.js`, `!${assetsDir}/js/src/**/_*.js`],
+		srcDir: `${assetsDir}/js/src`,
+		dest: `${assetsDir}/js`,
 	},
 	images: {
-		src: `${ assetsDir }/images/src/**/*.{jpg,JPG,png,svg,gif,GIF}`,
-		dest: `${ assetsDir }/images/`,
+		src: `${assetsDir}/images/src/**/*.{jpg,JPG,png,svg,gif,GIF}`,
+		dest: `${assetsDir}/images/`,
 	},
 	fonts: {
-		src: `${ assetsDir }/fonts/**/*.{woff,woff2,eot,ttf,svg}`,
-		dest: `${ assetsDir }/fonts/`,
+		src: `${assetsDir}/fonts/**/*.{woff,woff2,eot,ttf,svg}`,
+		dest: `${assetsDir}/fonts/`,
 	},
 	export: {
 		src: [],
-		stringReplaceSrc: [
-			`${ rootPath }/style.css`,
-			`${ rootPath }/languages/*.po`,
-		],
+		stringReplaceSrc: [`${rootPath}/style.css`, `${rootPath}/languages/*.po`],
 	},
 	languages: {
 		src: [
-			`${ rootPath }/**/*.php`,
-			`!${ rootPath }/optional/**/*.*`,
-			`!${ rootPath }/tests/**/*.*`,
-			`!${ rootPath }/vendor/**/*.*`,
+			`${rootPath}/**/*.php`,
+			`!${rootPath}/optional/**/*.*`,
+			`!${rootPath}/tests/**/*.*`,
+			`!${rootPath}/vendor/**/*.*`,
 		],
-		dest: `${ rootPath }/languages/${ nameFieldDefaults.slug }.pot`,
+		dest: `${rootPath}/languages/${nameFieldDefaults.slug}.pot`,
 	},
 };
 
 // Add rootPath to filesToCopy and additionalFilesToCopy
-const additionalFilesToCopy = configValueDefined(
-	'export.additionalFilesToCopy'
-)
+const additionalFilesToCopy = configValueDefined('export.additionalFilesToCopy')
 	? config.export.additionalFilesToCopy
 	: [];
-const filesToCopy = configValueDefined( 'export.filesToCopy' )
+const filesToCopy = configValueDefined('export.filesToCopy')
 	? config.export.filesToCopy
 	: [];
-for ( const filePath of filesToCopy.concat( additionalFilesToCopy ) ) {
+for (const filePath of filesToCopy.concat(additionalFilesToCopy)) {
 	// Add the files to export src - use path.posix.join to ensure forward slashes
 	// This ensures cross-platform compatibility (Windows/Mac/Linux)
-	const exportPath = `${ rootPath }/${ filePath }`.replace(/\\/g, '/');
-	paths.export.src.push( exportPath );
+	const exportPath = `${rootPath}/${filePath}`.replace(/\\/g, '/');
+	paths.export.src.push(exportPath);
 }
 
 // Override paths for production
-if ( isProd ) {
-	paths.php.dest = `${ prodThemePath }/`;
-	paths.styles.dest = `${ prodAssetsDir }/css/`;
-	paths.styles.editorDest = `${ prodAssetsDir }/css/editor/`;
-	paths.scripts.dest = `${ prodAssetsDir }/js/`;
-	paths.images.dest = `${ prodAssetsDir }/images/`;
-	paths.fonts.dest = `${ prodAssetsDir }/fonts/`;
+if (isProd) {
+	paths.php.dest = `${prodThemePath}/`;
+	paths.styles.dest = `${prodAssetsDir}/css/`;
+	paths.styles.editorDest = `${prodAssetsDir}/css/editor/`;
+	paths.scripts.dest = `${prodAssetsDir}/js/`;
+	paths.images.dest = `${prodAssetsDir}/images/`;
+	paths.fonts.dest = `${prodAssetsDir}/fonts/`;
 	paths.languages = {
-		src: `${ prodThemePath }/**/*.php`,
-		dest: `${ prodThemePath }/languages/${ config.theme.slug }.pot`,
+		src: `${prodThemePath}/**/*.php`,
+		dest: `${prodThemePath}/languages/${config.theme.slug}.pot`,
 	};
 }

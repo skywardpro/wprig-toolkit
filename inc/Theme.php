@@ -17,13 +17,12 @@ use InvalidArgumentException;
  */
 class Theme
 {
-
 	/**
 	 * Associative array of theme components, keyed by their slug.
 	 *
 	 * @var array
 	 */
-	protected $components = array();
+	protected $components = [];
 
 	/**
 	 * The template tags instance, providing access to all available template tags.
@@ -43,24 +42,26 @@ class Theme
 	 *
 	 * @throws InvalidArgumentException Thrown if one of the $components does not implement Component_Interface.
 	 */
-	public function __construct(array $components = array())
+	public function __construct(array $components = [])
 	{
-		if (array() === $components) {
+		if ([] === $components) {
 			$components = $this->get_default_components();
 		}
 
 		// Set the components.
 		foreach ($components as $component) {
-
 			// Bail if a component is invalid.
-			if (! $component instanceof Component_Interface) {
+			if (!$component instanceof Component_Interface) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: classname/type of the variable, 2: interface name */
-						esc_html__('The theme component %1$s does not implement the %2$s interface.', 'wp-rig'),
+						esc_html__(
+							'The theme component %1$s does not implement the %2$s interface.',
+							'wp-rig',
+						),
 						esc_html(gettype($component)),
-						Component_Interface::class
-					)
+						Component_Interface::class,
+					),
 				);
 			}
 
@@ -69,12 +70,11 @@ class Theme
 
 		// Instantiate the template tags instance for all theme templating components.
 		$this->template_tags = new Template_Tags(
-			array_filter(
-				$this->components,
-				function (Component_Interface $component) {
-					return $component instanceof Templating_Component_Interface;
-				}
-			)
+			array_filter($this->components, function (
+				Component_Interface $component,
+			) {
+				return $component instanceof Templating_Component_Interface;
+			}),
 		);
 	}
 
@@ -85,12 +85,9 @@ class Theme
 	 */
 	public function initialize()
 	{
-		array_walk(
-			$this->components,
-			function (Component_Interface $component) {
-				$component->initialize();
-			}
-		);
+		array_walk($this->components, function (Component_Interface $component) {
+			$component->initialize();
+		});
 	}
 
 	/**
@@ -119,13 +116,13 @@ class Theme
 	 */
 	public function component(string $slug): Component_Interface
 	{
-		if (! isset($this->components[$slug])) {
+		if (!isset($this->components[$slug])) {
 			throw new InvalidArgumentException(
 				sprintf(
 					/* translators: %s: slug */
 					esc_html__('No theme component with the slug %s exists.', 'wp-rig'),
-					esc_html($slug)
-				)
+					esc_html($slug),
+				),
 			);
 		}
 
@@ -144,7 +141,7 @@ class Theme
 	 */
 	protected function get_default_components(): array
 	{
-		$components = array(
+		$components = [
 			new Localization\Component(),
 			new Base_Support\Component(),
 			new Editor\Component(),
@@ -165,7 +162,7 @@ class Theme
 			new Excerpts\Component(),
 			new Options\Component(),
 			new Blocks\Component(),
-		);
+		];
 
 		if (defined('JETPACK__VERSION')) {
 			$components[] = new Jetpack\Component();

@@ -11,31 +11,29 @@ import fse from 'fs-extra';
  * @param {Object}          [options] - fast-glob options; ignore patterns will also be normalized for Windows.
  * @return {Promise<string[]>}        - Resolved file paths matching the glob(s).
  */
-export async function globFiles( patterns, options = {} ) {
+export async function globFiles(patterns, options = {}) {
 	// Normalize patterns to use forward slashes for cross-platform (Windows) globbing
-	const normalize = ( p ) => {
-		if ( typeof p === 'string' ) {
-			return p.replace( /\\/g, '/' );
+	const normalize = (p) => {
+		if (typeof p === 'string') {
+			return p.replace(/\\/g, '/');
 		}
 		return p;
 	};
-	const normalizedPatterns = Array.isArray( patterns )
-		? patterns.map( ( p ) => normalize( p ) )
-		: normalize( patterns );
+	const normalizedPatterns = Array.isArray(patterns)
+		? patterns.map((p) => normalize(p))
+		: normalize(patterns);
 	const normalizedOptions = { ...options };
-	if ( Array.isArray( options.ignore ) ) {
-		normalizedOptions.ignore = options.ignore.map( ( p ) =>
-			p.replace( /\\/g, '/' )
-		);
-	} else if ( typeof options.ignore === 'string' ) {
-		normalizedOptions.ignore = options.ignore.replace( /\\/g, '/' );
+	if (Array.isArray(options.ignore)) {
+		normalizedOptions.ignore = options.ignore.map((p) => p.replace(/\\/g, '/'));
+	} else if (typeof options.ignore === 'string') {
+		normalizedOptions.ignore = options.ignore.replace(/\\/g, '/');
 	}
-	const list = await fg( normalizedPatterns, {
+	const list = await fg(normalizedPatterns, {
 		onlyFiles: true,
 		dot: false,
 		caseSensitiveMatch: false,
 		...normalizedOptions,
-	} );
+	});
 	return list;
 }
 
@@ -45,9 +43,9 @@ export async function globFiles( patterns, options = {} ) {
  * @param {string} baseDir
  * @param {string} destRoot
  */
-export function destPathFor( srcFile, baseDir, destRoot ) {
-	const rel = path.relative( baseDir, srcFile );
-	return path.join( destRoot, rel );
+export function destPathFor(srcFile, baseDir, destRoot) {
+	const rel = path.relative(baseDir, srcFile);
+	return path.join(destRoot, rel);
 }
 
 /**
@@ -56,11 +54,11 @@ export function destPathFor( srcFile, baseDir, destRoot ) {
  * @param {string|Buffer} data
  * @param {string}        [encoding]
  */
-export async function writeFileEnsured( filePath, data, encoding ) {
-	await fse.ensureDir( path.dirname( filePath ) );
-	if ( Buffer.isBuffer( data ) ) {
-		await fse.writeFile( filePath, data );
+export async function writeFileEnsured(filePath, data, encoding) {
+	await fse.ensureDir(path.dirname(filePath));
+	if (Buffer.isBuffer(data)) {
+		await fse.writeFile(filePath, data);
 	} else {
-		await fse.writeFile( filePath, data, encoding || 'utf8' );
+		await fse.writeFile(filePath, data, encoding || 'utf8');
 	}
 }

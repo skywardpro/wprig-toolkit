@@ -10,64 +10,61 @@
  */
 
 // Check if ACF exists.
-if ( class_exists( 'ACF' ) ) {
-
+if (class_exists('ACF')) {
 	/**
 	 * Register field for custom H1.
 	 *
 	 * Adds a custom field for overriding the default H1 tag.
 	 */
-	function add_custom_acf_post_and_page_options() {
-
-		acf_add_local_field_group(
-			array(
-				'key'      => 'group_posts_and_pages_options',
-				'title'    => 'Post & Pages Options',
-				'fields'   => array(
-					array(
-						'key'          => 'field_custom_h1',
-						'label'        => 'Custom H1',
-						'name'         => 'custom_h1',
-						'type'         => 'text',
-						'instructions' => 'Fill this field if you want to override the default H1 tag (usually post or page name). Max length is 80 symbols but for SEO purposes it\'s better to use headers under 60-70.',
-						'maxlength'    => '80',
-					),
-				),
-				'location' => array(
-					array(
-						array(
-							'param'    => 'post_type',
-							'operator' => '==',
-							'value'    => 'page',
-						),
-					),
-					array(
-						array(
-							'param'    => 'post_type',
-							'operator' => '==',
-							'value'    => 'post',
-						),
-					),
-					array(
-						array(
-							'param'    => 'post_type',
-							'operator' => '==',
-							'value'    => 'treatments',
-						),
-					),
-				),
-				'menu_order'            => 0,
-				'position'              => 'acf_after_title',
-				'style'                 => 'default',
-				'label_placement'       => 'top',
-				'instruction_placement' => 'label',
-				'hide_on_screen'        => '',
-				'active'                => true,
-				'description'           => '',
-			)
-		);
+	function add_custom_acf_post_and_page_options()
+	{
+		acf_add_local_field_group([
+			'key' => 'group_posts_and_pages_options',
+			'title' => 'Post & Pages Options',
+			'fields' => [
+				[
+					'key' => 'field_custom_h1',
+					'label' => 'Custom H1',
+					'name' => 'custom_h1',
+					'type' => 'text',
+					'instructions' =>
+						'Fill this field if you want to override the default H1 tag (usually post or page name). Max length is 80 symbols but for SEO purposes it\'s better to use headers under 60-70.',
+					'maxlength' => '80',
+				],
+			],
+			'location' => [
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'page',
+					],
+				],
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'post',
+					],
+				],
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'treatments',
+					],
+				],
+			],
+			'menu_order' => 0,
+			'position' => 'acf_after_title',
+			'style' => 'default',
+			'label_placement' => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen' => '',
+			'active' => true,
+			'description' => '',
+		]);
 	}
 
-	add_action( 'acf/init', 'add_custom_acf_post_and_page_options' );
-
+	add_action('acf/init', 'add_custom_acf_post_and_page_options');
 }

@@ -14,7 +14,7 @@ import fs from 'fs';
  */
 import { paths } from '../lib/constants.js';
 
-export default function generateCert( done ) {
+export default function generateCert(done) {
 	// Use pem to create a new key/cert
 	/*
     const createCertOptions = {
@@ -29,44 +29,40 @@ export default function generateCert( done ) {
 		country: 'US',
 		state: 'OR',
 		locality: 'Portland',
-		altNames: [ 'localhost' ],
+		altNames: ['localhost'],
 		organization: 'WP Rig',
 		commonName: 'localhost',
 	};
 
-	createCert( createCertOptions ).then( ( keys ) => {
+	createCert(createCertOptions).then((keys) => {
 		// Create the BrowserSync directory if needed
-		if ( ! fs.existsSync( paths.browserSync.dir ) ) {
-			fs.mkdirSync( paths.browserSync.dir );
+		if (!fs.existsSync(paths.browserSync.dir)) {
+			fs.mkdirSync(paths.browserSync.dir);
 		}
 
 		// Save the key
-		fs.writeFileSync( paths.browserSync.key, keys.key, ( err ) => {
-			if ( err ) {
+		fs.writeFileSync(paths.browserSync.key, keys.key, (err) => {
+			if (err) {
 				throw err;
 			}
-		} );
+		});
 
 		// Save the cert
-		fs.writeFileSync( paths.browserSync.cert, keys.cert, ( err ) => {
-			if ( err ) {
+		fs.writeFileSync(paths.browserSync.cert, keys.cert, (err) => {
+			if (err) {
 				throw err;
 			}
-		} );
+		});
 
 		// Save the CA cert
-		fs.writeFileSync( paths.browserSync.caCert, keys.caCert, ( err ) => {
-			if ( err ) {
+		fs.writeFileSync(paths.browserSync.caCert, keys.caCert, (err) => {
+			if (err) {
 				throw err;
 			}
-		} );
+		});
 
-		log(
-			colors.green(
-				'Custom SSL key and certificate generated successfully!'
-			)
-		);
+		log(colors.green('Custom SSL key and certificate generated successfully!'));
 
 		done();
-	} );
+	});
 }

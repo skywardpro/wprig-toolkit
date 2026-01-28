@@ -9,8 +9,6 @@
  * @package wp_rig
  */
 
-
-
 // Register new menu location for the footer
 // add_action( 'after_setup_theme', function() {
 // 	register_nav_menus( array(

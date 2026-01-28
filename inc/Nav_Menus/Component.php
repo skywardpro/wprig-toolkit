@@ -29,7 +29,6 @@ use function wp_nav_menu;
  */
 class Component implements Component_Interface, Templating_Component_Interface
 {
-
 	const PRIMARY_NAV_MENU_SLUG = 'primary';
 
 	/**
@@ -94,9 +93,15 @@ class Component implements Component_Interface, Templating_Component_Interface
 		$svg_icons = wp_rig()->get_all_svg_icons();
 
 		// Get specific icons with fallback to get_theme_asset for backward compatibility
-		$dropdown_svg = $svg_icons['dropdown-symbol'] ?? wp_rig()->get_theme_asset('dropdown-symbol.svg', 'svg', true);
-		$menu_icon_svg = $svg_icons['menu-icon'] ?? wp_rig()->get_theme_asset('menu-icon.svg', 'svg', true);
-		$close_icon_svg = $svg_icons['close-icon'] ?? wp_rig()->get_theme_asset('close-icon.svg', 'svg', true);
+		$dropdown_svg =
+			$svg_icons['dropdown-symbol'] ??
+			wp_rig()->get_theme_asset('dropdown-symbol.svg', 'svg', true);
+		$menu_icon_svg =
+			$svg_icons['menu-icon'] ??
+			wp_rig()->get_theme_asset('menu-icon.svg', 'svg', true);
+		$close_icon_svg =
+			$svg_icons['close-icon'] ??
+			wp_rig()->get_theme_asset('close-icon.svg', 'svg', true);
 
 		/**
 		 * Filters the dropdown icon SVG markup used in navigation menus.
@@ -105,7 +110,10 @@ class Component implements Component_Interface, Templating_Component_Interface
 		 *
 		 * @param string $dropdown_svg The SVG markup for the dropdown arrow icon.
 		 */
-		$this->dropdown_symbol_svg = apply_filters('wp_rig_dropdown_icon_svg', $dropdown_svg);
+		$this->dropdown_symbol_svg = apply_filters(
+			'wp_rig_dropdown_icon_svg',
+			$dropdown_svg,
+		);
 
 		/**
 		 * Filters the mobile menu toggle (hamburger) icon SVG markup.
@@ -114,7 +122,10 @@ class Component implements Component_Interface, Templating_Component_Interface
 		 *
 		 * @param string $menu_icon_svg The SVG markup for the hamburger menu icon.
 		 */
-		$this->menu_icon_svg = apply_filters('wp_rig_menu_toggle_icon_svg', $menu_icon_svg);
+		$this->menu_icon_svg = apply_filters(
+			'wp_rig_menu_toggle_icon_svg',
+			$menu_icon_svg,
+		);
 
 		/**
 		 * Filters the mobile menu close (X) icon SVG markup.
@@ -123,7 +134,10 @@ class Component implements Component_Interface, Templating_Component_Interface
 		 *
 		 * @param string $close_icon_svg The SVG markup for the close menu icon.
 		 */
-		$this->close_icon_svg = apply_filters('wp_rig_menu_close_icon_svg', $close_icon_svg);
+		$this->close_icon_svg = apply_filters(
+			'wp_rig_menu_close_icon_svg',
+			$close_icon_svg,
+		);
 	}
 
 	/**
@@ -131,13 +145,39 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 */
 	public function hooks()
 	{
-		add_action('after_setup_theme', array($this, 'action_register_nav_menus'));
-		add_filter('walker_nav_menu_start_el', array($this, 'filter_primary_nav_menu_dropdown_symbol'), 10, 4);
-		add_filter('wp_rig_menu_toggle_button', array($this, 'customize_mobile_menu_toggle'));
-		add_filter('wp_rig_site_navigation_classes', array($this, 'customize_mobile_menu_nav_classes'));
-		add_filter('render_block_core/navigation', array($this, 'add_nav_class_to_navigation_block'), 10, 3);
-		add_filter('walker_nav_menu_start_el', array($this, 'modify_menu_items_for_accessibility'), 10, 4);
-		add_filter('wp_nav_menu_objects', array($this, 'inject_parent_link_into_submenu'), 10, 2);
+		add_action('after_setup_theme', [$this, 'action_register_nav_menus']);
+		add_filter(
+			'walker_nav_menu_start_el',
+			[$this, 'filter_primary_nav_menu_dropdown_symbol'],
+			10,
+			4,
+		);
+		add_filter('wp_rig_menu_toggle_button', [
+			$this,
+			'customize_mobile_menu_toggle',
+		]);
+		add_filter('wp_rig_site_navigation_classes', [
+			$this,
+			'customize_mobile_menu_nav_classes',
+		]);
+		add_filter(
+			'render_block_core/navigation',
+			[$this, 'add_nav_class_to_navigation_block'],
+			10,
+			3,
+		);
+		add_filter(
+			'walker_nav_menu_start_el',
+			[$this, 'modify_menu_items_for_accessibility'],
+			10,
+			4,
+		);
+		add_filter(
+			'wp_nav_menu_objects',
+			[$this, 'inject_parent_link_into_submenu'],
+			10,
+			2,
+		);
 	}
 
 	/**
@@ -149,10 +189,10 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 */
 	public function template_tags(): array
 	{
-		return array(
-			'is_primary_nav_menu_active' => array($this, 'is_primary_nav_menu_active'),
-			'display_primary_nav_menu'   => array($this, 'display_primary_nav_menu'),
-		);
+		return [
+			'is_primary_nav_menu_active' => [$this, 'is_primary_nav_menu_active'],
+			'display_primary_nav_menu' => [$this, 'display_primary_nav_menu'],
+		];
 	}
 
 	/**
@@ -160,13 +200,17 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 */
 	private function get_theme_settings_config()
 	{
-		$url      = get_theme_file_uri() . '/inc/EZ_Customizer/themeCustomizeSettings.json';
+		$url =
+			get_theme_file_uri() . '/inc/EZ_Customizer/themeCustomizeSettings.json';
 		$response = wp_remote_get($url);
 		if (is_wp_error($response)) {
 			return null;
 		} else {
-			$theme_settings_json  = wp_remote_retrieve_body($response);
-			$this->theme_settings = apply_filters('wp_rig_customizer_settings', json_decode($theme_settings_json, FILE_USE_INCLUDE_PATH));
+			$theme_settings_json = wp_remote_retrieve_body($response);
+			$this->theme_settings = apply_filters(
+				'wp_rig_customizer_settings',
+				json_decode($theme_settings_json, FILE_USE_INCLUDE_PATH),
+			);
 		}
 		return null;
 	}
@@ -176,11 +220,9 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 */
 	public function action_register_nav_menus()
 	{
-		register_nav_menus(
-			array(
-				static::PRIMARY_NAV_MENU_SLUG => esc_html__('Primary', 'wp-rig'),
-			)
-		);
+		register_nav_menus([
+			static::PRIMARY_NAV_MENU_SLUG => esc_html__('Primary', 'wp-rig'),
+		]);
 	}
 
 	/**
@@ -203,17 +245,29 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 * @param object  $args        An object of wp_nav_menu() arguments.
 	 * @return string Modified nav menu HTML.
 	 */
-	public function filter_primary_nav_menu_dropdown_symbol(string $item_output, WP_Post $item, int $depth, $args): string
-	{
-
+	public function filter_primary_nav_menu_dropdown_symbol(
+		string $item_output,
+		WP_Post $item,
+		int $depth,
+		$args,
+	): string {
 		// Only for our primary menu location.
-		if (empty($args->theme_location) || static::PRIMARY_NAV_MENU_SLUG !== $args->theme_location) {
+		if (
+			empty($args->theme_location) ||
+			static::PRIMARY_NAV_MENU_SLUG !== $args->theme_location
+		) {
 			return $item_output;
 		}
 
 		// Add the dropdown for items that have children.
-		if (! empty($item->classes) && in_array('menu-item-has-children', $item->classes, true)) {
-			return $item_output . '<span class="dropdown">' . $this->dropdown_symbol_svg . '</span>';
+		if (
+			!empty($item->classes) &&
+			in_array('menu-item-has-children', $item->classes, true)
+		) {
+			return $item_output .
+				'<span class="dropdown">' .
+				$this->dropdown_symbol_svg .
+				'</span>';
 		}
 
 		return $item_output;
@@ -235,9 +289,9 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 * @param array $args Optional. Array of arguments. See `wp_nav_menu()` documentation for a list of supported
 	 *                    arguments.
 	 */
-	public function display_primary_nav_menu(array $args = array())
+	public function display_primary_nav_menu(array $args = [])
 	{
-		if (! isset($args['container'])) {
+		if (!isset($args['container'])) {
 			$args['container'] = '';
 		}
 
@@ -251,8 +305,11 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 *
 	 * @return string Mobile Nav Toggle HTML.
 	 */
-	public function customize_mobile_menu_toggle() {
-		return '<button class="menu-toggle icon" aria-label="' . esc_html__( 'Open menu', 'wp-rig' ) . '" aria-controls="primary-menu" aria-expanded="false">
+	public function customize_mobile_menu_toggle()
+	{
+		return '<button class="menu-toggle icon" aria-label="' .
+			esc_html__('Open menu', 'wp-rig') .
+			'" aria-controls="primary-menu" aria-expanded="false">
 			<div class="hamburger">
 				<span class="meat"></span>
 				<span class="meat"></span>
@@ -268,7 +325,9 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 */
 	public function customize_mobile_menu_nav_classes()
 	{
-		return esc_html('main-navigation nav--toggle-sub nav--toggle-small icon-nav');
+		return esc_html(
+			'main-navigation nav--toggle-sub nav--toggle-small icon-nav',
+		);
 	}
 
 	// TODO: Please improve the following @param description.
@@ -281,13 +340,16 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 * @param mixed $instance The instance. Type could possibly be more specific.
 	 * @return string.
 	 */
-	public function add_nav_class_to_navigation_block($block_content, $block, $instance)
-	{
+	public function add_nav_class_to_navigation_block(
+		$block_content,
+		$block,
+		$instance,
+	) {
 		// Instantiate the tag processor.
 		$content = new \WP_HTML_Tag_Processor($block_content);
 
 		// Find the first <ul> or <ol> tag in the block markup.
-		$content->next_tag(array('nav'));
+		$content->next_tag(['nav']);
 		// Note: soon this will change to `$content->next( [ 'ol', 'ul' ] )`.
 
 		// Add a custom class.
@@ -316,34 +378,44 @@ class Component implements Component_Interface, Templating_Component_Interface
 	public function inject_parent_link_into_submenu($items, $args)
 	{
 		// Ensure we're working with the correct nav menu theme location.
-		if (empty($args->theme_location) || static::PRIMARY_NAV_MENU_SLUG !== $args->theme_location) {
+		if (
+			empty($args->theme_location) ||
+			static::PRIMARY_NAV_MENU_SLUG !== $args->theme_location
+		) {
 			return $items;
 		}
 
 		// Build a quick lookup of children by parent ID to detect existing injected links and ordering.
-		$children_by_parent = array();
+		$children_by_parent = [];
 		foreach ($items as $itm) {
 			$parent_id = (int) ($itm->menu_item_parent ?? 0);
-			if (! isset($children_by_parent[$parent_id])) {
-				$children_by_parent[$parent_id] = array();
+			if (!isset($children_by_parent[$parent_id])) {
+				$children_by_parent[$parent_id] = [];
 			}
 			$children_by_parent[$parent_id][] = $itm;
 		}
 
-		$injected = array();
+		$injected = [];
 
 		foreach ($items as $item) {
-			$has_children  = ! empty($item->classes) && is_array($item->classes) && in_array('menu-item-has-children', $item->classes, true);
-			$has_valid_url = ! empty($item->url) && '#' !== $item->url;
+			$has_children =
+				!empty($item->classes) &&
+				is_array($item->classes) &&
+				in_array('menu-item-has-children', $item->classes, true);
+			$has_valid_url = !empty($item->url) && '#' !== $item->url;
 
-			if (! $has_children || ! $has_valid_url) {
+			if (!$has_children || !$has_valid_url) {
 				continue;
 			}
 
 			$already_has_injected = false;
-			$children             = $children_by_parent[(int) $item->ID] ?? array();
+			$children = $children_by_parent[(int) $item->ID] ?? [];
 			foreach ($children as $child) {
-				if (! empty($child->classes) && is_array($child->classes) && in_array('menu-item--injected-parent-link', $child->classes, true)) {
+				if (
+					!empty($child->classes) &&
+					is_array($child->classes) &&
+					in_array('menu-item--injected-parent-link', $child->classes, true)
+				) {
 					$already_has_injected = true;
 					break;
 				}
@@ -356,29 +428,30 @@ class Component implements Component_Interface, Templating_Component_Interface
 			// Create a lightweight clone of the parent as a custom child item.
 			$new = clone $item;
 			// Ensure unique/harmless identifiers for the injected item.
-			$new->ID               = -1 * (absint($item->ID) + 100000);
-			$new->db_id            = 0;
+			$new->ID = -1 * (absint($item->ID) + 100000);
+			$new->db_id = 0;
 			$new->menu_item_parent = (int) $item->ID;
-			$new->type             = 'custom';
-			$new->object           = 'custom';
-			$new->object_id        = 0;
-			$new->title            = $item->title;
-			$new->url              = $item->url;
-			$new->xfn              = '';
-			$new->target           = $item->target ?? '';
-			$new->attr_title       = $item->attr_title ?? '';
-			$new->description      = '';
-			$base_classes          = array_diff((array) ($item->classes ?? array()), array('menu-item-has-children'));
-			$new->classes          = array_unique(array_merge($base_classes, array('menu-item--injected-parent-link')));
+			$new->type = 'custom';
+			$new->object = 'custom';
+			$new->object_id = 0;
+			$new->title = $item->title;
+			$new->url = $item->url;
+			$new->xfn = '';
+			$new->target = $item->target ?? '';
+			$new->attr_title = $item->attr_title ?? '';
+			$new->description = '';
+			$base_classes = array_diff((array) ($item->classes ?? []), [
+				'menu-item-has-children',
+			]);
+			$new->classes = array_unique(
+				array_merge($base_classes, ['menu-item--injected-parent-link']),
+			);
 
 			// Try to make it the first among this parent's children by using a very small menu_order.
-			$children_orders = array_map(
-				function ($c) {
-					return (int) ($c->menu_order ?? 0);
-				},
-				$children
-			);
-			$min_order       = empty($children_orders) ? 0 : min($children_orders);
+			$children_orders = array_map(function ($c) {
+				return (int) ($c->menu_order ?? 0);
+			}, $children);
+			$min_order = empty($children_orders) ? 0 : min($children_orders);
 			$new->menu_order = $min_order - 1;
 
 			$injected[] = $new;
@@ -390,17 +463,14 @@ class Component implements Component_Interface, Templating_Component_Interface
 
 		// Merge and sort items by menu_order to keep expected order.
 		$items = array_merge($items, $injected);
-		usort(
-			$items,
-			function ($a, $b) {
-				$ao = (int) ($a->menu_order ?? 0);
-				$bo = (int) ($b->menu_order ?? 0);
-				if ($ao === $bo) {
-					return 0;
-				}
-				return ($ao < $bo) ? -1 : 1;
+		usort($items, function ($a, $b) {
+			$ao = (int) ($a->menu_order ?? 0);
+			$bo = (int) ($b->menu_order ?? 0);
+			if ($ao === $bo) {
+				return 0;
 			}
-		);
+			return $ao < $bo ? -1 : 1;
+		});
 
 		return $items;
 	}
@@ -419,8 +489,12 @@ class Component implements Component_Interface, Templating_Component_Interface
 	 *
 	 * @return string Modified HTML output for the menu item.
 	 */
-	public function modify_menu_items_for_accessibility($item_output, $item, $depth, $args)
-	{
+	public function modify_menu_items_for_accessibility(
+		$item_output,
+		$item,
+		$depth,
+		$args,
+	) {
 		// Ensure we're working with the correct nav menu theme location.
 		if (empty($args->theme_location) || 'primary' !== $args->theme_location) {
 			return $item_output;
@@ -432,8 +506,9 @@ class Component implements Component_Interface, Templating_Component_Interface
 			$item_label = $item->title;
 
 			// Add dropdown symbol inside the button.
-			$dropdown_symbol = '<span class="dropdown">' . $this->dropdown_symbol_svg . '</span>';
-			$has_submenu     = in_array('menu-item-has-children', $item->classes, true);
+			$dropdown_symbol =
+				'<span class="dropdown">' . $this->dropdown_symbol_svg . '</span>';
+			$has_submenu = in_array('menu-item-has-children', $item->classes, true);
 
 			// Replace `<a>` with `<button>` for accessibility and meaningful semantics.
 			return sprintf(
@@ -441,7 +516,7 @@ class Component implements Component_Interface, Templating_Component_Interface
 				$has_submenu ? 'submenu-toggle' : '',
 				esc_attr($item->ID),
 				esc_html($item_label),
-				$has_submenu ? $dropdown_symbol : ''
+				$has_submenu ? $dropdown_symbol : '',
 			);
 		}
 

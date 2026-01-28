@@ -3,15 +3,15 @@
 ----------------------------*/
 
 @font-face {
-	font-family: "Your-Font";
+	font-family: 'Your-Font';
 	src: url(../fonts/Your-Font.eot);
 	src:
-		local("Your Font"),
-		local("Your-Font"),
-		url(../fonts/Your-Fonteot?#iefix) format("embedded-opentype"),
-		url(../fonts/Your-Font.woff2) format("woff2"),
-		url(../fonts/Your-Font.woff) format("woff"),
-		url(../fonts/Your-Font.ttf) format("truetype");
+		local('Your Font'),
+		local('Your-Font'),
+		url(../fonts/Your-Fonteot?#iefix) format('embedded-opentype'),
+		url(../fonts/Your-Font.woff2) format('woff2'),
+		url(../fonts/Your-Font.woff) format('woff'),
+		url(../fonts/Your-Font.ttf) format('truetype');
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;

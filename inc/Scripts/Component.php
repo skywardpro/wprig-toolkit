@@ -27,8 +27,8 @@ use function apply_filters;
  * Exposes template tags:
  * * `wp_rig()->print_scripts()`
  */
-class Component implements Component_Interface, Templating_Component_Interface {
-
+class Component implements Component_Interface, Templating_Component_Interface
+{
 	/**
 	 * Associative array of JavaScript files, as $handle => $data pairs.
 	 * $data must be an array with keys:
@@ -54,15 +54,17 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return string Component slug.
 	 */
-	public function get_slug(): string {
+	public function get_slug(): string
+	{
 		return 'scripts';
 	}
 
 	/**
 	 * Adds the action and filter hooks to integrate with WordPress.
 	 */
-	public function initialize(): void {
-		add_action( 'wp_enqueue_scripts', array( $this, 'action_enqueue_scripts' ) );
+	public function initialize(): void
+	{
+		add_action('wp_enqueue_scripts', [$this, 'action_enqueue_scripts']);
 	}
 
 	/**
@@ -72,10 +74,11 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *               a callable or an array with key 'callable'. This approach is used to reserve the possibility of
 	 *               adding support for further arguments in the future.
 	 */
-	public function template_tags(): array {
-		return array(
-			'print_scripts' => array( $this, 'print_scripts' ),
-		);
+	public function template_tags(): array
+	{
+		return [
+			'print_scripts' => [$this, 'print_scripts'],
+		];
 	}
 
 	/**
@@ -83,46 +86,57 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * JavaScript files that are global are enqueued. All other JavaScript files are only registered, to be enqueued later.
 	 */
-	public function action_enqueue_scripts(): void {
-		$js_uri = get_theme_file_uri( '/assets/js/' );
-		$js_dir = get_theme_file_path( '/assets/js/' );
+	public function action_enqueue_scripts(): void
+	{
+		$js_uri = get_theme_file_uri('/assets/js/');
+		$js_dir = get_theme_file_path('/assets/js/');
 
 		$js_files = $this->get_js_files();
-		foreach ( $js_files as $handle => $data ) {
-			$src     = $js_uri . $data['file'];
-			$version = wp_rig()->get_asset_version( $js_dir . $data['file'] );
+		foreach ($js_files as $handle => $data) {
+			$src = $js_uri . $data['file'];
+			$version = wp_rig()->get_asset_version($js_dir . $data['file']);
 
 			/*
 			 * Enqueue global JavaScript files immediately and register the other ones for later use.
 			 */
-			if ( $data['global'] ) {
-				wp_enqueue_script( $handle, $src, $data['deps'], $version, $data['footer'] );
+			if ($data['global']) {
+				wp_enqueue_script(
+					$handle,
+					$src,
+					$data['deps'],
+					$version,
+					$data['footer'],
+				);
 			} else {
-				wp_register_script( $handle, $src, $data['deps'], $version, $data['footer'] );
+				wp_register_script(
+					$handle,
+					$src,
+					$data['deps'],
+					$version,
+					$data['footer'],
+				);
 			}
 
 			/**
 			 * Set async and deferred attributes.
 			 */
-			if ( 'async' === $data['loading'] ) {
-				wp_script_add_data( $handle, 'async', true );
+			if ('async' === $data['loading']) {
+				wp_script_add_data($handle, 'async', true);
 			}
-			if ( 'defer' === $data['loading'] ) {
-				wp_script_add_data( $handle, 'defer', true );
+			if ('defer' === $data['loading']) {
+				wp_script_add_data($handle, 'defer', true);
 			}
 
 			/**
 			 *  Uses wp_localize_scripts
 			 */
-			if ( $data['localize'] ) {
-				foreach ( $data['localize'] as $object => $vars ) {
-					wp_localize_script( $handle, $object, $vars );
+			if ($data['localize']) {
+				foreach ($data['localize'] as $object => $vars) {
+					wp_localize_script($handle, $object, $vars);
 				}
 			}
 		}
 	}
-
-
 
 	/**
 	 * Prints JavaScript <script> tags directly.
@@ -136,26 +150,29 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @param string ...$handles One or more JavaScript file handles.
 	 */
-	public function print_scripts( string ...$handles ): void {
-
+	public function print_scripts(string ...$handles): void
+	{
 		$js_files = $this->get_js_files();
-		$handles  = array_filter(
-			$handles,
-			function ( $handle ) use ( $js_files ) {
-				$is_valid = isset( $js_files[ $handle ] ) && ! $js_files[ $handle ]['global'];
-				if ( ! $is_valid ) {
-					/* translators: %s: JS handle */
-					_doing_it_wrong( __CLASS__ . '::print_scripts()', esc_html( sprintf( __( 'Invalid theme JS handle: %s', 'wp-rig' ), $handle ) ), 'WP Rig 2.0.0' );
-				}
-				return $is_valid;
+		$handles = array_filter($handles, function ($handle) use ($js_files) {
+			$is_valid = isset($js_files[$handle]) && !$js_files[$handle]['global'];
+			if (!$is_valid) {
+				/* translators: %s: JS handle */
+				_doing_it_wrong(
+					__CLASS__ . '::print_scripts()',
+					esc_html(
+						sprintf(__('Invalid theme JS handle: %s', 'wp-rig'), $handle),
+					),
+					'WP Rig 2.0.0',
+				);
 			}
-		);
+			return $is_valid;
+		});
 
-		if ( array() === $handles ) {
+		if ([] === $handles) {
 			return;
 		}
 
-		wp_print_scripts( $handles );
+		wp_print_scripts($handles);
 	}
 
 	/**
@@ -163,24 +180,25 @@ class Component implements Component_Interface, Templating_Component_Interface {
 	 *
 	 * @return array Associative array of $handle => $data pairs.
 	 */
-	protected function get_js_files(): array {
-		if ( is_array( $this->js_files ) ) {
+	protected function get_js_files(): array
+	{
+		if (is_array($this->js_files)) {
 			return $this->js_files;
 		}
 
-		$js_files = array(
-			'wp-rig-global' => array(
-				'file'   => 'global.min.js',
+		$js_files = [
+			'wp-rig-global' => [
+				'file' => 'global.min.js',
 				'global' => true,
-			),
-		);
+			],
+		];
 
-		$js_files[] = array(
-			'wp-rig-authors' => array(
-				'file'   => 'authors.min.js',
+		$js_files[] = [
+			'wp-rig-authors' => [
+				'file' => 'authors.min.js',
 				'global' => true,
-			),
-		);
+			],
+		];
 
 		/**
 		 * Filters default JS files.
@@ -191,27 +209,27 @@ class Component implements Component_Interface, Templating_Component_Interface {
 		 *                         enqueued instead of just being registered) and 'preload_callback' (callback)
 		 *                         function determining whether the file should be preloaded for the current request).
 		 */
-		$js_files = apply_filters( 'wp_rig_js_files', $js_files );
+		$js_files = apply_filters('wp_rig_js_files', $js_files);
 
-		$this->js_files = array();
-		foreach ( $js_files as $handle => $data ) {
-			if ( is_string( $data ) ) {
-				$data = array( 'file' => $data );
+		$this->js_files = [];
+		foreach ($js_files as $handle => $data) {
+			if (is_string($data)) {
+				$data = ['file' => $data];
 			}
 
-			if ( empty( $data['file'] ) ) {
+			if (empty($data['file'])) {
 				continue;
 			}
 
-			$this->js_files[ $handle ] = array_merge(
-				array(
-					'global'   => false,
-					'loading'  => null,
-					'footer'   => false,
-					'deps'     => array(),
+			$this->js_files[$handle] = array_merge(
+				[
+					'global' => false,
+					'loading' => null,
+					'footer' => false,
+					'deps' => [],
 					'localize' => null,
-				),
-				$data
+				],
+				$data,
 			);
 		}
 

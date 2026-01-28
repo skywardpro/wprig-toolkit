@@ -1,8 +1,8 @@
 {
-  "theme": {
-    "slug": "gulp-test-prod-theme",
-    "name": "Gulp Test Prod Theme",
-    "author": "Gulp Bot",
-    "PHPNamespace": "Gulp_Bot\\Theme"
-  }
+	"theme": {
+		"slug": "gulp-test-prod-theme",
+		"name": "Gulp Test Prod Theme",
+		"author": "Gulp Bot",
+		"PHPNamespace": "Gulp_Bot\\Theme"
+	}
 }

@@ -24,10 +24,10 @@ import { getThemeConfig } from '../lib/utils.js';
 export const server = browserSync.create();
 
 // Initialize the BrowserSync server conditionally:
-export function serve( done ) {
+export function serve(done) {
 	const config = getThemeConfig();
 
-	if ( ! config.dev.browserSync.live ) {
+	if (!config.dev.browserSync.live) {
 		done();
 		return;
 	}
@@ -40,7 +40,7 @@ export function serve( done ) {
 	};
 
 	// Only setup HTTPS certificates if HTTPS is enabled
-	if ( config.dev.browserSync.https ) {
+	if (config.dev.browserSync.https) {
 		// Use a custom path key/cert if defined, otherwise use the default path
 		const certPath = Object.prototype.hasOwnProperty.call(
 			config.dev.browserSync,
@@ -56,44 +56,36 @@ export function serve( done ) {
 			: paths.browserSync.key;
 
 		// Ensure the key/cert files exist
-		const certFound = fs.existsSync( certPath );
-		const keyFound = fs.existsSync( keyPath );
+		const certFound = fs.existsSync(certPath);
+		const keyFound = fs.existsSync(keyPath);
 
 		// Let the user know if we found a cert
-		if ( certFound ) {
-			log(
-				colors.yellow(
-					`Using the SSL certificate ${ colors.bold( certPath ) }`
-				)
-			);
+		if (certFound) {
+			log(colors.yellow(`Using the SSL certificate ${colors.bold(certPath)}`));
 		} else {
 			log(
 				colors.yellow(
-					`No SSL certificate found, HTTPS will ${ colors.bold(
+					`No SSL certificate found, HTTPS will ${colors.bold(
 						'not'
-					) } be enabled`
+					)} be enabled`
 				)
 			);
 		}
 
 		// Let the user know if we found a key
-		if ( keyFound ) {
-			log(
-				colors.yellow( `Using the SSL key ${ colors.bold( keyPath ) }` )
-			);
+		if (keyFound) {
+			log(colors.yellow(`Using the SSL key ${colors.bold(keyPath)}`));
 		} else {
 			log(
 				colors.yellow(
-					`No SSL key found, HTTPS will ${ colors.bold(
-						'not'
-					) } be enabled`
+					`No SSL key found, HTTPS will ${colors.bold('not')} be enabled`
 				)
 			);
 		}
 
 		// Only enable HTTPS if there is a cert and a key
-		if ( certFound && keyFound ) {
-			log( colors.yellow( `HTTPS is ${ colors.bold( 'on' ) }` ) );
+		if (certFound && keyFound) {
+			log(colors.yellow(`HTTPS is ${colors.bold('on')}`));
 			serverConfig.https = {
 				key: keyPath,
 				cert: certPath,
@@ -102,17 +94,17 @@ export function serve( done ) {
 	}
 
 	// Start the BrowserSync server
-	server.init( serverConfig );
+	server.init(serverConfig);
 
 	done();
 }
 
 // Reload the live site:
-export function reload( done ) {
+export function reload(done) {
 	const config = getThemeConfig();
 
-	if ( config.dev.browserSync.live ) {
-		if ( server.paused ) {
+	if (config.dev.browserSync.live) {
+		if (server.paused) {
 			server.resume();
 		}
 		server.reload();

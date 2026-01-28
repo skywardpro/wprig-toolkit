@@ -10,8 +10,8 @@ namespace WP_Rig\WP_Rig;
 /**
  * Interface for a theme component that exposes template tags.
  */
-interface Templating_Component_Interface {
-
+interface Templating_Component_Interface
+{
 	/**
 	 * Gets template tags to expose as methods on the Template_Tags class instance, accessible through `wp_rig()`.
 	 *

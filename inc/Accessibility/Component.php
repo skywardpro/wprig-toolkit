@@ -25,7 +25,6 @@ use function wp_localize_script;
  */
 class Component implements Component_Interface
 {
-
 	/**
 	 * Gets the unique identifier for the theme component.
 	 *
@@ -41,10 +40,26 @@ class Component implements Component_Interface
 	 */
 	public function initialize()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'action_enqueue_navigation_script'));
-		add_action('wp_print_footer_scripts', array($this, 'action_print_skip_link_focus_fix'));
-		add_filter('nav_menu_link_attributes', array($this, 'filter_nav_menu_link_attributes_aria_current'), 10, 2);
-		add_filter('page_menu_link_attributes', array($this, 'filter_nav_menu_link_attributes_aria_current'), 10, 2);
+		add_action('wp_enqueue_scripts', [
+			$this,
+			'action_enqueue_navigation_script',
+		]);
+		add_action('wp_print_footer_scripts', [
+			$this,
+			'action_print_skip_link_focus_fix',
+		]);
+		add_filter(
+			'nav_menu_link_attributes',
+			[$this, 'filter_nav_menu_link_attributes_aria_current'],
+			10,
+			2,
+		);
+		add_filter(
+			'page_menu_link_attributes',
+			[$this, 'filter_nav_menu_link_attributes_aria_current'],
+			10,
+			2,
+		);
 	}
 
 	/**
@@ -52,25 +67,22 @@ class Component implements Component_Interface
 	 */
 	public function action_enqueue_navigation_script()
 	{
-
 		// Enqueue the navigation script.
 		wp_enqueue_script(
 			'wp-rig-navigation',
 			get_theme_file_uri('/assets/js/navigation.min.js'),
-			array(),
-			wp_rig()->get_asset_version(get_theme_file_path('/assets/js/navigation.min.js')),
-			false
+			[],
+			wp_rig()->get_asset_version(
+				get_theme_file_path('/assets/js/navigation.min.js'),
+			),
+			false,
 		);
 		wp_script_add_data('wp-rig-navigation', 'async', true);
 		wp_script_add_data('wp-rig-navigation', 'precache', true);
-		wp_localize_script(
-			'wp-rig-navigation',
-			'wpRigScreenReaderText',
-			array(
-				'expand'   => __('Expand child menu', 'wp-rig'),
-				'collapse' => __('Collapse child menu', 'wp-rig'),
-			)
-		);
+		wp_localize_script('wp-rig-navigation', 'wpRigScreenReaderText', [
+			'expand' => __('Expand child menu', 'wp-rig'),
+			'collapse' => __('Collapse child menu', 'wp-rig'),
+		]);
 	}
 
 	/**
@@ -85,9 +97,8 @@ class Component implements Component_Interface
 	 */
 	public function action_print_skip_link_focus_fix()
 	{
-
 		// Print the minified script.
-?>
+		?>
 		<script>
 			/(trident|msie)/i.test(navigator.userAgent) && document.getElementById && window.addEventListener && window.addEventListener("hashchange", function() {
 				var t, e = location.hash.substring(1);
@@ -106,16 +117,18 @@ class Component implements Component_Interface
 	 * @param WP_Post $item The current menu item.
 	 * @return array Modified HTML attributes
 	 */
-	public function filter_nav_menu_link_attributes_aria_current(array $atts, WP_Post $item): array
-	{
+	public function filter_nav_menu_link_attributes_aria_current(
+		array $atts,
+		WP_Post $item,
+	): array {
 		if (isset($item->current)) {
 			if ($item->current) {
 				$atts['aria-current'] = 'page';
 			}
-		} elseif (! empty($item->ID)) {
+		} elseif (!empty($item->ID)) {
 			global $post;
 
-			if (! empty($post->ID) && (int) $post->ID === (int) $item->ID) {
+			if (!empty($post->ID) && (int) $post->ID === (int) $item->ID) {
 				$atts['aria-current'] = 'page';
 			}
 		}

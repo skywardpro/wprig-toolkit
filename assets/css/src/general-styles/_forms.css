@@ -7,9 +7,9 @@ textarea {
 }
 
 button,
-input[type="button"],
-input[type="reset"],
-input[type="submit"] {
+input[type='button'],
+input[type='reset'],
+input[type='submit'] {
 	border: 1px solid;
 	border-color: var(--border-color-light) var(--border-color-light) #bbb;
 	border-radius: 3px;
@@ -22,24 +22,24 @@ input[type="submit"] {
 }
 
 button:hover,
-input[type="button"]:hover,
-input[type="reset"]:hover,
-input[type="submit"]:hover {
+input[type='button']:hover,
+input[type='reset']:hover,
+input[type='submit']:hover {
 	border-color: var(--border-color-light) #bbb #aaa;
 }
 
 button:active,
 button:focus,
-input[type="button"]:active,
-input[type="button"]:focus,
-input[type="reset"]:active,
-input[type="reset"]:focus,
-input[type="submit"]:active,
-input[type="submit"]:focus {
+input[type='button']:active,
+input[type='button']:focus,
+input[type='reset']:active,
+input[type='reset']:focus,
+input[type='submit']:active,
+input[type='submit']:focus {
 	border-color: #aaa #bbb #bbb;
 }
 
-input:not([type="submit"]),
+input:not([type='submit']),
 textarea {
 	color: var(--color-form-input-text);
 	border: 1px solid var(--color-form-input-border);
@@ -75,9 +75,9 @@ textarea:-webkit-autofill:focus {
 	border-color: var(--color-form-input-border) !important;
 }
 
-input:not([type="submit"]):focus,
+input:not([type='submit']):focus,
 textarea:focus,
-input:not([type="submit"]):hover,
+input:not([type='submit']):hover,
 textarea:hover {
 	color: var(--color-theme-black);
 	border-color: var(--color-form-input-border);
@@ -242,7 +242,9 @@ textarea.not-valid {
 	font-weight: 400;
 	color: var(--color-theme-black);
 	z-index: 999999999;
-	animation: slide-in 0.3s ease-out forwards, fade-out 0.3s ease-out 5s forwards;
+	animation:
+		slide-in 0.3s ease-out forwards,
+		fade-out 0.3s ease-out 5s forwards;
 	transition: all var(--animation-speed);
 }
 
@@ -292,12 +294,12 @@ input.wpcf7-not-valid {
 	border-color: var(--color-theme-red) !important;
 }
 
-.wpcf7-form input[type="submit"] {
+.wpcf7-form input[type='submit'] {
 	cursor: pointer;
 	transition: all var(--animation-speed);
 }
 
-form.submitting input[type="submit"] {
+form.submitting input[type='submit'] {
 	opacity: 0.75;
 	cursor: progress;
 }
@@ -337,7 +339,9 @@ form.submitting input[type="submit"] {
 	font-weight: 400;
 	color: var(--color-theme-black);
 	z-index: 999999999;
-	animation: slide-in 0.3s ease-out forwards, fade-out 0.3s ease-out 5s forwards;
+	animation:
+		slide-in 0.3s ease-out forwards,
+		fade-out 0.3s ease-out 5s forwards;
 	border: 1px solid var(--color-form-warning-border) !important;
 	background-color: var(--color-form-warning);
 	transition: all var(--animation-speed);
@@ -380,7 +384,6 @@ body:has(.wpcf7 form.aborted) .wpcf7-response-output::before,
 body:has(.wpcf7-form.sent) .wpcf7-response-output {
 	border: 1px solid var(--color-form-success-border) !important;
 	background-color: var(--color-form-success);
-
 }
 
 .wpcf7-response-output.wpcf7-mail-sent-ok::before,
@@ -399,24 +402,24 @@ body:has(.wpcf7-form.sent) .wpcf7-response-output::before {
 @keyframes slide-in {
 	0% {
 		transform: translateX(100%);
-		opacity: 0
+		opacity: 0;
 	}
 
 	100% {
 		transform: translateX(0);
-		opacity: 1
+		opacity: 1;
 	}
 }
 
 @keyframes fade-out {
 	0% {
 		opacity: 1;
-		visibility: visible
+		visibility: visible;
 	}
 
 	100% {
 		opacity: 0;
-		visibility: hidden
+		visibility: hidden;
 	}
 }
 
@@ -433,12 +436,12 @@ body:has(.wpcf7-form.sent) .wpcf7-response-output::before {
 	@keyframes slide-in {
 		0% {
 			transform: translateY(100%);
-			opacity: 0
+			opacity: 0;
 		}
 
 		100% {
 			transform: translateY(0);
-			opacity: 1
+			opacity: 1;
 		}
 	}
 }
@@ -452,7 +455,7 @@ body:has(.wpcf7-form.sent) .wpcf7-response-output::before {
 	flex: 0 0 100%;
 }
 
-.form__field--tel input[type="tel"] {
+.form__field--tel input[type='tel'] {
 	flex: 1;
 	border-top-left-radius: 0 !important;
 	border-bottom-left-radius: 0 !important;
@@ -551,7 +554,6 @@ body:has(.wpcf7-form.sent) .wpcf7-response-output::before {
 	top: calc(100% + 1rem);
 }
 
-
 .form__countries__list__search {
 	margin-bottom: 1rem;
 }
@@ -612,7 +614,7 @@ span.countries-list__code {
 
 .form__row:last-child,
 .form__row:has(.fake-submit),
-.form__row:has(button[type="submit"]) {
+.form__row:has(button[type='submit']) {
 	margin-bottom: 0;
 }
 
@@ -708,7 +710,7 @@ form.floating-label {
 
 	/* For select fields */
 	.form__field--select:has(select.has-value) label,
-	.form__field--select:has(select:not([value=""])) label,
+	.form__field--select:has(select:not([value=''])) label,
 	.form__field--select.has-value label {
 		top: 0;
 		font-size: 1.2rem;
