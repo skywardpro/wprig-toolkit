@@ -27,6 +27,7 @@ $taxonomies = wp_list_filter(get_object_taxonomies($post, 'objects'), [
  // Show terms for all taxonomies associated with the post.
  // Show terms for all taxonomies associated with the post.
  // Show terms for all taxonomies associated with the post.
+ // Show terms for all taxonomies associated with the post.
  foreach ($taxonomies as $taxonomy) {
 
  	// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
