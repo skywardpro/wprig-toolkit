@@ -1,8 +1,10 @@
 <?php
 /**
- * WP Rig functions and definitions
+ * WP Rig Toolkit functions and definitions
  *
- * This file must be parseable by PHP 5.2.
+ * DO NOT add ad-hoc hooks/features directly to this file's body beyond the
+ * constant toggles below. See AGENTS.md for the toolkit's conventions
+ * (feature-flag constants, `WP_Rig_Toolkit/*` components, `npm run create-rig-component`).
  *
  * @link https://developer.wordpress.org/themes/basics/theme-functions/
  *
@@ -56,6 +58,27 @@ define('DISABLE_DEFAULT_BLOCK_STYLES', true); // Remove default block styles.
 define('DISABLE_WP_POLYFILL', true); // Remove WP Polyfill js.
 
 /**
+ * WP_Rig_Toolkit component toggles.
+ *
+ * These components live one directory level deeper than WP Rig's core components
+ * (inc/WP_Rig_Toolkit/{Name}/Component.php), so Theme::get_default_components()'s
+ * auto-discovery scan does not pick them up automatically. Toggle them here instead;
+ * see functions/_functions-toolkit-components.php for the registration logic.
+ */
+define('ENABLE_FRESH_URL', false);
+define('ENABLE_GSAP', false);
+define('ENABLE_TINGLE', false);
+define('ENABLE_IMASK', true);
+define('ENABLE_VALIDATEJS', true);
+define('ENABLE_SWIPER', false);
+define('ENABLE_LIGHTGALLERY', false);
+define('ENABLE_SIMPLEBAR', false);
+define('ENABLE_MASONRY', false);
+define('ENABLE_SPLIT_TYPE', false);
+define('ENABLE_LISTJS', false);
+define('ENABLE_TOCBOT', false);
+
+/**
  * ============
  * * Basic Customizations
  *
@@ -96,6 +119,9 @@ require get_template_directory() . '/functions/_functions-custom-files.php';
 
 // Register custom functions.
 require get_template_directory() . '/functions/_functions-custom-functions.php';
+
+// Register optional WP_Rig_Toolkit components (see ENABLE_* constants above).
+require get_template_directory() . '/functions/_functions-toolkit-components.php';
 
 // Register Schema.org structured data.
 require get_template_directory() . '/functions/_functions-schema-org.php';

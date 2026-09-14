@@ -100,6 +100,33 @@ async function promptForParentSlug() {
 	return answers.parentSlug;
 }
 
+async function promptForOptions() {
+	const answers = await inquirer.prompt([
+		{
+			type: 'confirm',
+			name: 'trimTemplates',
+			message:
+				'Remove/backup top-level templates and template-parts/ to inherit fully from the parent theme?',
+			default: true,
+		},
+		{
+			type: 'confirm',
+			name: 'trimComponents',
+			message:
+				'Remove/backup core theme components in /inc (keeping only Styles, Scripts, and Sidebars)?',
+			default: true,
+		},
+		{
+			type: 'confirm',
+			name: 'minimizeAssets',
+			message:
+				'Reset assets/css and assets/js to clean, minimal child theme stubs? (This will overwrite existing src files)',
+			default: true,
+		},
+	]);
+	return answers;
+}
+
 function ensureBackupDir() {
 	const backupDir = path.join(themeRoot, 'childify_backup');
 	fse.ensureDirSync(backupDir);
@@ -204,6 +231,7 @@ function updateConfig(parentSlug) {
 		'assets/css/vendor/**/*.css',
 		'assets/js/vendor/**/*.js',
 		'assets/svg/*.svg',
+		'assets/icons/*.svg',
 		'style.css',
 	];
 
@@ -349,30 +377,58 @@ function appendDequeueHelper(parentSlug) {
 }
 
 /**
+ * Recursively retrieves all PHP files under a directory, excluding specific folders.
+ * @param {string} dir        Root directory to search.
+ * @param {Array}  [fileList] Accumulated list of files.
+ */
+function getPhpFiles(dir, fileList = []) {
+	const files = fs.readdirSync(dir);
+	files.forEach((file) => {
+		const filePath = path.join(dir, file);
+		const stat = fs.statSync(filePath);
+		if (stat.isDirectory()) {
+			if (
+				[
+					'node_modules',
+					'vendor',
+					'tests',
+					'childify_backup',
+					'.git',
+					'.github',
+					'.ai',
+				].includes(file)
+			) {
+				return;
+			}
+			getPhpFiles(filePath, fileList);
+		} else if (file.endsWith('.php')) {
+			fileList.push(filePath);
+		}
+	});
+	return fileList;
+}
+
+/**
  * Converts get_template_directory() calls to get_stylesheet_directory() in functions.php
- * and other PHP files to ensure proper child theme functionality.
+ * and all other theme PHP files to ensure proper child theme functionality.
  */
 function convertTemplateToCssDirectory() {
-	// The list of files to process
-	const filesToProcess = [
-		path.join(themeRoot, 'functions.php'),
-		path.join(themeRoot, 'inc', 'functions.php'),
-		// Add other PHP files that might need conversion
-	];
+	// Dynamically find all PHP files to process recursively
+	const filesToProcess = getPhpFiles(themeRoot);
 
 	let convertCount = 0;
 
 	filesToProcess.forEach((filePath) => {
-		if (!pathExists(filePath)) {
-			return; // Skip if file doesn't exist
-		}
-
 		try {
 			let fileContent = fs.readFileSync(filePath, 'utf8');
 
-			// Create backup of original file
-			const backupPath = `${filePath}.bak`;
-			fs.writeFileSync(backupPath, fileContent, 'utf8');
+			// Skip files that already handle stylesheet directory explicitly to avoid breaking fallback logic (e.g. Template_Tags.php)
+			if (
+				fileContent.includes('get_stylesheet_directory()') ||
+				fileContent.includes('get_stylesheet_directory_uri()')
+			) {
+				return;
+			}
 
 			// Perform replacements
 			const originalContent = fileContent;
@@ -391,6 +447,10 @@ function convertTemplateToCssDirectory() {
 
 			// If changes were made, write the file and log it
 			if (fileContent !== originalContent) {
+				// Create backup of original file
+				const backupPath = `${filePath}.bak`;
+				fs.writeFileSync(backupPath, originalContent, 'utf8');
+
 				fs.writeFileSync(filePath, fileContent, 'utf8');
 				const relPath = path.relative(themeRoot, filePath);
 				addLog(
@@ -616,15 +676,25 @@ async function main() {
 	}
 
 	const parentSlug = await promptForParentSlug();
+	const options = await promptForOptions();
 	const backupDir = ensureBackupDir();
 
 	upsertTemplateHeader(parentSlug);
 	updateConfig(parentSlug);
-	updateThemeComponents();
+	if (options.trimComponents) {
+		updateThemeComponents();
+	}
 	appendDequeueHelper(parentSlug);
-	trimTemplatesAndPartials(backupDir);
-	minimizeAssets(backupDir);
-	removeIncComponents(backupDir);
+
+	if (options.trimTemplates) {
+		trimTemplatesAndPartials(backupDir);
+	}
+	if (options.minimizeAssets) {
+		minimizeAssets(backupDir);
+	}
+	if (options.trimComponents) {
+		removeIncComponents(backupDir);
+	}
 	convertTemplateToCssDirectory();
 
 	writeSummary(backupDir);
@@ -634,7 +704,12 @@ async function main() {
 	console.log('If something looks off, see childify_backup/ to restore files.');
 }
 
-main().catch((e) => {
-	console.error('Childify failed:', e);
-	process.exitCode = 1;
-});
+export { getPhpFiles, convertTemplateToCssDirectory };
+
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
+	main().catch((e) => {
+		console.error('Childify failed:', e);
+		process.exitCode = 1;
+	});
+}

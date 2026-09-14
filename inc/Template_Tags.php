@@ -22,6 +22,8 @@ use RuntimeException;
  */
 class Template_Tags
 {
+	use Versioning_Trait;
+
 	/**
 	 * Associative array of all available template tags.
 	 *
@@ -47,7 +49,7 @@ class Template_Tags
 		// Set the template tags for the components.
 		foreach ($components as $component) {
 			// Bail if a templating component is invalid.
-			if (!$component instanceof Templating_Component_Interface) {
+			if (!($component instanceof Templating_Component_Interface)) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: classname/type of the variable, 2: interface name */
@@ -145,111 +147,70 @@ class Template_Tags
 	}
 
 	/**
-	 * Gets the theme version.
-	 *
-	 * @return string Theme version number.
-	 */
-	public function get_version(): string
-	{
-		static $theme_version = null;
-
-		if (null === $theme_version) {
-			$theme_version = wp_get_theme(get_template())->get('Version');
-		}
-
-		return $theme_version;
-	}
-
-	/**
-	 * Gets the version for a given asset.
-	 *
-	 * Returns filemtime when WP_DEBUG is true, otherwise the theme version.
-	 *
-	 * @param string $filepath Asset file path.
-	 * @return string Asset version number.
-	 */
-	public function get_asset_version(string $filepath): string
-	{
-		if (WP_DEBUG) {
-			return (string) filemtime($filepath);
-		}
-
-		return $this->get_version();
-	}
-
-	/**
 	 * Gets a theme asset from the assets directory.
 	 *
 	 * @param string $filename The name of the asset file (with extension).
 	 * @param string $type The asset type/subdirectory (e.g., 'images', 'svg').
 	 * @param bool   $content Whether to return the file contents (true) or URL (false).
 	 * @return string|null The asset URL/contents or null if not found.
-	 *
-	 * @throws RuntimeException If the asset file cannot be read.
 	 */
 	public function get_theme_asset(
 		string $filename,
 		string $type = 'images',
 		bool $content = false,
 	): ?string {
-		$asset_path =
-			get_template_directory() .
+		static $asset_cache = [];
+		$cache_key = md5($filename . $type . ($content ? 'content' : 'uri'));
+
+		if (isset($asset_cache[$cache_key])) {
+			return $asset_cache[$cache_key];
+		}
+
+		$child_asset_path =
+			get_stylesheet_directory() .
 			'/assets/' .
 			trim($type, '/') .
 			'/' .
 			$filename;
-		$asset_uri =
-			get_template_directory_uri() .
+		$child_asset_uri =
+			get_stylesheet_directory_uri() .
 			'/assets/' .
 			trim($type, '/') .
 			'/' .
 			$filename;
 
+		if (file_exists($child_asset_path)) {
+			$asset_path = $child_asset_path;
+			$asset_uri = $child_asset_uri;
+		} else {
+			$asset_path =
+				get_template_directory() .
+				'/assets/' .
+				trim($type, '/') .
+				'/' .
+				$filename;
+			$asset_uri =
+				get_template_directory_uri() .
+				'/assets/' .
+				trim($type, '/') .
+				'/' .
+				$filename;
+		}
+
 		if (!file_exists($asset_path)) {
+			$asset_cache[$cache_key] = null;
 			return null;
 		}
 
 		if ($content) {
-			try {
-				// Initialize WordPress Filesystem.
-				global $wp_filesystem;
-				if (empty($wp_filesystem)) {
-					require_once ABSPATH . '/wp-admin/includes/file.php';
-					WP_Filesystem();
-				}
-
-				if (!$wp_filesystem) {
-					throw new RuntimeException(
-						esc_html__(
-							'WordPress filesystem is not initialized properly.',
-							'wp-rig',
-						),
-					);
-				}
-
-				$file_contents = $wp_filesystem->get_contents($asset_path);
-				if (false === $file_contents) {
-					throw new RuntimeException(
-						sprintf(
-							/* translators: %s: asset file path */
-							esc_html__('Error reading asset file: %s', 'wp-rig'),
-							esc_html($asset_path),
-						),
-					);
-				}
-				return $file_contents;
-			} catch (\Exception $e) {
-				throw new RuntimeException(
-					sprintf(
-						/* translators: %s: error message */
-						esc_html__('Failed to get asset contents: %s', 'wp-rig'),
-						esc_html($e->getMessage()),
-					),
-				);
-			}
+			$file_contents = get_asset_content($asset_path);
+			$result = false !== $file_contents ? $file_contents : null;
+		} else {
+			$result = $asset_uri;
 		}
 
-		return $asset_uri;
+		$asset_cache[$cache_key] = $result;
+		return $result;
 	}
 
 	/**

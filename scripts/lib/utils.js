@@ -20,6 +20,27 @@ import {
 
 import config from '../../config/themeConfig.js';
 
+/**
+ * Resolves the final destination path for an asset, ensuring it goes to the 'src' directory in WP Rig.
+ *
+ * @param {string} assetPath Path from manifest.json
+ * @return {string} Mapped path relative to theme root
+ */
+export function getAssetPath(assetPath) {
+	const parts = assetPath.split('/');
+	// If it's an asset in the assets directory, ensure it goes to the src folder
+	if (
+		parts[0] === 'assets' &&
+		parts.length >= 3 &&
+		!['src', 'build', 'vendor'].includes(parts[2])
+	) {
+		const newParts = [...parts];
+		newParts.splice(2, 0, 'src');
+		return newParts.join('/');
+	}
+	return assetPath;
+}
+
 export const getDefaultConfig = () =>
 	import(`${rootPath}/config/config.default.json`);
 
@@ -122,20 +143,54 @@ function createReplaceStream(searchValue, replaceValue) {
 }
 
 /**
+ * Escapes special characters in a string for use in a regular expression.
+ *
+ * @param {string} string - The string to be escaped.
+ * @return {string} The escaped string.
+ */
+export function escapeRegExp(string) {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Builds an array of replacement objects based on the theme configuration and default name fields.
+ * Each object contains a 'searchValue' as a regular expression and a corresponding 'replaceValue'.
+ *
+ * @param {boolean} [isProdFlag] - Optional flag to indicate if production configuration should be used.
+ * @return {Array<Object>} An array of objects with 'searchValue' (RegExp) and 'replaceValue' (string).
+ */
+export function getReplacements(isProdFlag) {
+	const themeConfig = getThemeConfig(isProdFlag);
+	return Object.keys(nameFieldDefaults).map((nameField) => {
+		let searchValue;
+		if (nameField === 'slug') {
+			// Don't touch the slug when it's part of a wp-block-{slug} block name or followed by '/'.
+			searchValue = new RegExp(
+				'(?<!wp-block-)' +
+					escapeRegExp(String(nameFieldDefaults[nameField])) +
+					'(?!/)',
+				'g'
+			);
+		} else {
+			searchValue = new RegExp(
+				escapeRegExp(String(nameFieldDefaults[nameField])),
+				'g'
+			);
+		}
+		return {
+			searchValue,
+			replaceValue: themeConfig.theme[nameField],
+		};
+	});
+}
+
+/**
  * Creates a stream transformation for replacing strings based on the theme config.
  * @param {boolean} isProdFlag - Flag indicating whether it's in production mode.
  * @return {import('stream').Transform} - A stream transformation for string replacements.
  */
 export function getStringReplacementTasks(isProdFlag) {
-	const themeConfig = getThemeConfig(isProdFlag); // keep call signature intact
-
-	const replacements = Object.keys(nameFieldDefaults).map((nameField) => ({
-		searchValue: new RegExp(
-			nameFieldDefaults[nameField].replace(/\\/g, '\\\\'),
-			'g'
-		),
-		replaceValue: themeConfig.theme[nameField],
-	}));
+	const replacements = getReplacements(isProdFlag);
 
 	return new Transform({
 		objectMode: true,
@@ -186,18 +241,6 @@ export function createProdDir() {
 		rimraf.sync(prodThemePath);
 	}
 	mkdirp(prodThemePath);
-}
-
-/**
- * Computes the relative destination path for a given file based on its base path.
- *
- * @param {Object} file      - The file object that contains file path information.
- * @param {string} file.base - The base path of the file.
- * @param {string} file.cwd  - The current working directory from which the relative path is calculated.
- * @return {string} The relative production file path based on the file's base and current working directory.
- */
-export function gulpRelativeDest(file) {
-	return file.base.replace(file.cwd, prodThemePath);
 }
 
 /**
@@ -279,7 +322,7 @@ export function replaceInlineCSS(code) {
 	if (!isProd) {
 		return code;
 	}
-	const searchValue = nameFieldDefaults.slug;
+	const searchValue = escapeRegExp(nameFieldDefaults.slug);
 	const replaceValue = config.theme.slug;
 	return code.replace(new RegExp(searchValue, 'g'), replaceValue);
 }
@@ -317,13 +360,14 @@ export function replaceInlineJS(code) {
 		},
 	];
 
-	return code.replace(
-		new RegExp(replacements.map((r) => r.searchValue).join('|'), 'g'),
-		(match) => {
-			const replacement = replacements.find((r) =>
-				new RegExp(r.searchValue).test(match)
-			);
-			return replacement ? replacement.replaceValue : match;
-		}
-	);
+	const searchPattern = replacements
+		.map((r) => escapeRegExp(r.searchValue))
+		.join('|');
+
+	return code.replace(new RegExp(searchPattern, 'g'), (match) => {
+		const replacement = replacements.find((r) =>
+			new RegExp(escapeRegExp(r.searchValue)).test(match)
+		);
+		return replacement ? replacement.replaceValue : match;
+	});
 }

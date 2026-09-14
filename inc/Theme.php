@@ -25,11 +25,25 @@ class Theme
 	protected $components = [];
 
 	/**
+	 * Active Theme instance.
+	 *
+	 * @var Theme|null
+	 */
+	protected static ?Theme $instance = null;
+
+	/**
 	 * The template tags instance, providing access to all available template tags.
 	 *
 	 * @var \WP_Rig\WP_Rig\Template_Tags
 	 */
 	protected \WP_Rig\WP_Rig\Template_Tags $template_tags;
+
+	/**
+	 * Theme configuration.
+	 *
+	 * @var array
+	 */
+	protected array $config = [];
 
 	/**
 	 * Constructor.
@@ -44,6 +58,8 @@ class Theme
 	 */
 	public function __construct(array $components = [])
 	{
+		self::$instance = $this;
+
 		if ([] === $components) {
 			$components = $this->get_default_components();
 		}
@@ -51,7 +67,7 @@ class Theme
 		// Set the components.
 		foreach ($components as $component) {
 			// Bail if a component is invalid.
-			if (!$component instanceof Component_Interface) {
+			if (!($component instanceof Component_Interface)) {
 				throw new InvalidArgumentException(
 					sprintf(
 						/* translators: 1: classname/type of the variable, 2: interface name */
@@ -62,6 +78,21 @@ class Theme
 						esc_html(gettype($component)),
 						Component_Interface::class,
 					),
+				);
+			}
+
+			if (isset($this->components[$component->get_slug()])) {
+				_doing_it_wrong(
+					__METHOD__,
+					sprintf(
+						/* translators: %s: component slug */
+						esc_html__(
+							'Theme component slug collision: "%s" already exists and will be overwritten.',
+							'wp-rig',
+						),
+						esc_html($component->get_slug()),
+					),
+					'WP Rig 2.0.0',
 				);
 			}
 
@@ -91,6 +122,16 @@ class Theme
 	}
 
 	/**
+	 * Retrieves the active Theme instance if one exists.
+	 *
+	 * @return Theme|null Theme instance or null.
+	 */
+	public static function get_instance(): ?Theme
+	{
+		return self::$instance;
+	}
+
+	/**
 	 * Retrieves the template tags instance, the entry point exposing template tag methods.
 	 *
 	 * Calling `wp_rig()` is a short-hand for calling this method on the main theme instance. The instance then allows
@@ -102,6 +143,79 @@ class Theme
 	public function template_tags(): Template_Tags
 	{
 		return $this->template_tags;
+	}
+
+	/**
+	 * Retrieves the theme configuration, merged with defaults.
+	 *
+	 * @param string $filename Optional. The configuration filename. Default 'config.json'.
+	 * @return array Merged configuration array.
+	 */
+	public function get_config(string $filename = 'config.json'): array
+	{
+		if (isset($this->config[$filename])) {
+			return $this->config[$filename];
+		}
+
+		$config = [];
+
+		// Handle config.json specifically with its default.json counterpart.
+		if ('config.json' === $filename) {
+			$config = get_config_content('config.default.json') ?? [];
+		}
+
+		$custom_config = get_config_content($filename);
+		if (is_array($custom_config)) {
+			$config = array_replace_recursive($config, $custom_config);
+		}
+
+		/**
+		 * Filters the theme configuration.
+		 *
+		 * @param array  $config   The merged configuration.
+		 * @param string $filename The configuration filename.
+		 */
+		$this->config[$filename] = apply_filters(
+			'wprig_theme_config',
+			$config,
+			$filename,
+		);
+
+		return $this->config[$filename];
+	}
+
+	/**
+	 * Retrieves the theme components.
+	 *
+	 * @return array List of theme components, keyed by their slug.
+	 */
+	public function get_components(): array
+	{
+		return $this->components;
+	}
+
+	/**
+	 * Gets the asset manifests from all components.
+	 *
+	 * @param string $type Asset type ('styles' or 'scripts').
+	 * @return array Aggregated asset manifests.
+	 */
+	public function get_asset_manifests(string $type): array
+	{
+		$manifests = [];
+
+		foreach ($this->components as $component) {
+			if ($component instanceof Asset_Provider) {
+				$manifest = $component->get_asset_manifest();
+				if (!empty($manifest[$type])) {
+					foreach ($manifest[$type] as $handle => $data) {
+						$manifests[$handle] = $data;
+					}
+				}
+			}
+		}
+
+		return $manifests;
 	}
 
 	/**
@@ -132,159 +246,115 @@ class Theme
 	/**
 	 * Gets the default theme components.
 	 *
-	 * This method is called if no components are passed to the constructor, which is the common scenario.Theme Editor
+	 * This method is called if no components are passed to the constructor, which is the common scenario.
 	 *
-	 * Theme Editor: 'editor-styles'
-	 * Block Styles: 'wp-block-styles'
+	 * It dynamically scans the `inc/` directory for subdirectories containing a `Component.php` file
+	 * and instantiates each component class that follows the standard naming convention.
+	 *
+	 * Note: components nested more than one directory level deep (e.g. `inc/WP_Rig_Toolkit/{Name}/Component.php`)
+	 * are not picked up by this scan on purpose — they are registered explicitly via the `wprig_theme_components`
+	 * filter instead, see `functions/_functions-toolkit-components.php`.
 	 *
 	 * @return array List of theme components to use by default.
 	 */
 	protected function get_default_components(): array
 	{
-		$components = [
-			new Localization\Component(),
-			new Base_Support\Component(),
-			new Editor\Component(),
-			new Accessibility\Component(),
-			new Image_Sizes\Component(),
-			new PWA\Component(),
-			new Comments\Component(),
-			new Nav_Menus\Component(),
-			new Sidebars\Component(),
-			new Custom_Background\Component(),
-			new Custom_Header\Component(),
-			new Custom_Logo\Component(),
-			new Post_Thumbnails\Component(),
-			new EZ_Customizer\Component(),
-			new Fonts\Component(),
-			new Styles\Component(),
-			new Scripts\Component(),
-			new Excerpts\Component(),
-			new Options\Component(),
-			new Blocks\Component(),
-		];
+		static $cached_components = null;
 
-		if (defined('JETPACK__VERSION')) {
-			$components[] = new Jetpack\Component();
+		if (null !== $cached_components) {
+			return $cached_components;
 		}
 
-		/*----------------------------
-		# Global Features
-		----------------------------*/
+		$components = [];
+		// Get the stylesheet/theme directory path.
+		$inc_dir = get_stylesheet_directory() . '/inc';
+		$manifest_file = $inc_dir . '/components-manifest.json';
+
+		$manifest = [];
+		if (file_exists($manifest_file)) {
+			$manifest_json = get_asset_content($manifest_file);
+			$manifest = $manifest_json ? json_decode($manifest_json, true) : [];
+		}
+
+		$component_classes = [];
+
+		// Use manifest-driven approach if manifest exists and is not empty.
+		if (!empty($manifest) && is_array($manifest)) {
+			foreach (array_keys($manifest) as $component_name) {
+				$normalized_name = $this->normalize_component_name($component_name);
+				$component_classes[$normalized_name] =
+					__NAMESPACE__ . '\\' . $normalized_name . '\\Component';
+			}
+		} else {
+			// Fallback to directory scanning if no manifest is found.
+			// Iterate through subdirectories in the inc/ directory.
+			$directories = glob($inc_dir . '/*', GLOB_ONLYDIR);
+
+			foreach ($directories as $directory) {
+				$component_name = basename($directory);
+				$normalized_name = $this->normalize_component_name($component_name);
+
+				// Only add if Component.php exists directly in this directory.
+				if (file_exists($directory . '/Component.php')) {
+					$component_classes[$normalized_name] =
+						__NAMESPACE__ . '\\' . $normalized_name . '\\Component';
+				}
+			}
+		}
+
+		// Instantiate all identified components.
+		foreach ($component_classes as $component_class) {
+			// Check if the component class exists and implements Component_Interface.
+			// The class name is resolved by the registered theme autoloader, either Composer PSR-4 or WP Rig's fallback autoloader.
+			if (class_exists($component_class)) {
+				// Check for optional is_active() static method to support conditional loading.
+				if (
+					method_exists($component_class, 'is_active') &&
+					!$component_class::is_active()
+				) {
+					continue;
+				}
+				$components[] = new $component_class();
+			}
+		}
 
 		/**
-		 * Fresh_URL
+		 * Filters the default theme components.
 		 *
-		 * Plugin that keeps your URLs clean.
-		 */
-		// $components[] = new WP_Rig_Toolkit\Fresh_URL\Component();
-
-		/*----------------------------
-		# Animation
-		----------------------------*/
-
-		/**
-		 * GSAP – A wildly robust JavaScript animation library built for professionals
+		 * This filter allows adding or removing theme components at runtime. Used by
+		 * `functions/_functions-toolkit-components.php` to register the toggleable
+		 * `WP_Rig_Toolkit\*` wrapper components, which live one directory level too deep
+		 * to be picked up by the scan above.
 		 *
-		 * add necessary plugin for your application
-		 * 'ss' - scroll-smoother
-		 * 'st' - scroll-trigger
-		 * 'sto' - scroll-to-plugin
-		 * 'ce' - custom-easy
-		 * 'ds' - draw-svg
-		 * 'fl' - flip
-		 * 'stext' - split-text
-		 *
-		 * @param string[] $enabled_plugins Optional. List of plugin keys to load.
+		 * @param array $components List of theme component instances.
 		 */
-		// $components[] = new WP_Rig_Toolkit\GSAP\Component([]);
+		$components = apply_filters('wprig_theme_components', $components);
 
-		/*----------------------------
-		# Popups and Modals
-		----------------------------*/
-
-		/**
-		 * Tingle
-		 *
-		 * A minimalist and easy-to-use modal pure JavaScript plugin.
-		 */
-		// $components[] = new WP_Rig_Toolkit\Tingle\Component();
-
-		/*----------------------------
-		# Validation & Forms
-		----------------------------*/
-
-		/**
-		 * iMask
-		 *
-		 * JavaScript library for phone input masking.
-		 */
-		$components[] = new WP_Rig_Toolkit\iMask\Component();
-
-		/**
-		 * Validatejs
-		 *
-		 * A pure JavaScript library for forms validation.
-		 */
-		$components[] = new WP_Rig_Toolkit\Validatejs\Component();
-
-		/*----------------------------
-		# Sliders
-		----------------------------*/
-
-		/**
-		 * Swiper
-		 *
-		 * The most popular slider library.
-		 */
-		// $components[] = new WP_Rig_Toolkit\Swiper\Component();
-
-		/*----------------------------
-		# Content components
-		----------------------------*/
-
-		/**
-		 * Lightgallery
-		 *
-		 * A pure JavaScript library for creating lightbox galleries.
-		 */
-		// new WP_Rig_Toolkit\Lightgallery\Component();
-
-		/**
-		 * Simplebar
-		 *
-		 * A pure JavaScript library for creating scrollable content.
-		 */
-		// new WP_Rig_Toolkit\Simplebar\Component(),
-
-		/**
-		 * Masonry
-		 *
-		 * A pure JavaScript plugin for making masonry view content.
-		 */
-		// $components[] = new WP_Rig_Toolkit\Masonry\Component();
-
-		/**
-		 * Split-type
-		 * SplitType is a small javascript library that splits HTML text into elements so that lines, words, and characters can be animated independently.
-		 * Source: https://www.npmjs.com/package/split-type
-		 */
-		// $components[] = new WP_Rig_Toolkit\SplitType\Component();
-
-		/**
-		 * Listjs
-		 *
-		 * A pure JavaScript to sort and search within your data.
-		 */
-		// $components[] = new WP_Rig_Toolkit\Listjs\Component();
-
-		/**
-		 * Tocbot
-		 *
-		 * Table of contents generator
-		 */
-		// $components[] = new WP_Rig_Toolkit\Tocbot\Component();
+		$cached_components = $components;
 
 		return $components;
+	}
+
+	/**
+	 * Normalizes a component name to PascalCase with underscores.
+	 *
+	 * @param string $name Component name (slug or directory name).
+	 * @return string Normalized component name.
+	 */
+	protected function normalize_component_name(string $name): string
+	{
+		$normalized = str_replace(
+			' ',
+			'_',
+			ucwords(str_replace(['-', '_'], ' ', $name)),
+		);
+
+		// Ensure the name is a valid PHP identifier.
+		// If it starts with a number, prepend an underscore.
+		if (preg_match('/^\d/', $normalized)) {
+			$normalized = '_' . $normalized;
+		}
+
+		return $normalized;
 	}
 }

@@ -249,8 +249,7 @@ const defaultFormConstraints: Record<string, Constraints> = {
 // Get form constraints from global variable or use defaults
 function getFormConstraints(formId: string | null): Constraints {
 	const globalConstraints = (window as any).formConstraints as
-		| Record<string, Constraints>
-		| undefined;
+		Record<string, Constraints> | undefined;
 	const constraintsMap = globalConstraints || defaultFormConstraints;
 
 	if (formId && constraintsMap[formId]) {
@@ -748,9 +747,7 @@ function getFormattedFormData(form: HTMLFormElement): FormattedFormData {
 		}
 
 		const inputEl = form.querySelector(`[name="${inputName}"]`) as
-			| HTMLInputElement
-			| HTMLSelectElement
-			| null;
+			HTMLInputElement | HTMLSelectElement | null;
 
 		// Handle multiple checkboxes
 		if (
@@ -1078,9 +1075,9 @@ export function attachFormValidation(): void {
 				const values: Record<string, any> = {};
 
 				form
-					.querySelectorAll<
-						HTMLInputElement | HTMLTextAreaElement
-					>('input, textarea')
+					.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+						'input, textarea'
+					)
 					.forEach((input) => {
 						// Обработка файлов
 						if (input instanceof HTMLInputElement && input.type === 'file') {

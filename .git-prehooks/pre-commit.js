@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 
 try {
 	console.log('Running CSS linting...');
-	execSync('npm run lint:css', { stdio: 'inherit' });
+	execSync('npm run fix:css', { stdio: 'inherit' });
 	
 	console.log('Running Prettier...');
 	execSync('npm run prettier:fix', { stdio: 'inherit' });

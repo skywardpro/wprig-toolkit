@@ -23,7 +23,6 @@ export default [
 			'node_modules/**',
 			'vendor/**',
 			'config/**',
-			'gulpfile.babel.js', // Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
 			'**/*.min.{js,ts,jsx,tsx}', // All minified files
 		],
 	},
@@ -55,7 +54,6 @@ export default [
 			'eslint.config.js',
 			'webpack.config.js',
 			'*.config.js',
-			'gulpfile.js',
 		],
 		rules: {
 			'import/no-extraneous-dependencies': [
@@ -65,7 +63,6 @@ export default [
 						'eslint.config.js',
 						'webpack.config.js',
 						'*.config.js',
-						'gulpfile.js',
 					],
 				},
 			],
@@ -113,9 +110,9 @@ export default [
 		},
 	},
 
-	// Overides rules for gulp folder. Replaces the former gulp/.eslintrc.json.
+	// Overrides rules for scripts folder. Replaces the former build tool configuration.
 	{
-		files: ['gulp/**/*.js', 'gulpfile.js'],
+		files: ['scripts/**/*.js'],
 		languageOptions: {
 			ecmaVersion: 'latest',
 			sourceType: 'module',
@@ -136,6 +133,16 @@ export default [
 					peerDependencies: true,
 				},
 			],
+		},
+	},
+
+	// Tests folder
+	{
+		files: ['scripts/tests/**/*.js'],
+		languageOptions: {
+			globals: {
+				...globals.jest,
+			},
 		},
 	},
 ];

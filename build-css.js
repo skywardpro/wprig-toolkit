@@ -99,7 +99,7 @@ const VIRTUAL_ID = 'virtual:preload.css';
  * @param {string} css - CSS content to process
  * @return {string} - Processed CSS content
  */
-function processThemeUrls(css) {
+export function processThemeUrls(css) {
 	const themeName = themeSlug;
 
 	// Replace ~theme/... (with or without quotes)
@@ -130,7 +130,7 @@ function processThemeUrls(css) {
  * @param {string} snippet - Snippet to insert
  * @return {string} - Modified CSS content
  */
-function insertAfterTopImports(css, snippet) {
+export function insertAfterTopImports(css, snippet) {
 	const charsetRe = /^\s*@charset[^;]+;\s*/i;
 	let head = '';
 	let rest = css;
@@ -154,7 +154,7 @@ function insertAfterTopImports(css, snippet) {
  * @param {string} css - CSS content
  * @return {string} - CSS with virtual import ensured
  */
-function ensureVirtualImportInserted(css) {
+export function ensureVirtualImportInserted(css) {
 	if (
 		css.includes(`@import "${VIRTUAL_ID}"`) ||
 		css.includes(`@import '${VIRTUAL_ID}'`)

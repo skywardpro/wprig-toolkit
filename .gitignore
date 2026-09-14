@@ -20,6 +20,9 @@
 !/scripts/
 !gulp/
 !node/
+!/bin/
+!/.ai/
+!/.git-prehooks/
 
 # Exceptions: root theme files
 !style.css
@@ -27,6 +30,15 @@
 !build-css.js
 !build-js.js
 !functions
+!AGENTS.md
+!CLAUDE.md
+!BUILD-MIGRATION.md
+!.rig-config.json
+!.aiignore
+!.lighthouserc.cjs
+!playwright.config.ts
+!phpstan.neon.dist
+!phpstan-baseline.neon
 
 # =============================================================================
 # Assets: CSS
@@ -112,6 +124,22 @@
 !.git-prehooks/*
 
 # =============================================================================
+# Test/CI output (Playwright, Lighthouse CI)
+# =============================================================================
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+artifacts/
+
+# =============================================================================
+# Dependencies (regenerate with `npm install` / `composer install`)
+# =============================================================================
+node_modules/
+vendor/
+
+# =============================================================================
 # System Files
 # =============================================================================
 *.DS_Store
+*.log

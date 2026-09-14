@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "wprig-toolkit",
+  "version": "3.4.2",
+  "description": "Configuration metadata for AI agent discoverability in wprig-toolkit, a personal WP Rig boilerplate (see AGENTS.md/CLAUDE.md for the toolkit-specific conventions layered on top of stock WP Rig).",
+
+  "entryPoints": {
+    "php": {
+      "bootstrap": "functions.php",
+      "theme": "inc/Theme.php",
+      "components": "inc/*/Component.php",
+      "templateTags": "inc/Template_Tags.php",
+      "functions": "inc/functions.php"
+    },
+    "css": {
+      "global": "assets/css/src/global.css",
+      "partials": "assets/css/src/_*.css",
+      "content": "assets/css/src/content.css",
+      "sidebar": "assets/css/src/sidebar.css",
+      "widgets": "assets/css/src/widgets.css",
+      "comments": "assets/css/src/comments.css",
+      "frontPage": "assets/css/src/front-page.css",
+      "editor": "assets/css/src/editor/editor-styles.css",
+      "admin": "assets/css/src/admin/*.css",
+      "spacingSystem": "assets/css/src/spacing-system/_spacing-system.scss",
+      "typographySystem": "assets/css/src/typography/_typography-system.scss",
+      "framework": "assets/css/src/framework/_bulma-barebone.sass"
+    },
+    "js": {
+      "global": "assets/js/src/global.ts",
+      "navigation": "assets/js/src/navigation.ts",
+      "customizer": "assets/js/src/customizer.tsx",
+      "admin": "assets/js/src/admin/index.jsx",
+      "forms": "assets/js/src/forms.ts",
+      "elementsConfiguration": "assets/js/src/elements-configuration.ts"
+    },
+    "templates": {
+      "index": "index.php",
+      "frontPage": "front-page.php",
+      "header": "header.php",
+      "footer": "footer.php",
+      "sidebar": "sidebar.php",
+      "comments": "comments.php",
+      "404": "404.php",
+      "500": "500.php",
+      "offline": "offline.php",
+      "parts": "template-parts/**/*.php",
+      "forms": "template-parts/forms/*.php"
+    },
+    "config": {
+      "default": "config/config.default.json",
+      "custom": "config/config.json",
+      "local": "config/config.local.json"
+    }
+  },
+
+  "components": {
+    "localization": {
+      "file": "inc/Localization/Component.php",
+      "handles": ["text-domain", "translations"]
+    },
+    "base_support": {
+      "file": "inc/Base_Support/Component.php",
+      "handles": ["theme-support", "content-width", "embed-sizing"]
+    },
+    "editor": {
+      "file": "inc/Editor/Component.php",
+      "handles": ["editor-styles", "block-styles", "wide-alignments"],
+      "cssFiles": ["assets/css/src/editor/editor-styles.css"]
+    },
+    "accessibility": {
+      "file": "inc/Accessibility/Component.php",
+      "handles": ["skip-link", "keyboard-navigation", "focus-styles"],
+      "cssFiles": ["assets/css/src/_accessibility.css"]
+    },
+    "image_sizes": {
+      "file": "inc/Image_Sizes/Component.php",
+      "handles": ["custom-image-sizes"]
+    },
+    "pwa": {
+      "file": "inc/PWA/Component.php",
+      "handles": ["service-worker", "offline-page"],
+      "templates": ["offline.php"]
+    },
+    "comments": {
+      "file": "inc/Comments/Component.php",
+      "handles": ["comment-form", "comment-list", "threaded-comments"],
+      "cssFiles": ["assets/css/src/comments.css"],
+      "templates": ["comments.php"]
+    },
+    "nav_menus": {
+      "file": "inc/Nav_Menus/Component.php",
+      "handles": ["menu-registration", "menu-rendering", "mobile-navigation"],
+      "cssFiles": ["assets/css/src/_navigation.css"],
+      "jsFiles": ["assets/js/src/navigation.ts"]
+    },
+    "sidebars": {
+      "file": "inc/Sidebars/Component.php",
+      "handles": ["widget-areas", "sidebar-registration"],
+      "cssFiles": ["assets/css/src/sidebar.css", "assets/css/src/widgets.css"],
+      "templates": ["sidebar.php"]
+    },
+    "custom_background": {
+      "file": "inc/Custom_Background/Component.php",
+      "handles": ["custom-background"]
+    },
+    "custom_header": {
+      "file": "inc/Custom_Header/Component.php",
+      "handles": ["custom-header"],
+      "cssFiles": ["assets/css/src/_header.css"]
+    },
+    "custom_logo": {
+      "file": "inc/Custom_Logo/Component.php",
+      "handles": ["custom-logo"]
+    },
+    "post_thumbnails": {
+      "file": "inc/Post_Thumbnails/Component.php",
+      "handles": ["featured-images", "thumbnail-sizes"]
+    },
+    "ez_customizer": {
+      "file": "inc/EZ_Customizer/Component.php",
+      "handles": ["customizer-settings", "live-preview"],
+      "jsFiles": ["assets/js/src/customizer.tsx"]
+    },
+    "fonts": {
+      "file": "inc/Fonts/Component.php",
+      "handles": ["web-fonts", "font-preloading"]
+    },
+    "styles": {
+      "file": "inc/Styles/Component.php",
+      "handles": ["css-enqueuing", "preloading", "conditional-styles"],
+      "cssFiles": [
+        "assets/css/src/global.css",
+        "assets/css/src/content.css",
+        "assets/css/src/sidebar.css",
+        "assets/css/src/comments.css",
+        "assets/css/src/front-page.css"
+      ],
+      "configKeys": ["dev.styles"]
+    },
+    "scripts": {
+      "file": "inc/Scripts/Component.php",
+      "handles": ["js-enqueuing", "async-loading", "defer-loading"],
+      "jsFiles": ["assets/js/src/global.ts", "assets/js/src/navigation.ts"],
+      "configKeys": ["dev.debug.scripts"]
+    },
+    "excerpts": {
+      "file": "inc/Excerpts/Component.php",
+      "handles": ["excerpt-length", "excerpt-more"]
+    },
+    "options": {
+      "file": "inc/Options/Component.php",
+      "handles": ["theme-options", "settings-page"],
+      "cssFiles": ["assets/css/src/admin/theme-settings.css"],
+      "jsFiles": ["assets/js/src/admin/index.jsx"]
+    },
+    "blocks": {
+      "file": "inc/Blocks/Component.php",
+      "handles": ["gutenberg-block-registration"]
+    }
+  },
+
+  "wpRigToolkitComponents": {
+    "_comment": "inc/WP_Rig_Toolkit/{Name}/Component.php - one directory level too deep for Theme.php's auto-discovery on purpose. Toggled via ENABLE_* constants in root functions.php, registered through the wprig_theme_components filter in functions/_functions-toolkit-components.php. Only iMask and Validatejs are enabled by default.",
+    "fresh_url": { "file": "inc/WP_Rig_Toolkit/Fresh_URL/Component.php", "toggle": "ENABLE_FRESH_URL", "default": false },
+    "gsap": { "file": "inc/WP_Rig_Toolkit/GSAP/Component.php", "toggle": "ENABLE_GSAP", "default": false },
+    "tingle": { "file": "inc/WP_Rig_Toolkit/Tingle/Component.php", "toggle": "ENABLE_TINGLE", "default": false },
+    "imask": { "file": "inc/WP_Rig_Toolkit/iMask/Component.php", "toggle": "ENABLE_IMASK", "default": true },
+    "validatejs": { "file": "inc/WP_Rig_Toolkit/Validatejs/Component.php", "toggle": "ENABLE_VALIDATEJS", "default": true },
+    "swiper": { "file": "inc/WP_Rig_Toolkit/Swiper/Component.php", "toggle": "ENABLE_SWIPER", "default": false },
+    "lightgallery": { "file": "inc/WP_Rig_Toolkit/Lightgallery/Component.php", "toggle": "ENABLE_LIGHTGALLERY", "default": false },
+    "simplebar": { "file": "inc/WP_Rig_Toolkit/Simplebar/Component.php", "toggle": "ENABLE_SIMPLEBAR", "default": false },
+    "masonry": { "file": "inc/WP_Rig_Toolkit/Masonry/Component.php", "toggle": "ENABLE_MASONRY", "default": false },
+    "split_type": { "file": "inc/WP_Rig_Toolkit/SplitType/Component.php", "toggle": "ENABLE_SPLIT_TYPE", "default": false },
+    "listjs": { "file": "inc/WP_Rig_Toolkit/Listjs/Component.php", "toggle": "ENABLE_LISTJS", "default": false },
+    "tocbot": { "file": "inc/WP_Rig_Toolkit/Tocbot/Component.php", "toggle": "ENABLE_TOCBOT", "default": false }
+  },
+
+  "buildSystem": {
+    "cssProcessor": {
+      "file": "build-css.js",
+      "tool": "postcss",
+      "features": ["custom-media-queries", "custom-properties", "nesting-rules", "autoprefixer"]
+    },
+    "jsProcessor": {
+      "file": "build-js.js",
+      "tool": "esbuild",
+      "features": ["typescript", "jsx", "bundling", "minification"]
+    },
+    "commands": {
+      "init": "npm run rig-init",
+      "dev": "npm run dev",
+      "build": "npm run build",
+      "bundle": "npm run bundle",
+      "lint": "npm run lint",
+      "lintCss": "npm run lint:css",
+      "lintJs": "npm run lint:js",
+      "lintPhp": "npm run lint:php"
+    }
+  },
+
+  "conventions": {
+    "cssPartialPrefix": "_",
+    "componentPattern": "inc/{Feature}/Component.php",
+    "namespaceRoot": "WP_Rig\\WP_Rig",
+    "textDomain": "wp-rig",
+    "conditionalStylesMethod": "get_css_files",
+    "templateTagsAccess": "wp_rig()->{method}()"
+  },
+
+  "fileRelationships": {
+    "header": {
+      "template": "header.php",
+      "css": "assets/css/src/_header.css",
+      "component": "inc/Custom_Header/Component.php"
+    },
+    "navigation": {
+      "css": "assets/css/src/_navigation.css",
+      "js": "assets/js/src/navigation.ts",
+      "component": "inc/Nav_Menus/Component.php"
+    },
+    "sidebar": {
+      "template": "sidebar.php",
+      "css": ["assets/css/src/sidebar.css", "assets/css/src/widgets.css"],
+      "component": "inc/Sidebars/Component.php"
+    },
+    "comments": {
+      "template": "comments.php",
+      "css": "assets/css/src/comments.css",
+      "component": "inc/Comments/Component.php"
+    },
+    "footer": {
+      "template": "footer.php",
+      "css": "assets/css/src/_footer.css"
+    }
+  }
+}

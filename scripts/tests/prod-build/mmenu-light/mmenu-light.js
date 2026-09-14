@@ -144,7 +144,7 @@
 					t.classList.add('mm--open'),
 					t.classList.remove('mm--parent'));
 				let n = t.parentElement.closest('ul');
-				for (; n; ) {
+				for (; n;) {
 					(n.classList.add('mm--open', 'mm--parent'),
 						(n = n.parentElement.closest('ul')));
 				}

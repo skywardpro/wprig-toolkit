@@ -10,6 +10,7 @@ namespace WP_Rig\WP_Rig\Styles;
 use WP_Rig\WP_Rig\Component_Interface;
 use WP_Rig\WP_Rig\Templating_Component_Interface;
 use function WP_Rig\WP_Rig\wp_rig;
+use function WP_Rig\WP_Rig\wp_rig_theme;
 use function add_action;
 use function add_filter;
 use function wp_enqueue_style;
@@ -312,6 +313,13 @@ class Component implements Component_Interface, Templating_Component_Interface
 				},
 			],
 		];
+
+		// Aggregate manifests from components implementing Asset_Provider
+		// (e.g. inc/WP_Rig_Toolkit/* wrapper components that declare their own vendor CSS).
+		$css_files = array_merge(
+			$css_files,
+			wp_rig_theme()->get_asset_manifests('styles'),
+		);
 
 		/**
 		 * Filters default CSS files.

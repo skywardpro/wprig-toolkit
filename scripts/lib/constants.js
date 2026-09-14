@@ -5,6 +5,7 @@
  * External dependencies
  */
 import path from 'path';
+import fs from 'node:fs';
 import * as process from 'node:process';
 
 /**
@@ -72,7 +73,6 @@ export const paths = {
 			`!${rootPath}/optional/**/*.*`,
 			`!${rootPath}/tests/**/*.*`,
 			`!${rootPath}/vendor/**/*.*`,
-			`!${rootPath}/wp-cli/**/*.*`,
 			`!${rootPath}/node_modules/**/*.*`,
 			`!${rootPath}/childify_backup/**/*.*`,
 			`!${rootPath}/scripts/**/*.*`,
@@ -111,6 +111,10 @@ export const paths = {
 		src: `${assetsDir}/fonts/**/*.{woff,woff2,eot,ttf,svg}`,
 		dest: `${assetsDir}/fonts/`,
 	},
+	blocks: {
+		srcDir: `${assetsDir}/blocks`,
+		dest: `${assetsDir}/blocks/`,
+	},
 	export: {
 		src: [],
 		stringReplaceSrc: [`${rootPath}/style.css`, `${rootPath}/languages/*.po`],
@@ -127,6 +131,17 @@ export const paths = {
 };
 
 // Add rootPath to filesToCopy and additionalFilesToCopy
+const includeWpCli = configValueDefined('export.includeWpCli')
+	? config.export.includeWpCli
+	: false;
+
+if (!includeWpCli) {
+	paths.php.src.push(`!${rootPath}/wp-cli/**/*.*`);
+} else {
+	// Add wp-cli to php src to be processed and bundled
+	paths.php.src.push(`${rootPath}/wp-cli/**/*.*`);
+}
+
 const additionalFilesToCopy = configValueDefined('export.additionalFilesToCopy')
 	? config.export.additionalFilesToCopy
 	: [];
@@ -140,6 +155,11 @@ for (const filePath of filesToCopy.concat(additionalFilesToCopy)) {
 	paths.export.src.push(exportPath);
 }
 
+// Add blocks to export if they exist.
+if (fs.existsSync(paths.blocks.srcDir)) {
+	paths.export.src.push(`${paths.blocks.srcDir}/**/*`.replace(/\\/g, '/'));
+}
+
 // Override paths for production
 if (isProd) {
 	paths.php.dest = `${prodThemePath}/`;
@@ -148,6 +168,7 @@ if (isProd) {
 	paths.scripts.dest = `${prodAssetsDir}/js/`;
 	paths.images.dest = `${prodAssetsDir}/images/`;
 	paths.fonts.dest = `${prodAssetsDir}/fonts/`;
+	paths.blocks.dest = `${prodAssetsDir}/blocks/`;
 	paths.languages = {
 		src: `${prodThemePath}/**/*.php`,
 		dest: `${prodThemePath}/languages/${config.theme.slug}.pot`,

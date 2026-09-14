@@ -7,9 +7,15 @@
 		"author": "The WP Rig Contributors",
 		"author_uri": "https://wprig.io/",
 		"description": "A progressive theme development rig for WordPress.",
-		"version": "1.0.0"
+		"version": "1.0.0",
+		"themeType": "classic",
+		"enableBlocks": false
 	},
 	"dev": {
+		"admin": {
+			"user": "admin",
+			"password": "password"
+		},
 		"browserSync": {
 			"live": true,
 			"proxyURL": "wprig.test:8888",
@@ -45,6 +51,7 @@
 	"export": {
 		"compress": true,
 		"generatePotFile": true,
+		"includeWpCli": false,
 		"filesToCopy": [
 			"LICENSE",
 			"readme.txt",
